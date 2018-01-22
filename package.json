@@ -1,0 +1,38 @@
+{
+  "name": "my-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=dev nodemon --inspect ./app.js",
+    "prod": "cross-env NODE_ENV=prod pm2 start ./app.js --name=my-service",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiaobxia/my-service.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xiaobxia/my-service/issues"
+  },
+  "homepage": "https://github.com/xiaobxia/my-service#readme",
+  "dependencies": {
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-router": "^7.2.1",
+    "koa-session": "^5.5.1",
+    "log4js": "^2.3.10",
+    "md5": "^2.2.1",
+    "moment": "^2.19.1",
+    "mysql": "^2.15.0",
+    "nodemailer": "^4.4.0",
+    "qiniu": "^7.1.1",
+    "ws": "^3.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1",
+    "pm2": "^2.7.2"
+  }
+}
