@@ -1,14 +1,7 @@
 /**
- * Created by xiaobxia on 2017/7/6.
+ * Created by xiaobxia on 2018/1/23.
  */
-const logger = require('../common/logger');
-
-module.exports = function (req, res, next) {
-  let ip = req.ip;
-  if (ip) {
-    logger.trace('ip: ' + ip);
-  }
-  logger.trace('path: ' + req.path);
+module.exports = async function (ctx, next) {
+  console.log(ctx.originalUrl);
   next();
 };
-

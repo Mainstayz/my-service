@@ -1,10 +1,12 @@
 const Koa = require('koa');
 const bluebird = require('bluebird');
+const cors = require('koa-cors');
 const bodyParser = require('koa-bodyparser');
-const session = require('koa-session');
 const base = require('./app/base');
+const checkLogin = require('./app/middlewares/checkLogin');
+const error = require('./app/middlewares/error');
+const requestLog = require('./app/middlewares/requestLog');
 const router = require('./app/routes/index');
-const log = require('./app/common/logger');
 const config = require('./config/index');
 
 global.Promise = bluebird;
@@ -15,18 +17,17 @@ const app = new Koa();
 // 加入全局信息
 base(app);
 
-// session
-const session_secret = config.server.session_secret;
-app.keys = [session_secret];
-const CONFIG = {
-  key: session_secret,
-  maxAge: 1000 * 60 * 20,
-  overwrite: true,
-  httpOnly: true,
-  signed: true,
-  rolling: true,
-};
-app.use(session(CONFIG, app));
+// 跨域
+app.use(cors({
+  methods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
+  credentials: true,
+  maxAge: 2592000
+}));
+
+//请求日志
+app.use(requestLog);
+// 检查登录中间件
+app.use(checkLogin);
 
 // post
 app.use(bodyParser());
@@ -35,13 +36,12 @@ app.use(bodyParser());
 app.use(router.routes());
 
 // 错误处理
-app.on('error', (err, ctx) => {
-  log.error(err);
-});
+app.on('error', error);
 
 // 监听
 const port = config.server.port || 8080;
+console.log(port);
 app.listen(port, () => {
   console.log(`server started at localhost:${port}`);
-  console.log(`当前环境是:${env || 'dev'}`)
+  console.log(`当前环境是:${env || 'dev'}`);
 });

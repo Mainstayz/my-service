@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const controllers = require('../controllers');
-const config = require('../../config/index');
+const reqlib = require('app-root-path').require;
+const config = reqlib('/config/index');
 
 const projectName = config.project.projectName;
 if (!projectName) {
@@ -10,15 +11,9 @@ if (!projectName) {
 const router = new Router({
   prefix: `/${projectName}`
 });
-//登录
-router.post('/sys/auth/login', controllers.authController.login());
-router.get('/sys/auth/checkLogin', controllers.authController.checkLogin());
-router.get('/sys/auth/logout', controllers.authController.logout());
-//注册
-router.get('/sys/user/register/active', controllers.userController.registerActive());
-router.get('/sys/user/register/result', controllers.userController.registerResult());
-router.post('/sys/user/register', controllers.userController.register());
-router.get('/sys/user/sendActiveEmail', controllers.userController.sendActiveEmail());
 
+//登录
+router.post('/auth/login', controllers.authController.login);
+router.get('/auth/checkLogin', controllers.authController.checkLogin);
 
 module.exports = router;

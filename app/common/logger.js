@@ -1,6 +1,7 @@
 const log4js = require('log4js');
 const path = require('path');
-const config = require('../../config/index');
+const reqlib = require('app-root-path').require;
+const config = reqlib('/config/index');
 
 const loggerConfig = config.logger;
 const env = process.env.NODE_ENV;

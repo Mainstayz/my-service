@@ -1,9 +1,8 @@
-const _ = require('lodash');
-const config = require('config');
+const models = require('../models');
 
-const m = require('../models');
+const UserModel = models.User;
 
-const UserModel = m.User;
+exports.UserModel = UserModel;
 
 exports.newAndSave = function (name, password, nickName, headImg) {
   const user = new UserModel();

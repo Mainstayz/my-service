@@ -1,7 +1,9 @@
-const localConfig = require('../config');
+const reqlib = require('app-root-path').require;
+const localConfig = reqlib('/config');
 const localConst = require('./const');
 const logger = require('./common/logger');
 const mailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 const Parameter = require('./common/validate');
 
 const p = new Parameter();
@@ -51,12 +53,12 @@ module.exports = function (app) {
     };
   };
   // 获取session
-  app.context.getSession = function (session) {
-    return session[localConst.SESSION_KEY];
+  app.context.getSessionUser = function (session) {
+    return session[localConst.SESSION_USER_KEY];
   };
   // 设置session
-  app.context.setSession = function (session, data) {
-    session[localConst.SESSION_KEY] = data;
+  app.context.setSessionUser = function (session, data) {
+    session[localConst.SESSION_USER_KEY] = data;
   };
   // 接口
   app.context.validateData = function (rule, data) {
@@ -76,5 +78,15 @@ module.exports = function (app) {
     } else {
       return fake;
     }
+  };
+  app.context.token = {};
+  app.context.token.sign = function (data, expiresIn) {
+    const tokenConfig = localConfig.server.token;
+    return jwt.sign(data, tokenConfig.key, {expiresIn: expiresIn || tokenConfig.expiresIn});
+  };
+
+  app.context.token.verify = function (token) {
+    const tokenConfig = localConfig.server.token;
+    return jwt.verify(token, tokenConfig.key);
   };
 };
