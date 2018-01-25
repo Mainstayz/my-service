@@ -23,7 +23,7 @@ app.use(cors({
   credentials: true,
   maxAge: 2592000
 }));
-
+// 每个next都需要await
 //请求日志
 app.use(requestLog);
 // 检查登录中间件

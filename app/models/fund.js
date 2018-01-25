@@ -1,5 +1,5 @@
 /**
- * Created by xiaobxia on 2018/1/23.
+ * Created by xiaobxia on 2018/1/25.
  */
 const mongoose = require('mongoose');
 
@@ -7,15 +7,17 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const schema = new Schema({
-  log_type: String,
   user_id: {type: ObjectId},
-  platform: String,
+  name: String,
+  code: String,
+  // 净值
+  net_value:
   create_at: {
     type: Date,
     default: Date.now
   }
 });
-// 一般是以用户id查
+
 schema.index({ user_id: 1, create_at: -1 });
 
-module.exports = mongoose.model('LogAudit', schema);
+module.exports = mongoose.model('Fund', schema);

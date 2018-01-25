@@ -15,5 +15,6 @@ const router = new Router({
 //登录
 router.post('/auth/login', controllers.authController.login);
 router.get('/auth/checkLogin', controllers.authController.checkLogin);
+router.get('/auth/logout', controllers.authController.logout);
 
 module.exports = router;

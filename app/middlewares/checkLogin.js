@@ -3,31 +3,30 @@
  */
 
 module.exports = async function (ctx, next) {
-  const token = ctx.header.token;
-  let user = null;
-  try {
-    user = ctx.token.verify(token);
-  } catch (err) {
-    next(err);
+  const originalUrl = ctx.originalUrl;
+  const projectName = ctx.localConfig.project.projectName;
+  const filterPath = ['/auth'];
+  let ifFilter = false;
+  for (let k = 0; k < filterPath.length; k++) {
+    if (originalUrl.startsWith(`/${projectName}${filterPath[k]}`)) {
+      ifFilter = true;
+      break;
+    }
   }
-  // if (user) {
-  //   ctx.requestUser = user;
-  //   next();
-  // } else {
-  //   const originalUrl = ctx.originalUrl;
-  //   const projectName = ctx.localConfig.server.projectName;
-  //   const filterPath = ['/auth'];
-  //   let ifFilter = false;
-  //   for (let k = 0; k < filterPath.length; k++) {
-  //     if (originalUrl.startsWith(`/${projectName}${filterPath[k]}`)) {
-  //       ifFilter = true;
-  //       break;
-  //     }
-  //   }
-  //   if (ifFilter) {
-  //     next();
-  //   } else {
-  //     next();
-  //   }
-  // }
+  if (ifFilter) {
+    ctx.logger.trace('in filter route');
+    await next();
+  } else {
+    ctx.logger.trace('in check route');
+    const token = ctx.header.token;
+    let user = null;
+    try {
+      user = ctx.token.verify(token);
+      ctx.user = user;
+      await next();
+    } catch (err) {
+      ctx.logger.trace('in token error');
+      await next(err);
+    }
+  }
 };

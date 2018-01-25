@@ -75,6 +75,14 @@ class Parameter {
         return;
       }
 
+      if (rule.include && rule.include.indexOf(obj[key]) === -1) {
+        errors.push({
+          message: this.t('invalid'),
+          field: key,
+          code: this.t('invalid_value')
+        });
+      }
+
       var checker = TYPE_MAP[rule.type];
       if (!checker) {
         throw new TypeError('rule type must be one of ' + Object.keys(TYPE_MAP).join(', ') +
@@ -199,7 +207,7 @@ function formatRule(rule) {
  */
 
 function checkInt(rule, value) {
-  if (typeof value !== 'number' || value % 1 !== 0) {
+  if (typeof value !== 'number' || isNaN(value) || value % 1 !== 0) {
     return this.t('should be an integer');
   }
 

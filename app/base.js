@@ -2,6 +2,7 @@ const reqlib = require('app-root-path').require;
 const localConfig = reqlib('/config');
 const localConst = require('./const');
 const logger = require('./common/logger');
+const services = require('./services');
 const mailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const Parameter = require('./common/validate');
@@ -44,7 +45,10 @@ module.exports = function (app) {
     };
   };
   // 失败
-  app.context.refail = function (message, code, data) {
+  app.context.refail = function (err, data) {
+    logger.warn(err);
+    const message = err.message;
+    const code = err.code;
     return {
       code: code || -1,
       success: false,
@@ -65,16 +69,24 @@ module.exports = function (app) {
     let fake = {};
     for (let key in rule) {
       if (rule.hasOwnProperty(key)) {
-        if (!rule[key].type) {
-          rule[key].type = 'string';
+        if (rule[key].type === 'int') {
+          fake[key] = parseInt(data[key], 10);
+        } else if (rule[key].type === 'number') {
+          fake[key] = parseFloat(data[key]);
+        } else {
+          if (!rule[key].type) {
+            rule[key].type = 'string';
+          }
+          fake[key] = data[key];
         }
-        fake[key] = data[key];
       }
     }
     let msgList = p.validate(rule, fake);
     if (msgList !== undefined) {
       let msg = msgList[0];
-      throw new Error(msg.field + ' ' + msg.message);
+      let err = new Error(msg.field + ' ' + msg.message);
+      err.code = '10001';
+      throw err;
     } else {
       return fake;
     }
@@ -89,4 +101,6 @@ module.exports = function (app) {
     const tokenConfig = localConfig.server.token;
     return jwt.verify(token, tokenConfig.key);
   };
+
+  app.context.services = services;
 };
