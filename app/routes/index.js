@@ -17,4 +17,8 @@ router.post('/auth/login', controllers.authController.login);
 router.get('/auth/checkLogin', controllers.authController.checkLogin);
 router.get('/auth/logout', controllers.authController.logout);
 
+//基金
+router.post('/fund/addUserFund', controllers.fundController.addUserFund);
+router.get('/fund/getUserFunds', controllers.fundController.getUserFunds);
+
 module.exports = router;

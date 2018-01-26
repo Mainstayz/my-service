@@ -4,20 +4,21 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
 
 const schema = new Schema({
-  user_id: {type: ObjectId},
   name: String,
   code: String,
   // 净值
-  net_value:
+  net_value: Number,
+  // 估值
+  valuation: Number,
   create_at: {
     type: Date,
     default: Date.now
   }
 });
 
-schema.index({ user_id: 1, create_at: -1 });
+schema.index({code: 1}, {unique: true});
+schema.index({create_at: -1});
 
 module.exports = mongoose.model('Fund', schema);

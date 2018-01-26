@@ -4,3 +4,4 @@
 exports.auth = require('./auth');
 exports.log = require('./log');
 exports.user = require('./user');
+exports.fund = require('./fund');
