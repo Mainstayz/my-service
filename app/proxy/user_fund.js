@@ -16,6 +16,20 @@ exports.newAndSave = function (userId, fundId, count) {
   return UserFund.save();
 };
 
+exports.updateByUserIdAndFundId = function (userId, fundId, count) {
+  return UserFundModel.update({
+    user_id: userId,
+    fund_id: fundId
+  }, {
+    $set: {
+      count
+    }
+  });
+};
+
+exports.deleteByUserIdAndFundId = function (userId, fundId) {
+  return UserFundModel.remove({user_id: userId, fund_id: fundId});
+};
 
 exports.getByUserIdAndFundId = function (userId, fundId) {
   return UserFundModel.findOne({user_id: userId, fund_id: fundId});

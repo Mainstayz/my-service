@@ -1,7 +1,6 @@
 {
-  "watch": [
-    "./app",
-    "./config",
-    "createData.js"
+  "ignore": [
+    "./logs",
+    "./uploads"
   ]
 }

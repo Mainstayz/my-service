@@ -3,7 +3,6 @@ const bluebird = require('bluebird');
 const cors = require('koa-cors');
 const bodyParser = require('koa-bodyparser');
 const base = require('./app/base');
-const checkLogin = require('./app/middlewares/checkLogin');
 const error = require('./app/middlewares/error');
 const requestLog = require('./app/middlewares/requestLog');
 const router = require('./app/routes/index');
@@ -27,7 +26,7 @@ app.use(cors({
 //请求日志
 app.use(requestLog);
 // 检查登录中间件
-app.use(checkLogin);
+// app.use(checkLogin);
 
 // post
 app.use(bodyParser());
@@ -40,7 +39,7 @@ app.on('error', error);
 
 // 监听
 const port = config.server.port || 8080;
-console.log(port);
+
 app.listen(port, () => {
   console.log(`server started at localhost:${port}`);
   console.log(`当前环境是:${env || 'dev'}`);

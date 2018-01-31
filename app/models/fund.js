@@ -12,6 +12,14 @@ const schema = new Schema({
   net_value: Number,
   // 估值
   valuation: Number,
+  // 估值源
+  valuationSource: {
+    type: String,
+    default: 'tiantian'
+  },
+  // 更新时间
+  valuationDate: Date,
+  updateDate: Date,
   create_at: {
     type: Date,
     default: Date.now

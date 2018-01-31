@@ -5,6 +5,8 @@ const logger = require('./common/logger');
 const services = require('./services');
 const mailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const fs = require('fs-extra');
+const schedules = require('./schedules/inedx');
 const Parameter = require('./common/validate');
 
 const p = new Parameter();
@@ -103,4 +105,12 @@ module.exports = function (app) {
   };
 
   app.context.services = services;
+
+  app.context.createJsonFile = function (fileName, fileData) {
+    return fs.ensureFile(fileName).then(() => {
+      return fs.writeJson(fileName, fileData, {spaces: 2});
+    });
+  };
+
+  app.context.schedules = schedules;
 };

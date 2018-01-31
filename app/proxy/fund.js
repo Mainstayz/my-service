@@ -7,7 +7,7 @@ const FundModel = models.Fund;
 
 exports.FundModel = FundModel;
 
-exports.newAndSave = function (code, name, valuation, net_value) {
+exports.newAndSave = function (code, name, net_value, valuation) {
   const fund = new FundModel({
     name,
     code,
@@ -15,8 +15,38 @@ exports.newAndSave = function (code, name, valuation, net_value) {
     net_value,
     // 估值
     valuation,
+    valuationDate: Date.now(),
+    updateDate: Date.now()
   });
   return fund.save();
+};
+
+exports.updateByCode = function (code, name, net_value, valuation) {
+  return FundModel.update({
+    code
+  }, {
+    $set: {
+      name,
+      // 净值
+      net_value,
+      // 估值
+      valuation,
+      valuationDate: Date.now(),
+      updateDate: Date.now()
+    }
+  });
+};
+
+exports.updateNetValueByCode = function (code, net_value) {
+  return FundModel.update({
+    code
+  }, {
+    $set: {
+      // 净值
+      net_value,
+      updateDate: Date.now()
+    }
+  });
 };
 
 
