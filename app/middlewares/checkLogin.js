@@ -18,15 +18,15 @@ module.exports = async function (ctx, next) {
     await next();
   } else {
     ctx.logger.trace('in check route');
-    const token = ctx.header.token;
-    let user = null;
+    const token = ctx.header.token || '';
     try {
-      user = ctx.token.verify(token);
-      ctx.user = user;
+      ctx.tokenRaw = ctx.token.verify(token);
       await next();
     } catch (err) {
       ctx.logger.trace('in token error');
-      await next(err);
+      ctx.refail({
+        code: '401'
+      });
     }
   }
 };

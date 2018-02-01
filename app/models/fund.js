@@ -11,15 +11,15 @@ const schema = new Schema({
   // 净值
   net_value: Number,
   // 估值
-  valuation: Number,
+  valuation_tiantian: Number,
+  valuation_haomai: Number,
   // 估值源
-  valuationSource: {
+  valuation_source: {
     type: String,
     default: 'tiantian'
   },
   // 更新时间
-  valuationDate: Date,
-  updateDate: Date,
+  update_date: Date,
   create_at: {
     type: Date,
     default: Date.now

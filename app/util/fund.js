@@ -5,6 +5,7 @@ const request = require('request-promise');
 const cheerio = require('cheerio');
 const Iconv = require('iconv-lite');
 
+// 天天得到单个基金的信息
 exports.getFundInfo = function (code) {
   return request({
     method: 'get',
@@ -16,6 +17,7 @@ exports.getFundInfo = function (code) {
   });
 };
 
+// 天天得到所有基金的信息
 exports.getFundsInfo = function () {
   return request({
     method: 'get',
@@ -43,3 +45,30 @@ exports.getFundsInfo = function () {
     return funds;
   });
 };
+
+// 好买得到所有基金的估值信息
+request({
+  method: 'get',
+  url: `https://www.howbuy.com/fund/valuation/index.htm`,
+  transform: function (body) {
+    return cheerio.load(body);
+  }
+}).then(($) => {
+  const tbody = $('#nTab2_Con1 tbody');
+  const texts = $('#nTab2_Con1 textarea');
+  texts.each(function () {
+    tbody.append($(this).text());
+  });
+  // 预估涨跌幅
+  const items = $('#nTab2_Con1 tbody tr');
+  let funds = [];
+  items.each(function () {
+    const cols = $(this).find('td');
+    // 是可购的
+    funds.push({
+      code: cols.eq(2).text(),
+      valuation: parseFloat(cols.eq(4).text())
+    });
+  });
+  return funds;
+});

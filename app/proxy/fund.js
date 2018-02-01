@@ -15,8 +15,8 @@ exports.newAndSave = function (code, name, net_value, valuation) {
     net_value,
     // 估值
     valuation,
-    valuationDate: Date.now(),
-    updateDate: Date.now()
+    valuation_date: Date.now(),
+    update_date: Date.now()
   });
   return fund.save();
 };
@@ -31,8 +31,8 @@ exports.updateByCode = function (code, name, net_value, valuation) {
       net_value,
       // 估值
       valuation,
-      valuationDate: Date.now(),
-      updateDate: Date.now()
+      valuation_date: Date.now(),
+      update_date: Date.now()
     }
   });
 };
@@ -44,7 +44,7 @@ exports.updateNetValueByCode = function (code, net_value) {
     $set: {
       // 净值
       net_value,
-      updateDate: Date.now()
+      update_date: Date.now()
     }
   });
 };

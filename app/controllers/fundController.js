@@ -5,10 +5,20 @@ const fs = require('fs-extra');
 const del = require('del');
 const send = require('koa-send');
 
+// 得到所有基金信息
+exports.funds = async function (ctx) {
+  try {
+    const funds = await ctx.services.fund.getFunds();
+    ctx.body = ctx.resuccess();
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
 exports.addUserFund = async function (ctx) {
   const query = ctx.request.body;
   try {
-    const tokenRaw = ctx.token.verify(ctx.headers.token || '');
+    const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
       fundCode: {type: 'string', required: true},
       fundCount: {type: 'number', required: true}
@@ -27,7 +37,7 @@ exports.addUserFund = async function (ctx) {
 exports.deleteUserFund = async function (ctx) {
   const query = ctx.query;
   try {
-    const tokenRaw = ctx.token.verify(ctx.headers.token || '');
+    const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
       fundCode: {type: 'string', required: true}
     }, query);
@@ -44,7 +54,7 @@ exports.deleteUserFund = async function (ctx) {
 
 exports.getUserFunds = async function (ctx) {
   try {
-    const tokenRaw = ctx.token.verify(ctx.headers.token || '');
+    const tokenRaw = ctx.tokenRaw;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 找到用户下的基金
     const userFunds = await ctx.services.fund.getUserFunds(userRaw._id);
@@ -68,10 +78,10 @@ exports.getUserFunds = async function (ctx) {
             code: fund.code,
             count: userFund.count,
             // 净值
-            net_value: fund.net_value,
+            netValue: fund.net_value,
             // 估值
             valuation: fund.valuation,
-            valuationSource: fund.valuationSource,
+            valuationSource: fund.valuation_source,
             // 持仓净值
             sum,
             valuationSum
@@ -93,7 +103,7 @@ exports.getUserFunds = async function (ctx) {
 };
 
 exports.importMyFund = async function (ctx) {
-  const tokenRaw = ctx.token.verify(ctx.headers.token);
+  const tokenRaw = ctx.tokenRaw;
   console.log(ctx.req.file);
   const filePath = `${ctx.localConfig.uploadDir}/${ctx.req.file.filename}`;
   const data = await fs.readJson(filePath);
@@ -115,7 +125,7 @@ exports.importMyFund = async function (ctx) {
 
 exports.exportMyFund = async function (ctx) {
   try {
-    const tokenRaw = ctx.token.verify(ctx.headers.token || '');
+    const tokenRaw = ctx.tokenRaw;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     const userFunds = await ctx.services.fund.getUserFunds(userRaw._id);
     const fundIds = userFunds.map(f => f.fund_id);
