@@ -5,7 +5,7 @@
 module.exports = async function (ctx, next) {
   const originalUrl = ctx.originalUrl;
   const projectName = ctx.localConfig.project.projectName;
-  const filterPath = ['/auth'];
+  const filterPath = ['/auth', '/analyze'];
   let ifFilter = false;
   for (let k = 0; k < filterPath.length; k++) {
     if (originalUrl.startsWith(`/${projectName}${filterPath[k]}`)) {
@@ -19,14 +19,15 @@ module.exports = async function (ctx, next) {
   } else {
     ctx.logger.trace('in check route');
     const token = ctx.header.token || '';
+    console.log(token)
     try {
       ctx.tokenRaw = ctx.token.verify(token);
-      await next();
     } catch (err) {
       ctx.logger.trace('in token error');
-      ctx.refail({
+      ctx.body = ctx.refail({
         code: '401'
       });
     }
+    await next();
   }
 };

@@ -4,6 +4,6 @@
 const Proxy = require('../proxy');
 const LogAuditProxy = Proxy.LogAudit;
 
-exports.addLogAudit = async function (log) {
-  return LogAuditProxy.newAndSave(log.logType, log.userId, log.platform);
+exports.addLogAudit = async function (data) {
+  return LogAuditProxy.newAndSave(data);
 };

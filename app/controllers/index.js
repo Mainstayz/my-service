@@ -3,3 +3,4 @@
  */
 exports.authController = require('./authController');
 exports.fundController = require('./fundController');
+exports.analyzeController = require('./analyzeController');

@@ -58,37 +58,44 @@ exports.getUserFunds = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 找到用户下的基金
     const userFunds = await ctx.services.fund.getUserFunds(userRaw._id);
-    const fundIds = userFunds.map(f => f.fund_id);
-    // 得到所有基金的信息
-    const funds = await ctx.services.fund.getFundsByIds(fundIds);
+    const fundAnalyzeIds = userFunds.map(f => f.fund.fund_analyze);
+    // 找到分析
+    const fundAnalyzes = await ctx.services.analyze.getFundAnalyzeByIds(fundAnalyzeIds);
     let list = [];
     let totalSum = 0;
     let valuationTotalSum = 0;
-    for (let i = 0; i < funds.length; i++) {
-      const fund = funds[i];
-      for (let j = 0; j < userFunds.length; j++) {
-        const userFund = userFunds[j];
-        if (userFund['fund_id'].toString() === fund['_id'].toString()) {
-          const sum = parseInt((fund.net_value * userFund.count) * 100) / 100;
-          const valuationSum = parseInt((fund.valuation * userFund.count) * 100) / 100;
-          totalSum += sum;
-          valuationTotalSum += valuationSum;
-          list.push({
-            name: fund.name,
-            code: fund.code,
-            count: userFund.count,
-            // 净值
-            netValue: fund.net_value,
-            // 估值
-            valuation: fund.valuation,
-            valuationSource: fund.valuation_source,
-            // 持仓净值
-            sum,
-            valuationSum
-          });
-          break;
+    for (let i = 0; i < userFunds.length; i++) {
+      const userFund = userFunds[i];
+      const fund = userFund.fund;
+      // 持仓金额
+      const sum = parseInt((fund.net_value * userFund.count) * 100) / 100;
+      totalSum += sum;
+      let result = {
+        name: fund.name,
+        code: fund.code,
+        count: userFund.count,
+        // 净值
+        netValue: fund.net_value,
+        // 持仓净值
+        sum
+      };
+      // 填充分析
+      for (let j = 0; j < fundAnalyzes.length; j++) {
+        const fundAnalyze = fundAnalyzes[j];
+        if (fund['fund_analyze'].toString() === fundAnalyze['_id'].toString()) {
+          console.log(fundAnalyze)
+          if (fundAnalyze['haomai_count'] > fundAnalyze['tiantian_count']) {
+            result.valuationSource = 'haomai';
+            result.valuation = fundAnalyze['valuation_haomai'];
+          } else {
+            result.valuationSource = 'tiantian';
+            result.valuation = fundAnalyze['valuation_tiantian'];
+          }
+          result.valuationSum = parseInt((result.valuation * userFund.count) * 100) / 100;
+          valuationTotalSum += result.valuationSum;
         }
       }
+      list.push(result);
     }
     ctx.body = ctx.resuccess({
       list,
@@ -102,20 +109,39 @@ exports.getUserFunds = async function (ctx) {
   }
 };
 
+// 导入基金，如果基金不存在，就不导入
 exports.importMyFund = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   console.log(ctx.req.file);
+  // 获取上传数据
   const filePath = `${ctx.localConfig.uploadDir}/${ctx.req.file.filename}`;
   const data = await fs.readJson(filePath);
   const funds = data.myFund;
   const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+  // 添加
+  let failList = [];
   if (funds.length > 0 && funds[0].code) {
+    let optionList = [];
     for (let k = 0; k < funds.length; k++) {
-      const fund = await ctx.services.fund.addFund(funds[k].code);
-      await ctx.services.fund.addUserFund(userRaw._id, fund._id, funds[k].count);
+      // 检查是否在基金库中
+      const fund = await ctx.services.fund.getFundByCode(funds[k].code);
+      if (fund) {
+        // 检查是否已经添加
+        const record = await ctx.services.fund.getUserFund(userRaw._id, fund._id);
+        if (record) {
+          optionList.push(ctx.services.fund.updateUserFund(userRaw._id, fund._id, funds[k].count));
+        } else {
+          optionList.push(ctx.services.fund.addUserFund(userRaw._id, fund._id, funds[k].count));
+        }
+      } else {
+        failList.push(funds[k]);
+      }
     }
     del(filePath);
-    ctx.body = ctx.resuccess();
+    await Promise.all(optionList);
+    ctx.body = ctx.resuccess({
+      failList
+    });
   } else {
     ctx.body = ctx.refail({
       message: 'json数据不正确'
@@ -153,10 +179,10 @@ exports.exportMyFund = async function (ctx) {
   }
 };
 
-exports.updateFundsInfo = async function (ctx) {
+exports.updateBaseInfo = async function (ctx) {
   try {
     // 主要是为了更新单位净值
-    await ctx.services.fund.updateFundsInfo();
+    await ctx.services.fund.updateBaseInfo();
     ctx.body = ctx.resuccess();
   } catch (err) {
     ctx.body = ctx.refail(err);

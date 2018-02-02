@@ -7,11 +7,7 @@ const LogAuditModel = models.LogAudit;
 
 exports.LogAuditModel = LogAuditModel;
 
-exports.newAndSave = function (logType, userId, platform) {
-  const log = new LogAuditModel({
-    log_type: logType,
-    user_id: userId,
-    platform: platform,
-  });
+exports.newAndSave = function (data) {
+  const log = new LogAuditModel(data);
   return log.save();
 };

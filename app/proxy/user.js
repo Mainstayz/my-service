@@ -4,16 +4,21 @@ const UserModel = models.User;
 
 exports.UserModel = UserModel;
 
-exports.update = function (user) {
+exports.newAndSave = function (data) {
+  const fund = new UserModel(data);
+  return fund.save();
+};
+
+exports.update = function (id, user) {
   return UserModel.update({
     _id: user.id
   }, {
-    $set: {
-      nick_name: user.nick_name,
-      head_img: user.head_img,
-      password: user.password
-    }
+    $set: user
   });
+};
+
+exports.delete = function (data) {
+  return UserModel.remove(data);
 };
 
 exports.getByName = function (userName) {

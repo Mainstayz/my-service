@@ -7,48 +7,22 @@ const FundModel = models.Fund;
 
 exports.FundModel = FundModel;
 
-exports.newAndSave = function (code, name, net_value, valuation) {
-  const fund = new FundModel({
-    name,
-    code,
-    // 净值
-    net_value,
-    // 估值
-    valuation,
-    valuation_date: Date.now(),
-    update_date: Date.now()
-  });
+exports.newAndSave = function (data) {
+  const fund = new FundModel(data);
   return fund.save();
 };
 
-exports.updateByCode = function (code, name, net_value, valuation) {
+exports.delete = function (data) {
+  return FundModel.remove(data);
+};
+
+exports.updateByCode = function (code, data) {
   return FundModel.update({
     code
   }, {
-    $set: {
-      name,
-      // 净值
-      net_value,
-      // 估值
-      valuation,
-      valuation_date: Date.now(),
-      update_date: Date.now()
-    }
+    $set: data
   });
 };
-
-exports.updateNetValueByCode = function (code, net_value) {
-  return FundModel.update({
-    code
-  }, {
-    $set: {
-      // 净值
-      net_value,
-      update_date: Date.now()
-    }
-  });
-};
-
 
 exports.getByCode = function (code) {
   return FundModel.findOne({code: code});
@@ -65,3 +39,4 @@ exports.getById = function (fundId) {
 exports.find = function (query, opt) {
   return FundModel.find(query, {}, opt);
 };
+

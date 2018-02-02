@@ -1,6 +1,7 @@
 const schedule = require('node-schedule');
 const request = require('request-promise');
 const reqlib = require('app-root-path').require;
+const logger = require('../common/logger');
 const config = reqlib('/config/index');
 /**
  * cron风格的
@@ -19,11 +20,19 @@ let rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [new schedule.Range(1, 5)];
 rule.hour = 6;
 
-const job = schedule.scheduleJob(rule, function(){
+function updateFundsBaseInfo() {
   request({
     method: 'get',
-    url: `http://localhost:${config.server.port || 8080}/myService/fund/updateFundsInfo`
+    url: `http://localhost:${config.server.port || 8080}/myService/analyze/updateBaseInfo`
+  }).catch(function (err) {
+    logger.error(err);
   });
-});
+  logger.info(`于${new Date().toLocaleString()}执行更新基金单位净值`);
+}
+
+//用于更新基金净值
+const job = schedule.scheduleJob(rule, updateFundsBaseInfo);
 
 module.exports = job;
+
+

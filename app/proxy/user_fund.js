@@ -7,19 +7,19 @@ const UserFundModel = models.UserFund;
 
 exports.UserFundModel = UserFundModel;
 
-exports.newAndSave = function (userId, fundId, count) {
-  const UserFund = new UserFundModel({
-    user_id: userId,
-    fund_id: fundId,
-    count: count,
-  });
+exports.newAndSave = function (data) {
+  const UserFund = new UserFundModel(data);
   return UserFund.save();
 };
 
-exports.updateByUserIdAndFundId = function (userId, fundId, count) {
+exports.deleteUserFund = function (userId, fundId) {
+  return UserFundModel.remove({user: userId, fund: fundId});
+};
+
+exports.updateCount = function (userId, fundId, count) {
   return UserFundModel.update({
-    user_id: userId,
-    fund_id: fundId
+    user: userId,
+    fund: fundId
   }, {
     $set: {
       count
@@ -27,16 +27,16 @@ exports.updateByUserIdAndFundId = function (userId, fundId, count) {
   });
 };
 
-exports.deleteByUserIdAndFundId = function (userId, fundId) {
-  return UserFundModel.remove({user_id: userId, fund_id: fundId});
+exports.getUserFunds = function (userId) {
+  return UserFundModel.find({user: userId}).populate('fund');
 };
 
-exports.getByUserIdAndFundId = function (userId, fundId) {
-  return UserFundModel.findOne({user_id: userId, fund_id: fundId});
+exports.getUserFund = function (userId, fundId) {
+  return UserFundModel.findOne({user: userId, fund: fundId});
 };
 
 exports.getByUserId = function (userId) {
-  return UserFundModel.find({user_id: userId});
+  return UserFundModel.find({user: userId});
 };
 
 exports.getById = function (UserFundId) {

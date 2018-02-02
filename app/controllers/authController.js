@@ -12,9 +12,9 @@ exports.login = async function (ctx) {
     };
     const token = ctx.token.sign(user, 60 * 60);
     ctx.services.log.addLogAudit({
-      logType: 'login',
+      log_type: 'login',
       platform: data.platform,
-      useId: userRaw._id
+      user_id: userRaw._id
     });
     ctx.body = ctx.resuccess({
       token,
@@ -57,9 +57,9 @@ exports.logout = async function (ctx) {
     const tokenRaw = ctx.token.verify(data.token);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     ctx.services.log.addLogAudit({
-      logType: 'logout',
+      log_type: 'logout',
       platform: data.platform,
-      useId: userRaw._id
+      user_id: userRaw._id
     });
     ctx.body = ctx.resuccess();
   } catch (err) {

@@ -32,7 +32,11 @@ router.get('/auth/logout', controllers.authController.logout);
 router.post('/fund/addUserFund', controllers.fundController.addUserFund);
 router.get('/fund/getUserFunds', controllers.fundController.getUserFunds);
 router.get('/fund/deleteUserFund', controllers.fundController.deleteUserFund);
-router.get('/fund/updateFundsInfo', controllers.fundController.updateFundsInfo);
+router.get('/fund/updateBaseInfo', controllers.fundController.updateBaseInfo);
+
+//分析路由
+router.get('/analyze/updateValuation', controllers.analyzeController.updateValuation);
+router.get('/analyze/updateBaseInfo', controllers.analyzeController.updateBaseInfo);
 
 //文件上传
 router.post('/upload/importMyFund', upload.single('fundFile'), controllers.fundController.importMyFund);

@@ -6,58 +6,76 @@ const fundUtil = require('../util/fund');
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
-
-exports.getFundByCode = async function (code) {
-  const fund = await FundProxy.getByCode(code);
-  return fund;
-};
-
-exports.addFund = async function (code) {
-  const fund = await FundProxy.getByCode(code);
-  if (!fund) {
-    const result = await fundUtil.getFundInfo(code);
-    // 新增的是用天天的源，在估算的定时任务中修改源
-    return FundProxy.newAndSave(result.fundcode, result.name, result.dwjz, result.gsz);
-  } else {
-    return fund;
-  }
-};
+const FundAnalyzeProxy = Proxy.FundAnalyze;
 
 exports.addUserFund = async function (userId, fundId, count) {
-  const userFund = await UserFundProxy.getByUserIdAndFundId(userId, fundId);
-  if (!userFund) {
-    return UserFundProxy.newAndSave(userId, fundId, count);
-  } else {
-    return UserFundProxy.updateByUserIdAndFundId(userId, fundId, count);
-  }
+  return UserFundProxy.newAndSave({
+    user: userId,
+    fund: fundId,
+    count: count,
+  });
 };
 
 exports.deleteUserFund = async function (userId, fundId) {
-  return UserFundProxy.deleteByUserIdAndFundId(userId, fundId);
+  return UserFundProxy.deleteUserFund(userId, fundId);
+};
+
+exports.updateUserFund = async function (userId, fundId, count) {
+  return UserFundProxy.updateCount(userId, fundId, count);
+};
+
+// 更新基本信息，没有的添加，有的更新
+exports.updateBaseInfo = async function () {
+  // 得到基金信息
+  const funds = await fundUtil.getFundsInfo();
+  let optionList = [];
+  for (let k = 0; k < funds.length; k++) {
+    const temp = funds[k];
+    // 分析表也要添加数据
+    let fundAnalyze = await FundAnalyzeProxy.getByCode(temp.code);
+    if (!fundAnalyze) {
+      fundAnalyze = await FundAnalyzeProxy.newAndSave({
+        code: temp.code,
+        tiantian_count: 0,
+        haomai_count: 0,
+      });
+    }
+    const fund = await FundProxy.getByCode(temp.code);
+    if (!fund) {
+      optionList.push(FundProxy.newAndSave({
+        code: temp.code,
+        name: temp.name,
+        net_value: temp.net_value,
+        net_value_date: Date.now(),
+        sell: temp.sell,
+        fund_analyze: fundAnalyze._id
+      }));
+    } else {
+      optionList.push(FundProxy.updateByCode(funds[k].code, {
+        name: temp.name,
+        net_value: temp.net_value,
+        net_value_date: Date.now()
+      }));
+    }
+  }
+  return Promise.all(optionList);
+};
+
+
+exports.getFundByCode = async function (code) {
+  return FundProxy.getByCode(code);
+};
+
+exports.getUserFund = async function (userId, fundId) {
+  return UserFundProxy.getUserFund(userId, fundId);
 };
 
 exports.getUserFunds = async function (userId) {
-  return UserFundProxy.getByUserId(userId);
+  return UserFundProxy.getUserFunds(userId);
 };
 
 exports.getFundsByIds = async function (ids) {
   return FundProxy.find({_id: {$in: [...ids]}});
 };
 
-exports.updateFundsInfo = async function () {
-  const funds = await fundUtil.getFundsInfo();
-  for (let k = 0; k < funds.length; k++) {
-    const fund = await FundProxy.getByCode(funds[k].code);
-    if (!fund) {
-      await FundProxy.newAndSave(funds[k].code, funds[k].name, funds[k].net_value, funds[k].valuation);
-    } else {
-      // 如果源是天天的，那就更新估值
-      if(fund.valuationSource === 'tiantian') {
-        await FundProxy.updateByCode(funds[k].code, funds[k].name, funds[k].net_value, funds[k].valuation);
-      } else {
-        await FundProxy.updateNetValueByCode(funds[k].code, funds[k].net_value);
-      }
-    }
-  }
-  return true;
-};
+

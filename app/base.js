@@ -58,14 +58,6 @@ module.exports = function (app) {
       data: data || null
     };
   };
-  // 获取session
-  app.context.getSessionUser = function (session) {
-    return session[localConst.SESSION_USER_KEY];
-  };
-  // 设置session
-  app.context.setSessionUser = function (session, data) {
-    session[localConst.SESSION_USER_KEY] = data;
-  };
   // 接口
   app.context.validateData = function (rule, data) {
     let fake = {};
