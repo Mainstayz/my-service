@@ -2,67 +2,48 @@
  * Created by xiaobxia on 2017/7/26.
  */
 const path = require('path');
+
+const root = path.resolve(__dirname, '../');
+function resolveRoot(dir) {
+  return path.resolve(root, dir);
+}
 module.exports = {
+  root: path.resolve(__dirname, '../'),
   project: {
-    //务必修改
-    projectName: "",
-    remoteAddress: 'http://localhost:4000/#'
+    projectName: "myService"
   },
   server: {
-    //默认
-    debug: true,
-    root: path.resolve(__dirname, '../'),
-    port: 8080,
-    //务必修改
-    session_secret: "secret"
-  },
-  //mysql配置
-  mysql: {
-    //默认
-    connectionLimit: 10,
-    dateStrings: true,
-    //务必修改
-    host: "",
-    user: "",
-    password: "",
-    database: "",
-
+    port: 3002,
+    token: {
+      key: 'xiaobxia',
+      expiresIn: 60 * 60 * 24
+    }
   },
   logger: {
-    //默认
-    dir: path.resolve(__dirname, '../logs/'),
+    dir: resolveRoot('logs'),
     fileName: 'cheese.log',
-    debugLogLevel: 'ALL',
-    productLogLevel: 'ERROR'
+    debugLogLevel: 'all',
+    productLogLevel: 'info'
   },
+  uploadDir: 'uploads',
+  db: 'mongodb://127.0.0.1:27017/myService',
   qiniu: {
-    //例子：华南就填写'Zone_z2'
-    zone: ''
+    zone: 'Zone_z2'
   },
-  //务必修改
   //只有在debug为false时开启
   email: {
     senderAccount: {
-      //阿里邮箱的例子:host: smtp.mxhichina.com, port: 25
-      host: '',
-      //使用ssl
-      //secureConnection: true, // use SSL
-      //port: 465, // port for secure SMTP
-
-      //不适用ssl
+      host: 'smtp.mxhichina.com',
       port: 25,
       //secure: true, // use TLS
       auth: {
-        //邮箱地址
-        user: '',
-        //邮箱密码
-        pass: ''
+        user: 'chenlingjie@cd121.com',
+        pass: 'CLJclj214'
       },
       ignoreTLS: true,
     },
     adminAccount: {
-      //管理人员的邮箱地址
-      user: ''
+      user: '673806687@qq.com'
     }
   }
 };
