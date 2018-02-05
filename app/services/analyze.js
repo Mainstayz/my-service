@@ -12,14 +12,7 @@ const FundAnalyzeProxy = Proxy.FundAnalyze;
 // 分析前，需要确定表中有数据了
 exports.updateValuation = async function () {
   // 只更新表中已经有的
-  const funds = await FundProxy.find({});
-  logger.warn('find end');
-  await fundUtil.getFundsInfo();
-  logger.warn('getFundsInfo end');
-  await fundUtil.getFundsInfoHaomai();
-  logger.warn('getFundsInfoHaomai end');
-  await fundUtil.getFundInfo();
-  logger.warn('getFundInfo end');
+  const funds = await FundAnalyzeProxy.find({});
   const fetchList = Promise.all([
     fundUtil.getFundsInfo(),
     fundUtil.getFundsInfoHaomai(),
@@ -47,9 +40,6 @@ exports.updateValuation = async function () {
       }
     }
   }
-  fetchData[0] = null;
-  fetchData[1] = null;
-  logger.warn('tiantian haomai mix end');
   // 更新
   for (let k = 0; k < funds.length; k++) {
     for (let i = 0; i < valuationDataList.length; i++) {

@@ -26,7 +26,7 @@ module.exports = {
     productLogLevel: 'info'
   },
   uploadDir: 'uploads',
-  db: 'mongodb://127.0.0.1:27017/myService',
+  db: 'mongodb://39.108.114.91:27017/myService',
   qiniu: {
     zone: 'Zone_z2'
   },
