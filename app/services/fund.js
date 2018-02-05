@@ -27,7 +27,8 @@ exports.updateUserFund = async function (userId, fundId, count) {
 // 更新基本信息，没有的添加，有的更新
 exports.updateBaseInfo = async function () {
   // 得到基金信息
-  const funds = await fundUtil.getFundsInfo();
+  const fundInfos = await fundUtil.getFundsInfo();
+  const funds = fundInfos.funds;
   let optionList = [];
   for (let k = 0; k < funds.length; k++) {
     const temp = funds[k];
@@ -46,7 +47,7 @@ exports.updateBaseInfo = async function () {
         code: temp.code,
         name: temp.name,
         net_value: temp.net_value,
-        net_value_date: Date.now(),
+        net_value_date: fundInfos.netValueDate,
         sell: temp.sell,
         fund_analyze: fundAnalyze._id
       }));
@@ -54,13 +55,12 @@ exports.updateBaseInfo = async function () {
       optionList.push(FundProxy.updateByCode(funds[k].code, {
         name: temp.name,
         net_value: temp.net_value,
-        net_value_date: Date.now()
+        net_value_date: fundInfos.netValueDate
       }));
     }
   }
   return Promise.all(optionList);
 };
-
 
 exports.getFundByCode = async function (code) {
   return FundProxy.getByCode(code);

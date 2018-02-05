@@ -83,8 +83,7 @@ exports.getUserFunds = async function (ctx) {
       for (let j = 0; j < fundAnalyzes.length; j++) {
         const fundAnalyze = fundAnalyzes[j];
         if (fund['fund_analyze'].toString() === fundAnalyze['_id'].toString()) {
-          console.log(fundAnalyze)
-          if (fundAnalyze['haomai_count'] > fundAnalyze['tiantian_count']) {
+          if (fundAnalyze['better_count'].split('h').length - 1 > fundAnalyze['better_count'].length - 1) {
             result.valuationSource = 'haomai';
             result.valuation = fundAnalyze['valuation_haomai'];
           } else {

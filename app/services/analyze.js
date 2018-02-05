@@ -16,25 +16,28 @@ exports.updateValuation = async function () {
     fundUtil.getFundsInfoHaomai()
   ]);
   const fetchData = await fetchList;
+  const tiantianData  = fetchData[0];
+  const haomaiData = fetchData[1];
   let updateList = [];
   for (let k = 0; k < funds.length; k++) {
     let tiantian = 0;
     let haomai = 0;
-    for (let i = 0; i < fetchData[0].length; i++) {
-      if (fetchData[0][i].code === funds[k].code) {
-        tiantian = fetchData[0][i].valuation;
+    for (let i = 0; i < tiantianData.funds.length; i++) {
+      if (tiantianData.funds[i].code === funds[k].code) {
+        tiantian = tiantianData.funds[i].valuation;
         break;
       }
     }
-    for (let i = 0; i < fetchData[1].length; i++) {
-      if (fetchData[1][i].code === funds[k].code) {
-        haomai = fetchData[1][i].valuation;
+    for (let i = 0; i < haomaiData.funds.length; i++) {
+      if (haomaiData.funds.code === funds[k].code) {
+        haomai = haomaiData.funds.valuation;
         break;
       }
     }
     updateList.push(FundAnalyzeProxy.updateByCode(funds[k].code,{
       valuation_tiantian: tiantian,
       valuation_haomai: haomai || tiantian,
+      valuation_date: Date.now()
     }))
   }
   return Promise.all(updateList);
