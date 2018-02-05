@@ -3,7 +3,7 @@
  */
 const fs = require('fs-extra');
 const del = require('del');
-const send = require('koa-send');
+const moment = require('moment');
 
 // 得到所有基金信息
 exports.funds = async function (ctx) {
@@ -83,7 +83,22 @@ exports.getUserFunds = async function (ctx) {
       for (let j = 0; j < fundAnalyzes.length; j++) {
         const fundAnalyze = fundAnalyzes[j];
         if (fund['fund_analyze'].toString() === fundAnalyze['_id'].toString()) {
-          if (fundAnalyze['better_count'].split('h').length - 1 > fundAnalyze['better_count'].length - 1) {
+          // 判断是否有数据
+          let haomaiCount = 0;
+          let tiantianCount = 0;
+          //统计
+          if (fundAnalyze['better_count']) {
+            const betterCount = JSON.parse(fundAnalyze['better_count']).data;
+            betterCount.forEach(function (item) {
+              if (item.type === 'tiantian') {
+                tiantianCount++;
+              } else {
+                haomaiCount++;
+              }
+            })
+          }
+          // 填充数据
+          if (haomaiCount > tiantianCount) {
             result.valuationSource = 'haomai';
             result.valuation = fundAnalyze['valuation_haomai'];
           } else {
@@ -148,6 +163,7 @@ exports.importMyFund = async function (ctx) {
   }
 };
 
+// 导出我的基金
 exports.exportMyFund = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw;

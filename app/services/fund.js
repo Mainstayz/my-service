@@ -36,11 +36,10 @@ exports.updateBaseInfo = async function () {
     let fundAnalyze = await FundAnalyzeProxy.getByCode(temp.code);
     if (!fundAnalyze) {
       fundAnalyze = await FundAnalyzeProxy.newAndSave({
-        code: temp.code,
-        tiantian_count: 0,
-        haomai_count: 0,
+        code: temp.code
       });
     }
+    // 没有的添加，有的更新
     const fund = await FundProxy.getByCode(temp.code);
     if (!fund) {
       optionList.push(FundProxy.newAndSave({

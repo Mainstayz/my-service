@@ -37,7 +37,9 @@ router.get('/fund/updateBaseInfo', controllers.fundController.updateBaseInfo);
 //分析路由
 router.get('/analyze/updateValuation', controllers.analyzeController.updateValuation);
 router.get('/analyze/updateBaseInfo', controllers.analyzeController.updateBaseInfo);
-
+router.get('/analyze/updateRecentNetValue', controllers.analyzeController.updateRecentNetValue);
+router.get('/analyze/betterValuation', controllers.analyzeController.betterValuation);
+router.get('/analyze/addRecentNetValue', controllers.analyzeController.addRecentNetValue);
 //文件上传
 router.post('/upload/importMyFund', upload.single('fundFile'), controllers.fundController.importMyFund);
 

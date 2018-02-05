@@ -91,3 +91,31 @@ exports.getFundsInfoHaomai = function () {
   });
 };
 
+exports.getRecentNetValue = function (code, days) {
+  return request({
+    method: 'get',
+    url: `http://api.fund.eastmoney.com/f10/lsjz?callback=jQuery18306565218995177082_${Date.now()}&fundCode=${code}&pageIndex=1&pageSize=${days || 260}&startDate=&endDate=&_=${Date.now()}`,
+    encoding: 'utf-8',
+    headers: {
+      Referer: `http://fund.eastmoney.com/f10/jjjz_${code}.html`
+    }
+  }).then((body) => {
+    const jsonData = body.substring(body.indexOf('(') + 1, body.indexOf(')'));
+    const list = JSON.parse(jsonData).Data.LSJZList;
+    let list2 = [];
+    list.forEach(function (item) {
+      list2.push({
+        // 净值增长率
+        JZZZL: parseFloat(item.JZZZL || 0),
+        // 日期
+        FSRQ: item.FSRQ,
+        // 单位净值
+        DWJZ: parseFloat(item.DWJZ || 0),
+      });
+    });
+    return list2;
+  }).catch(function (err) {
+    logger.error(err);
+  });
+};
+

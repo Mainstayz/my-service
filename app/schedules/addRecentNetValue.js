@@ -1,5 +1,5 @@
 /**
- * Created by xiaobxia on 2018/2/2.
+ * Created by xiaobxia on 2018/2/5.
  */
 const schedule = require('node-schedule');
 const request = require('request-promise');
@@ -19,25 +19,22 @@ const config = reqlib('/config/index');
  └───────────────────────── second (0 - 59, OPTIONAL)
  */
 let rule = new schedule.RecurrenceRule();
-//工作日早上6点执行
-rule.dayOfWeek = [new schedule.Range(1, 5)];
-rule.hour = [9, 10, 11, 13, 14, 15];
-let minute = [];
-for (let k = 0; k < 60; k += 10) {
-  minute.push(k);
-}
-rule.minute = minute;
+// 第二天统计
+rule.dayOfWeek = [new schedule.Range(2, 6)];
+rule.hour = 6;
+rule.minute = 20;
 
-function updateValuation() {
+function addRecentNetValue() {
   request({
     method: 'get',
-    url: `http://localhost:${config.server.port || 8080}/myService/analyze/updateValuation`
+    url: `http://localhost:${config.server.port || 8080}/myService/analyze/addRecentNetValue`
   }).catch(function (err) {
     logger.error(err);
   });
-  logger.info(`于${new Date().toLocaleString()}执行更新基金估值`);
+  logger.info(`于${new Date().toLocaleString()}执行添加新的涨跌数据`);
 }
 
-const job = schedule.scheduleJob(rule, updateValuation);
+// 统计哪个基金估值更准
+const job = schedule.scheduleJob(rule, addRecentNetValue);
 
 module.exports = job;
