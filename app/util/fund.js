@@ -60,7 +60,7 @@ exports.getFundsInfo = function () {
 exports.getFundsInfoHaomai = function () {
   return request({
     method: 'get',
-    url: `https://www.howbuy.com/fund/valuation/index.htm`,
+    url: `http://www.howbuy.com/fund/valuation/index.htm`,
     transform: function (body) {
       return cheerio.load(body);
     }
