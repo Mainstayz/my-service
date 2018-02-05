@@ -123,6 +123,25 @@ exports.getUserFunds = async function (ctx) {
   }
 };
 
+// 导入基金
+exports.importFund = async function (ctx) {
+  console.log(ctx.req.file);
+  // 获取上传数据
+  const filePath = `${ctx.localConfig.uploadDir}/${ctx.req.file.filename}`;
+  const data = await fs.readJson(filePath);
+  const funds = data.fund;
+  // 添加
+  if (funds.length > 0 && funds[0].code) {
+    await ctx.services.fund.importFund(funds);
+    del(filePath);
+    ctx.body = ctx.resuccess();
+  } else {
+    ctx.body = ctx.refail({
+      message: 'json数据不正确'
+    });
+  }
+};
+
 // 导入基金，如果基金不存在，就不导入
 exports.importMyFund = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;

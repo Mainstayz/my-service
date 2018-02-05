@@ -8,6 +8,38 @@ const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
 const FundAnalyzeProxy = Proxy.FundAnalyze;
 
+exports.importFund = async function (funds) {
+  const fundInfos = await fundUtil.getFundsInfo();
+  const fundsData = fundInfos.funds;
+  let optionList = [];
+  for (let k = 0; k < funds.length; k++) {
+    // 检查是否在基金库中
+    const fund = await FundProxy.getByCode(funds[k].code);
+    if (!fund) {
+      let fundAnalyze = null;
+      for (let i = 0; i < fundsData.length; i++) {
+        const fundInfo = fundsData[i];
+        // 找到数据
+        if (funds[k].code === fundInfo.code) {
+          fundAnalyze = await FundAnalyzeProxy.newAndSave({
+            code: fundInfo.code
+          });
+          optionList.push(FundProxy.newAndSave({
+            code: fundInfo.code,
+            name: fundInfo.name,
+            net_value: fundInfo.net_value,
+            net_value_date: fundInfos.netValueDate,
+            sell: fundInfo.sell,
+            fund_analyze: fundAnalyze._id
+          }));
+          break;
+        }
+      }
+    }
+  }
+  return Promise.all(optionList);
+};
+
 exports.addUserFund = async function (userId, fundId, count) {
   return UserFundProxy.newAndSave({
     user: userId,
