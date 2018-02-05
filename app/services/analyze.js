@@ -23,7 +23,7 @@ exports.updateValuation = async function () {
   const haomaiData = fetchData[1];
   // 估值时间
   const valuationDate = fetchData[2].gztime;
-  let updateList = [];
+  // let updateList = [];
   let valuationDataList = [];
   // 混合天天和好买数据
   for (let i = 0; i < tiantianData.funds.length; i++) {
@@ -43,16 +43,17 @@ exports.updateValuation = async function () {
     for (let i = 0; i < valuationDataList.length; i++) {
       const valuationData = valuationDataList[i];
       if (valuationData.code === funds[k].code) {
-        updateList.push(FundAnalyzeProxy.updateByCode(funds[k].code, {
+        // 阿里云吃不消
+        await FundAnalyzeProxy.updateByCode(funds[k].code, {
           valuation_tiantian: valuationData.tiantian,
           valuation_haomai: valuationData.haomai || valuationData.tiantian,
           valuation_date: valuationDate
-        }));
+        });
         break;
       }
     }
   }
-  return Promise.all(updateList);
+  return true;
 };
 
 exports.getFundAnalyzeByIds = async function (ids) {
