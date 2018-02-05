@@ -21,12 +21,19 @@ const config = reqlib('/config/index');
 let rule = new schedule.RecurrenceRule();
 //工作日早上6点执行
 rule.dayOfWeek = [new schedule.Range(1, 5)];
-rule.hour = [9, 10, 11, 13, 14, 15];
-let minute = [];
-for (let k = 0; k < 60; k += 10) {
-  minute.push(k);
+const env = process.env.NODE_ENV;
+const isDev = env === 'dev';
+if (isDev) {
+  rule.hour = [9, 10, 11, 13, 14, 15];
+  let minute = [];
+  for (let k = 0; k < 60; k += 20) {
+    minute.push(k);
+  }
+  rule.minute = minute;
+} else {
+  // 阿里云上，一天只执行一次，用于记录数据，不是为了实时估值
+  rule.hour = 16;
 }
-rule.minute = minute;
 
 function updateValuation() {
   request({

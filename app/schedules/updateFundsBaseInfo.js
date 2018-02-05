@@ -16,9 +16,9 @@ const config = reqlib('/config/index');
  └───────────────────────── second (0 - 59, OPTIONAL)
  */
 let rule = new schedule.RecurrenceRule();
-//工作日早上6点执行
+//工作日早上4点执行
 rule.dayOfWeek = [new schedule.Range(1, 5)];
-rule.hour = 6;
+rule.hour = 4;
 
 function updateFundsBaseInfo() {
   request({

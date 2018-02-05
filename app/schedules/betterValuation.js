@@ -21,8 +21,7 @@ const config = reqlib('/config/index');
 let rule = new schedule.RecurrenceRule();
 // 第二天统计
 rule.dayOfWeek = [new schedule.Range(2, 6)];
-rule.hour = 6;
-rule.minute = 10;
+rule.hour = 5;
 
 function betterValuation() {
   request({
