@@ -9,55 +9,91 @@ const logger = require('../common/logger');
 const FundProxy = Proxy.Fund;
 const FundAnalyzeProxy = Proxy.FundAnalyze;
 
-// 分析前，需要确定表中有数据了
-exports.updateValuation = async function () {
-  // 只更新表中已经有的
-  const funds = await FundProxy.find({});
-  const fetchList = Promise.all([
-    fundUtil.getFundsInfo(),
-    fundUtil.getFundsInfoHaomai(),
-    // 估值时间以招商白酒为基准
-    fundUtil.getFundInfo('161725')
-  ]);
-  const fetchData = await fetchList;
-  const tiantianData = fetchData[0];
-  const haomaiData = fetchData[1];
-  // 估值时间
-  const valuationDate = fetchData[2].gztime;
+async function updateValuationByTiantian() {
+  const fundInfos = await fundUtil.getFundsInfo();
   let updateList = [];
-  let valuationDataList = [];
-  // 混合天天和好买数据
-  for (let i = 0; i < tiantianData.funds.length; i++) {
-    for (let j = 0; j < haomaiData.funds.length; j++) {
-      if (tiantianData.funds[i].code === haomaiData.funds[j].code) {
-        valuationDataList.push({
-          code: tiantianData.funds[i].code,
-          tiantian: tiantianData.funds[i].valuation,
-          haomai: haomaiData.funds[j].valuation
-        });
-        break;
-      }
-    }
-  }
-  fetchData[0] = null;
-  fetchData[1] = null;
-  logger.warn('tiantian haomai mix end');
-  // 更新
-  for (let k = 0; k < funds.length; k++) {
-    for (let i = 0; i < valuationDataList.length; i++) {
-      const valuationData = valuationDataList[i];
-      if (valuationData.code === funds[k].code) {
-        updateList.push(FundAnalyzeProxy.updateByCode(funds[k].code, {
-          valuation_tiantian: valuationData.tiantian,
-          valuation_haomai: valuationData.haomai || valuationData.tiantian,
-          valuation_date: valuationDate
-        }));
-        break;
-      }
+  for (let k = 0; k < fundInfos.length; k++) {
+    const fundTemp = await FundProxy.getByCode(fundInfos[k].code);
+    if(fundTemp) {
+      updateList.push(FundAnalyzeProxy.updateByCode(fundInfos[k].code, {
+        valuation_tiantian: fundInfos[k].valuation
+      }));
     }
   }
   return Promise.all(updateList);
+}
+
+async function updateValuationByHaomai() {
+  const fundInfos = await fundUtil.getFundsInfoHaomai();
+  const info = await fundUtil.getFundInfo('161725');
+  const valuationDate = info.gztime;
+  let updateList = [];
+  for (let k = 0; k < fundInfos.length; k++) {
+    const fundTemp = await FundProxy.getByCode(fundInfos[k].code);
+    if(fundTemp) {
+      updateList.push(FundAnalyzeProxy.updateByCode(fundInfos[k].code, {
+        valuation_haomai: fundInfos[k].valuation || fundTemp['valuation_tiantian'],
+        valuation_date: valuationDate
+      }));
+    }
+  }
+  return Promise.all(updateList);
+}
+
+exports.updateValuation = async function () {
+  await updateValuationByTiantian();
+  await updateValuationByHaomai();
 };
+
+// 分析前，需要确定表中有数据了
+// exports.updateValuation = async function () {
+//   // 只更新表中已经有的
+//   const funds = await FundProxy.find({});
+//   const fetchList = Promise.all([
+//     fundUtil.getFundsInfo(),
+//     fundUtil.getFundsInfoHaomai(),
+//     // 估值时间以招商白酒为基准
+//     fundUtil.getFundInfo('161725')
+//   ]);
+//   const fetchData = await fetchList;
+//   const tiantianData = fetchData[0];
+//   const haomaiData = fetchData[1];
+//   // 估值时间
+//   const valuationDate = fetchData[2].gztime;
+//   let updateList = [];
+//   let valuationDataList = [];
+//   // 混合天天和好买数据
+//   for (let i = 0; i < tiantianData.funds.length; i++) {
+//     for (let j = 0; j < haomaiData.funds.length; j++) {
+//       if (tiantianData.funds[i].code === haomaiData.funds[j].code) {
+//         valuationDataList.push({
+//           code: tiantianData.funds[i].code,
+//           tiantian: tiantianData.funds[i].valuation,
+//           haomai: haomaiData.funds[j].valuation
+//         });
+//         break;
+//       }
+//     }
+//   }
+//   fetchData[0] = null;
+//   fetchData[1] = null;
+//   logger.warn('tiantian haomai mix end');
+//   // 更新
+//   for (let k = 0; k < funds.length; k++) {
+//     for (let i = 0; i < valuationDataList.length; i++) {
+//       const valuationData = valuationDataList[i];
+//       if (valuationData.code === funds[k].code) {
+//         updateList.push(FundAnalyzeProxy.updateByCode(funds[k].code, {
+//           valuation_tiantian: valuationData.tiantian,
+//           valuation_haomai: valuationData.haomai || valuationData.tiantian,
+//           valuation_date: valuationDate
+//         }));
+//         break;
+//       }
+//     }
+//   }
+//   return Promise.all(updateList);
+// };
 
 exports.getFundAnalyzeByIds = async function (ids) {
   return FundAnalyzeProxy.find({_id: {$in: [...ids]}});
