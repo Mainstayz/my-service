@@ -47,9 +47,9 @@ exports.getFundsInfo = function () {
       }
     });
     return {
-      netValueDate: $('#oTable thead tr').eq(0).find('th').eq(7).text(),
+      netValueDate: $('#oTable thead tr').eq(0).find('th').eq(7).text().substring(0, 10),
       funds,
-      valuationDate: $('#oTable thead tr').eq(0).find('th').eq(4).text().substring(0, 9)
+      valuationDate: $('#oTable thead tr').eq(0).find('th').eq(4).text().substring(0, 10)
     };
   }).catch(function (err) {
     logger.error(err);
@@ -81,19 +81,13 @@ exports.getFundsInfoHaomai = function () {
         valuation: parseFloat(cols.eq(4).text())
       });
     });
-    console.log({
-      netValueDate: $('#nTab2_Con1 thead tr').eq(0).find('th').eq(7).text().substring(0, 9),
-      valuationDate: $('#nTab2_Con1 thead tr').eq(0).find('th').eq(4).text().substring(0, 9)
-    })
     return {
-      netValueDate: $('#nTab2_Con1 thead tr').eq(0).find('th').eq(7).text().substring(0, 9),
+      netValueDate: $('#nTab2_Con1 thead tr').eq(0).find('td').eq(7).text().substring(0, 10),
       funds,
-      valuationDate: $('#nTab2_Con1 thead tr').eq(0).find('th').eq(4).text().substring(0, 9)
+      valuationDate: $('#nTab2_Con1 thead tr').eq(0).find('td').eq(4).text().substring(0, 10)
     };
   }).catch(function (err) {
     logger.error(err);
   });
 };
-
-this.getFundsInfoHaomai()
 
