@@ -32,7 +32,7 @@ if (isDev) {
   rule.minute = minute;
 } else {
   // 阿里云上，一天只执行一次，用于记录数据，不是为了实时估值
-  rule.hour = 16;
+  rule.hour = 23;
 }
 
 function updateValuation() {

@@ -4,6 +4,7 @@
 const moment = require('moment');
 const Proxy = require('../proxy');
 const fundUtil = require('../util/fund');
+const logger = require('../common/logger');
 
 const FundProxy = Proxy.Fund;
 const FundAnalyzeProxy = Proxy.FundAnalyze;
@@ -38,6 +39,9 @@ exports.updateValuation = async function () {
       }
     }
   }
+  fetchData[0] = null;
+  fetchData[1] = null;
+  logger.warn('tiantian haomai mix end');
   // 更新
   for (let k = 0; k < funds.length; k++) {
     for (let i = 0; i < valuationDataList.length; i++) {
