@@ -105,4 +105,24 @@ module.exports = function (app) {
   };
 
   app.context.schedules = schedules;
+
+  app.context.paging = function(current, pageSize, defaultValue) {
+    let defaultCurrent = 1,
+      defaultPageSize = 10;
+    if (defaultValue) {
+      defaultCurrent = defaultValue.current || defaultCurrent;
+      defaultPageSize = defaultValue.pageSize || defaultPageSize;
+    }
+    //得是个整数
+    let currentT = parseInt(current, 10),
+      pageSizeT = parseInt(pageSize, 10),
+      index = isNaN(currentT) ? defaultCurrent : currentT,
+      size = isNaN(pageSizeT) ? defaultPageSize : pageSizeT;
+    return {
+      current: index,
+      pageSize: size,
+      start: (index - 1) * size,
+      offset: size
+    };
+  };
 };

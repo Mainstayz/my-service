@@ -5,11 +5,56 @@ const fs = require('fs-extra');
 const del = require('del');
 const moment = require('moment');
 
-// 得到所有基金信息
-exports.funds = async function (ctx) {
+//手动添加基金
+exports.addFund = async function (ctx) {
+  const query = ctx.request.body;
   try {
-    const funds = await ctx.services.fund.getFunds();
+    const data = ctx.validateData({
+      code: {required: true}
+    }, query);
+    const fund = await ctx.services.fund.getFundByCode(data.code);
+    if (!fund) {
+      await ctx.services.fund.addFund(data.code);
+    }
     ctx.body = ctx.resuccess();
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+// 删除基金
+exports.deleteFund = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      code: {required: true}
+    }, query);
+    await ctx.services.fund.deleteFund(data.code);
+    ctx.body = ctx.resuccess();
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
+// 得到所有基金信息
+exports.getFunds = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      current: {type: 'int', required: true},
+      pageSize: {type: 'int', required: true}
+    }, query);
+    let paging = ctx.paging(data.current, data.pageSize);
+    const opt = {
+      skip: paging.start,
+      limit: paging.offset,
+      sort: '-create_at'
+    };
+    const funds = await ctx.services.fund.getFundsByPaging({}, opt);
+    paging.total = funds.count;
+    ctx.body = ctx.resuccess({
+      list: funds.list,
+      page: paging
+    });
   } catch (err) {
     ctx.body = ctx.refail(err);
   }
@@ -24,7 +69,10 @@ exports.addUserFund = async function (ctx) {
       fundCount: {type: 'number', required: true}
     }, query);
     // 添加基金
-    const fund = await ctx.services.fund.addFund(data.fundCode);
+    let fund = await ctx.services.fund.getFundByCode(data.fundCode);
+    if (!fund) {
+      fund = await ctx.services.fund.addFund(data.fundCode);
+    }
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 添加基金用户关系
     await ctx.services.fund.addUserFund(userRaw._id, fund._id, data.fundCount);
@@ -45,7 +93,7 @@ exports.deleteUserFund = async function (ctx) {
     const fund = await ctx.services.fund.getFundByCode(data.fundCode);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 删除基金用户关系
-    await ctx.services.fund.deleteUserFund(userRaw._id, fund._id, data.fundCount);
+    await ctx.services.fund.deleteUserFund(userRaw._id, fund._id);
     ctx.body = ctx.resuccess();
   } catch (err) {
     ctx.body = ctx.refail(err);
@@ -123,62 +171,72 @@ exports.getUserFunds = async function (ctx) {
   }
 };
 
-// 导入基金
+// 导入基金，所有基金手动添加或导入
 exports.importFund = async function (ctx) {
   console.log(ctx.req.file);
   // 获取上传数据
   const filePath = `${ctx.localConfig.uploadDir}/${ctx.req.file.filename}`;
   const data = await fs.readJson(filePath);
-  const funds = data.fund;
-  // 添加
-  if (funds.length > 0 && funds[0].code) {
-    await ctx.services.fund.importFund(funds);
-    del(filePath);
-    ctx.body = ctx.resuccess();
-  } else {
+  try {
+    const funds = data.fund;
+    // 添加
+    if (funds.length > 0 && funds[0].code) {
+      await ctx.services.fund.importFund(funds);
+      ctx.body = ctx.resuccess();
+    } else {
+      ctx.body = ctx.refail({
+        message: 'json数据不正确'
+      });
+    }
+  } catch (err) {
     ctx.body = ctx.refail({
       message: 'json数据不正确'
     });
+  } finally {
+    del(filePath);
   }
 };
 
-// 导入基金，如果基金不存在，就不导入
+// 导入基金，如果基金不存在，就添加
 exports.importMyFund = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   console.log(ctx.req.file);
   // 获取上传数据
   const filePath = `${ctx.localConfig.uploadDir}/${ctx.req.file.filename}`;
   const data = await fs.readJson(filePath);
-  const funds = data.myFund;
-  const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-  // 添加
-  let failList = [];
-  if (funds.length > 0 && funds[0].code) {
-    let optionList = [];
-    for (let k = 0; k < funds.length; k++) {
-      // 检查是否在基金库中
-      const fund = await ctx.services.fund.getFundByCode(funds[k].code);
-      if (fund) {
-        // 检查是否已经添加
-        const record = await ctx.services.fund.getUserFund(userRaw._id, fund._id);
-        if (record) {
-          optionList.push(ctx.services.fund.updateUserFund(userRaw._id, fund._id, funds[k].count));
+  try {
+    const funds = data.myFund;
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    // 添加
+    if (funds.length > 0 && funds[0].code) {
+      let optionList = [];
+      for (let k = 0; k < funds.length; k++) {
+        // 检查是否在基金库中
+        let fund = await ctx.services.fund.getFundByCode(funds[k].code);
+        if (fund) {
+          // 检查是否已经添加
+          const record = await ctx.services.fund.getUserFund(userRaw._id, fund._id);
+          if (record) {
+            optionList.push(ctx.services.fund.updateUserFund(userRaw._id, fund._id, funds[k].count));
+          } else {
+            optionList.push(ctx.services.fund.addUserFund(userRaw._id, fund._id, funds[k].count));
+          }
         } else {
+          fund = await ctx.services.fund.addFund(funds[k].code);
           optionList.push(ctx.services.fund.addUserFund(userRaw._id, fund._id, funds[k].count));
         }
-      } else {
-        failList.push(funds[k]);
       }
+      await Promise.all(optionList);
+      ctx.body = ctx.resuccess();
+    } else {
+      ctx.body = ctx.refail({
+        message: 'json数据不正确'
+      });
     }
+  } catch (err) {
+    ctx.body = ctx.refail();
+  } finally {
     del(filePath);
-    await Promise.all(optionList);
-    ctx.body = ctx.resuccess({
-      failList
-    });
-  } else {
-    ctx.body = ctx.refail({
-      message: 'json数据不正确'
-    });
   }
 };
 
@@ -213,12 +271,12 @@ exports.exportMyFund = async function (ctx) {
   }
 };
 
-exports.updateBaseInfo = async function (ctx) {
-  try {
-    // 主要是为了更新单位净值
-    await ctx.services.fund.updateBaseInfo();
-    ctx.body = ctx.resuccess();
-  } catch (err) {
-    ctx.body = ctx.refail(err);
-  }
-};
+// exports.updateBaseInfo = async function (ctx) {
+//   try {
+//     // 主要是为了更新单位净值
+//     await ctx.services.fund.updateBaseInfo();
+//     ctx.body = ctx.resuccess();
+//   } catch (err) {
+//     ctx.body = ctx.refail(err);
+//   }
+// };

@@ -16,6 +16,10 @@ exports.delete = function (data) {
   return FundModel.remove(data);
 };
 
+exports.deleteByCode = function (code) {
+  return FundModel.remove({code});
+};
+
 exports.updateByCode = function (code, data) {
   return FundModel.update({
     code
@@ -38,5 +42,9 @@ exports.getById = function (fundId) {
 
 exports.find = function (query, opt) {
   return FundModel.find(query, {}, opt);
+};
+
+exports.count = function (query) {
+  return FundModel.count(query);
 };
 

@@ -20,7 +20,6 @@ exports.updateValuation = async function () {
     fundUtil.getFundInfo('161725')
   ]);
   const fetchData = await fetchList;
-  logger.warn('request end');
   const tiantianData = fetchData[0];
   const haomaiData = fetchData[1];
   // 估值时间

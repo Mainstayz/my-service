@@ -8,28 +8,59 @@ const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
 const FundAnalyzeProxy = Proxy.FundAnalyze;
 
+exports.addFund = async function (code) {
+  const data = await fundUtil.getFundInfo(code);
+  const fundAnalyze = await FundAnalyzeProxy.newAndSave({
+    code: data.fundcode
+  });
+  return FundProxy.newAndSave({
+    code: data.fundcode,
+    name: data.name,
+    net_value: data.dwjz,
+    net_value_date: data.jzrq,
+    sell: true,
+    fund_analyze: fundAnalyze._id
+  })
+};
+
+exports.deleteFund = async function (code) {
+  const fund = await FundProxy.getByCode(code);
+  // 存在才删除
+  if (fund) {
+    await FundAnalyzeProxy.deleteByCode(fund.code);
+    return FundProxy.deleteByCode(fund.code)
+  }
+};
+
+exports.getFundsByPaging = async function (query, opt) {
+  const data = await Promise.all([FundProxy.find(query, opt), FundProxy.count(query)]);
+  return {list: data[0], count: data[1]};
+};
+
 exports.importFund = async function (funds) {
+  // 在网络上得到基本信息
   const fundInfos = await fundUtil.getFundsInfo();
   const fundsData = fundInfos.funds;
   let optionList = [];
+  // 遍历导入的基金
   for (let k = 0; k < funds.length; k++) {
     // 检查是否在基金库中
     const fund = await FundProxy.getByCode(funds[k].code);
     if (!fund) {
       let fundAnalyze = null;
       for (let i = 0; i < fundsData.length; i++) {
-        const fundInfo = fundsData[i];
+        const fundData = fundsData[i];
         // 找到数据
-        if (funds[k].code === fundInfo.code) {
+        if (funds[k].code === fundData.code) {
           fundAnalyze = await FundAnalyzeProxy.newAndSave({
-            code: fundInfo.code
+            code: fundData.code
           });
           optionList.push(FundProxy.newAndSave({
-            code: fundInfo.code,
-            name: fundInfo.name,
-            net_value: fundInfo.net_value,
+            code: fundData.code,
+            name: fundData.name,
+            net_value: fundData.net_value,
             net_value_date: fundInfos.netValueDate,
-            sell: fundInfo.sell,
+            sell: fundData.sell,
             fund_analyze: fundAnalyze._id
           }));
           break;
