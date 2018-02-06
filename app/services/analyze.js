@@ -67,7 +67,7 @@ exports.updateValuation = async function () {
   ]);
   const fetchData = await fetchList;
   logger.warn('request end');
-  const tiantianData = fetchData[0];
+  const tiantianData = fetchData[0].funds;
   // 估值时间
   const valuationDate = fetchData[1].gztime;
   let updateList = [];
@@ -77,8 +77,23 @@ exports.updateValuation = async function () {
       const valuationData = tiantianData[i];
       if (valuationData.code === funds[k].code) {
         updateList.push(FundAnalyzeProxy.updateByCode(funds[k].code, {
-          valuation_tiantian: valuationData.tiantian,
+          valuation_tiantian: valuationData.valuation,
           valuation_date: valuationDate
+        }));
+        break;
+      }
+    }
+  }
+  logger.warn('request2 begin');
+  const fetchData2 = await fundUtil.getFundsInfoHaomai();
+  const haomaiData = fetchData2.funds;
+  logger.warn('request2 end');
+  for (let k = 0; k < funds.length; k++) {
+    for (let i = 0; i < haomaiData.length; i++) {
+      const valuationData = haomaiData[i];
+      if (valuationData.code === funds[k].code) {
+        updateList.push(FundAnalyzeProxy.updateByCode(funds[k].code, {
+          valuation_tiantian: valuationData.valuation
         }));
         break;
       }
