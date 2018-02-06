@@ -37,6 +37,7 @@ router.get('/fund/getUserFunds', controllers.fundController.getUserFunds);
 router.get('/fund/deleteUserFund', controllers.fundController.deleteUserFund);
 
 //分析路由
+router.get('/analyze/updateBaseInfo', controllers.analyzeController.updateBaseInfo);
 router.get('/analyze/updateValuation', controllers.analyzeController.updateValuation);
 router.get('/analyze/updateRecentNetValue', controllers.analyzeController.updateRecentNetValue);
 router.get('/analyze/betterValuation', controllers.analyzeController.betterValuation);

@@ -270,13 +270,3 @@ exports.exportMyFund = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
-
-// exports.updateBaseInfo = async function (ctx) {
-//   try {
-//     // 主要是为了更新单位净值
-//     await ctx.services.fund.updateBaseInfo();
-//     ctx.body = ctx.resuccess();
-//   } catch (err) {
-//     ctx.body = ctx.refail(err);
-//   }
-// };

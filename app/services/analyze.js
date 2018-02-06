@@ -20,6 +20,7 @@ exports.updateValuation = async function () {
     fundUtil.getFundInfo('161725')
   ]);
   const fetchData = await fetchList;
+  logger.warn('request end');
   const tiantianData = fetchData[0];
   const haomaiData = fetchData[1];
   // 估值时间
@@ -148,4 +149,29 @@ exports.addRecentNetValue = async function () {
       recent_net_value: JSON.stringify({data: recentNetValue})
     });
   }
+};
+
+// 更新基本信息
+exports.updateBaseInfo = async function () {
+  // 得到基金，有的才更新
+  const funds = await FundProxy.find({});
+  // 得到基金信息
+  const fundsInfo = await fundUtil.getFundsInfo();
+  const fundInfos = fundsInfo.funds;
+  let optionList = [];
+  for (let k = 0; k < funds.length; k++) {
+    const temp = funds[k];
+    for (let i = 0; i < fundInfos.length; i++) {
+      const info = fundInfos[i];
+      if(temp.code === info.code) {
+        optionList.push(FundProxy.updateByCode(temp.code, {
+          name: info.name,
+          net_value: info.net_value,
+          net_value_date: fundsInfo.netValueDate
+        }));
+        break;
+      }
+    }
+  }
+  return Promise.all(optionList);
 };
