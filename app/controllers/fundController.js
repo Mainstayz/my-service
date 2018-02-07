@@ -106,9 +106,8 @@ exports.getUserFunds = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 找到用户下的基金
     const userFunds = await ctx.services.fund.getUserFunds(userRaw._id);
-    const fundAnalyzeIds = userFunds.map(f => f.fund.fund_analyze);
     // 找到分析
-    const fundAnalyzes = await ctx.services.analyze.getFundAnalyzeByIds(fundAnalyzeIds);
+    const fundAnalyzes = await ctx.services.analyze.getFundAnalyzesBase();
     let list = [];
     let totalSum = 0;
     let valuationTotalSum = 0;

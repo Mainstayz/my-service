@@ -57,8 +57,12 @@ exports.updateValuation = async function () {
   return Promise.all(updateList);
 };
 
+exports.getFundAnalyzesBase = async function (query) {
+  return FundAnalyzeProxy.findBase(query || {});
+};
+
 exports.getFundAnalyzeByIds = async function (ids) {
-  return FundAnalyzeProxy.find({_id: {$in: [...ids]}});
+  return FundAnalyzeProxy.find({_id: {$in: ids}});
 };
 
 // 记录最新一次的估值哪个更准
@@ -72,14 +76,14 @@ exports.betterValuation = async function () {
       betterCount = JSON.parse(fund['better_count']).data;
       // 先验证数据是否被添加过
       if (moment(fund['valuation_date']).isSame(betterCount[0].date, 'day')) {
-        break;
+        continue;
       }
     }
     let type = '';
     const fundTemp = await FundProxy.getByCode(fund.code);
     // 验证估值和净值是不是同一天
     if (!moment(fund['valuation_date']).isSame(fundTemp['net_value_date'], 'day')) {
-      break;
+      continue;
     }
     // 相同的时候也取天天
     if (Math.abs(fund['valuation_tiantian'] - fundTemp['net_value']) > Math.abs(fund['valuation_haomai'] - fundTemp['net_value'])) {
@@ -98,7 +102,7 @@ exports.betterValuation = async function () {
     }
     // 更新数据
     await FundAnalyzeProxy.updateByCode(funds[k].code, {
-      betterCount: JSON.stringify({
+      better_count: JSON.stringify({
         data: betterCount
       })
     })
@@ -163,7 +167,7 @@ exports.updateBaseInfo = async function () {
     const temp = funds[k];
     for (let i = 0; i < fundInfos.length; i++) {
       const info = fundInfos[i];
-      if(temp.code === info.code) {
+      if (temp.code === info.code) {
         optionList.push(FundProxy.updateByCode(temp.code, {
           name: info.name,
           net_value: info.net_value,
