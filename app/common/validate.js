@@ -72,7 +72,7 @@ class Parameter {
           });
         }
       } else {
-        return;
+        continue;
       }
 
       if (rule.include && rule.include.indexOf(obj[key]) === -1) {
