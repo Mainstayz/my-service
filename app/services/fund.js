@@ -52,8 +52,12 @@ exports.importFund = async function (funds) {
         const fundData = fundsData[i];
         // 找到数据
         if (funds[k].code === fundData.code) {
+          // 近一年的涨跌数据
+          const data = await fundUtil.getRecentNetValue(funds[k].code, 260);
+          // 在分析表中添加数据
           fundAnalyze = await FundAnalyzeProxy.newAndSave({
-            code: fundData.code
+            code: fundData.code,
+            recent_net_value: JSON.stringify({data})
           });
           optionList.push(FundProxy.newAndSave({
             code: fundData.code,
