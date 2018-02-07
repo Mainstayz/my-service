@@ -20,6 +20,7 @@ let rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [new schedule.Range(1, 5)];
 rule.hour = 4;
 
+// 实际上，净值要到第二天早上才有
 function updateFundsBaseInfo() {
   request({
     method: 'get',
