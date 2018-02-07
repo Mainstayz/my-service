@@ -9,9 +9,17 @@ const UserFundProxy = Proxy.UserFund;
 const FundAnalyzeProxy = Proxy.FundAnalyze;
 
 exports.addFund = async function (code) {
-  const data = await fundUtil.getFundInfo(code);
+  const fetchData = await Promise.all([
+    fundUtil.getFundInfo(code),
+    fundUtil.getRecentNetValue(code, 260)
+  ]);
+  const data = fetchData[0];
+  // 近一年的涨跌数据
+  const dataRecent = fetchData[1];
+  // 在分析表中添加数据
   const fundAnalyze = await FundAnalyzeProxy.newAndSave({
-    code: data.fundcode
+    code: code,
+    recent_net_value: JSON.stringify({dataRecent})
   });
   return FundProxy.newAndSave({
     code: data.fundcode,
@@ -101,6 +109,10 @@ exports.getUserFund = async function (userId, fundId) {
 
 exports.getUserFunds = async function (userId) {
   return UserFundProxy.getUserFunds(userId);
+};
+
+exports.getUserFundsByFundId = async function (fundId) {
+  return UserFundProxy.find(fundId);
 };
 
 exports.getFundsByIds = async function (ids) {

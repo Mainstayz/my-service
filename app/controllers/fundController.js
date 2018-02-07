@@ -28,8 +28,17 @@ exports.deleteFund = async function (ctx) {
     const data = ctx.validateData({
       code: {required: true}
     }, query);
-    await ctx.services.fund.deleteFund(data.code);
-    ctx.body = ctx.resuccess();
+    // 验证基金是否以被用
+    const fund = await ctx.services.fund.getFundByCode(data.code);
+    const userFund = await ctx.services.fund.getUserFundsByFundId(fund._id);
+    if(userFund) {
+      ctx.body = ctx.refail({
+        message: '被使用'
+      });
+    } else {
+      await ctx.services.fund.deleteFund(data.code);
+      ctx.body = ctx.resuccess();
+    }
   } catch (err) {
     ctx.body = ctx.refail(err);
   }
@@ -65,17 +74,17 @@ exports.addUserFund = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
-      fundCode: {type: 'string', required: true},
-      fundCount: {type: 'number', required: true}
+      code: {type: 'string', required: true},
+      count: {type: 'number', required: true}
     }, query);
     // 添加基金
-    let fund = await ctx.services.fund.getFundByCode(data.fundCode);
+    let fund = await ctx.services.fund.getFundByCode(data.code);
     if (!fund) {
-      fund = await ctx.services.fund.addFund(data.fundCode);
+      fund = await ctx.services.fund.addFund(data.code);
     }
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 添加基金用户关系
-    await ctx.services.fund.addUserFund(userRaw._id, fund._id, data.fundCount);
+    await ctx.services.fund.addUserFund(userRaw._id, fund._id, data.count);
     ctx.body = ctx.resuccess();
   } catch (err) {
     ctx.body = ctx.refail(err);
@@ -87,14 +96,39 @@ exports.deleteUserFund = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
-      fundCode: {type: 'string', required: true}
+      code: {type: 'string', required: true}
     }, query);
     // 得到基金信息
-    const fund = await ctx.services.fund.getFundByCode(data.fundCode);
+    const fund = await ctx.services.fund.getFundByCode(data.code);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 删除基金用户关系
     await ctx.services.fund.deleteUserFund(userRaw._id, fund._id);
     ctx.body = ctx.resuccess();
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
+exports.updateUserFund = async function (ctx) {
+  const query = ctx.request.body;
+  try {
+    const tokenRaw = ctx.tokenRaw;
+    const data = ctx.validateData({
+      code: {type: 'string', required: true},
+      count: {type: 'number', required: true}
+    }, query);
+    // 验证基金
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    const fund = await ctx.services.fund.getFundByCode(data.code);
+    if (fund) {
+      // 更新基金用户关系
+      await ctx.services.fund.updateUserFund(userRaw._id, fund._id, data.count);
+      ctx.body = ctx.resuccess();
+    } else {
+      ctx.body = ctx.refail({
+        message: '非法基金'
+      });
+    }
   } catch (err) {
     ctx.body = ctx.refail(err);
   }

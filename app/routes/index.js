@@ -32,10 +32,12 @@ router.get('/auth/logout', controllers.authController.logout);
 router.get('/fund/getFunds', controllers.fundController.getFunds);
 router.get('/fund/deleteFund', controllers.fundController.deleteFund);
 router.post('/fund/addFund', controllers.fundController.addFund);
+
+//用户基金
 router.post('/fund/addUserFund', controllers.fundController.addUserFund);
 router.get('/fund/getUserFunds', controllers.fundController.getUserFunds);
 router.get('/fund/deleteUserFund', controllers.fundController.deleteUserFund);
-
+router.post('/fund/updateUserFund', controllers.fundController.updateUserFund);
 //分析路由
 router.get('/analyze/updateBaseInfo', controllers.analyzeController.updateBaseInfo);
 router.get('/analyze/updateValuation', controllers.analyzeController.updateValuation);

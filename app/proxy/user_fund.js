@@ -46,3 +46,7 @@ exports.getById = function (UserFundId) {
 exports.find = function (query, opt) {
   return UserFundModel.find(query, {}, opt);
 };
+
+exports.findOne = function (query) {
+  return UserFundModel.findOne(query);
+};
