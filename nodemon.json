@@ -1,6 +1,7 @@
 {
-  "ignore": [
-    "./logs",
-    "./uploads"
+  "watch": [
+    "./app",
+    "./config",
+    "app.js"
   ]
 }
