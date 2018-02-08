@@ -6,6 +6,7 @@ const services = require('./services');
 const mailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const fs = require('fs-extra');
+const schedules = require('./schedules/inedx');
 const Parameter = require('./common/validate');
 
 const p = new Parameter();
@@ -103,7 +104,7 @@ module.exports = function (app) {
     });
   };
 
-  // app.context.schedules = schedules;
+  app.context.schedules = schedules;
 
   app.context.paging = function(current, pageSize, defaultValue) {
     let defaultCurrent = 1,

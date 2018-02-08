@@ -19,13 +19,15 @@ exports.addFund = async function (code) {
   // 在分析表中添加数据
   const fundAnalyze = await FundAnalyzeProxy.newAndSave({
     code: code,
-    recent_net_value: JSON.stringify({dataRecent})
+    valuation_tiantian: data.valuation,
+    valuation_date: data.valuation_date,
+    recent_net_value: JSON.stringify({data: dataRecent})
   });
   return FundProxy.newAndSave({
-    code: data.fundcode,
+    code: data.code,
     name: data.name,
-    net_value: data.dwjz,
-    net_value_date: data.jzrq,
+    net_value: data.net_value,
+    net_value_date: data.net_value_date,
     sell: true,
     fund_analyze: fundAnalyze._id
   })

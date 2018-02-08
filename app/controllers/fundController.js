@@ -44,6 +44,19 @@ exports.deleteFund = async function (ctx) {
   }
 };
 
+exports.getFund = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      code: {type: 'string', required: true}
+    }, query);
+    const fund = await ctx.services.fund.getFundByCode(data.code);
+    ctx.body = ctx.resuccess(fund);
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
 // 得到所有基金信息
 exports.getFunds = async function (ctx) {
   const query = ctx.query;
@@ -196,7 +209,8 @@ exports.getUserFunds = async function (ctx) {
       list,
       info: {
         totalSum: parseInt(totalSum),
-        valuationTotalSum: parseInt(valuationTotalSum)
+        valuationTotalSum: parseInt(valuationTotalSum),
+        valuationDate: fundAnalyzes[0]['valuation_date']
       }
     });
   } catch (err) {

@@ -4,6 +4,7 @@
 const moment = require('moment');
 const Proxy = require('../proxy');
 const fundUtil = require('../util/fund');
+const analyzeUtil = require('../util/analyze');
 const logger = require('../common/logger');
 
 const FundProxy = Proxy.Fund;
@@ -12,7 +13,7 @@ const FundAnalyzeProxy = Proxy.FundAnalyze;
 // 分析前，需要确定表中有数据了
 exports.updateValuation = async function () {
   // 只更新表中已经有的
-  const funds = await FundAnalyzeProxy.find({});
+  const funds = await FundAnalyzeProxy.findBase({});
   const fetchList = Promise.all([
     fundUtil.getFundsInfo(),
     fundUtil.getFundsInfoHaomai(),
@@ -24,7 +25,7 @@ exports.updateValuation = async function () {
   const tiantianData = fetchData[0];
   const haomaiData = fetchData[1];
   // 估值时间
-  const valuationDate = fetchData[2].gztime;
+  const valuationDate = fetchData[2].valuation_date;
   let updateList = [];
   let valuationDataList = [];
   // 混合天天和好买数据
@@ -57,8 +58,15 @@ exports.updateValuation = async function () {
   return Promise.all(updateList);
 };
 
+exports.getFundAnalyzeByCode = async function (code) {
+  return FundAnalyzeProxy.findOne({code});
+};
 exports.getFundAnalyzesBase = async function (query) {
   return FundAnalyzeProxy.findBase(query || {});
+};
+
+exports.getFundAnalyzeBase = async function (query) {
+  return FundAnalyzeProxy.findOneBase(query || {});
 };
 
 exports.getFundAnalyzeByIds = async function (ids) {
@@ -67,7 +75,7 @@ exports.getFundAnalyzeByIds = async function (ids) {
 
 // 记录最新一次的估值哪个更准
 exports.betterValuation = async function () {
-  const funds = await FundAnalyzeProxy.find({});
+  const funds = await FundAnalyzeProxy.findBase({});
   for (let k = 0; k < funds.length; k++) {
     const fund = funds[k];
     // 不是第一次添加
@@ -111,7 +119,7 @@ exports.betterValuation = async function () {
 
 // 产生近期涨跌数据，一般只有第一次产生数据时用
 exports.updateRecentNetValue = async function () {
-  const funds = await FundAnalyzeProxy.find({});
+  const funds = await FundAnalyzeProxy.findBase({});
   for (let k = 0; k < funds.length; k++) {
     // 近一年的数据
     const data = await fundUtil.getRecentNetValue(funds[k].code, 260);
@@ -135,7 +143,7 @@ exports.addRecentNetValue = async function () {
       recentNetValue = JSON.parse(fund['recent_net_value']).data;
       // 检查是否添加过
       if (moment(recentNetValue[0].FSRQ).isSame(fundTemp['net_value_date'], 'day')) {
-        break;
+        continue;
       }
       newData.JZZZL = parseInt(((fundTemp['net_value'] / recentNetValue[0].DWJZ) - 1) * 10000) / 100
     } else {
@@ -180,3 +188,21 @@ exports.updateBaseInfo = async function () {
   }
   return Promise.all(optionList);
 };
+
+exports.getUpAndDownCount = function (list) {
+  return analyzeUtil.getUpAndDownCount(list);
+};
+exports.getMaxUpAndDown = function (list) {
+  return analyzeUtil.getMaxUpAndDown(list);
+};
+exports.getUpAndDownDistribution = function (list) {
+  return analyzeUtil.getUpAndDownDistribution(list);
+};
+exports.getMaxUpIntervalAndMaxDownInterval = function (list) {
+  return analyzeUtil.getMaxUpIntervalAndMaxDownInterval(list);
+};
+exports.continueDays = function (now, list) {
+  return analyzeUtil.continueDays(now, list);
+};
+
+

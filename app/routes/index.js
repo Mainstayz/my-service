@@ -29,6 +29,7 @@ router.get('/auth/checkLogin', controllers.authController.checkLogin);
 router.get('/auth/logout', controllers.authController.logout);
 
 //基金
+router.get('/fund/getFund', controllers.fundController.getFund);
 router.get('/fund/getFunds', controllers.fundController.getFunds);
 router.get('/fund/deleteFund', controllers.fundController.deleteFund);
 router.post('/fund/addFund', controllers.fundController.addFund);
@@ -39,6 +40,8 @@ router.get('/fund/getUserFunds', controllers.fundController.getUserFunds);
 router.get('/fund/deleteUserFund', controllers.fundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.fundController.updateUserFund);
 //分析路由
+router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
+router.get('/analyze/getFundAnalyzeBase', controllers.analyzeController.getFundAnalyzeBase);
 router.get('/analyze/updateBaseInfo', controllers.analyzeController.updateBaseInfo);
 router.get('/analyze/updateValuation', controllers.analyzeController.updateValuation);
 router.get('/analyze/updateRecentNetValue', controllers.analyzeController.updateRecentNetValue);

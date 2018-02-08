@@ -14,7 +14,16 @@ exports.getFundInfo = function (code) {
     encoding: 'utf-8'
   }).then((body) => {
     const jsonData = body.substring(body.indexOf('(') + 1, body.indexOf(')'));
-    return JSON.parse(jsonData);
+    const data = JSON.parse(jsonData);
+    return {
+      code: data.fundcode,
+      name: data.name,
+      net_value: data.dwjz,
+      net_value_date: data.jzrq,
+      valuation: data.gsz,
+      valuation_date: data.gztime,
+      valuation_rate: data.gszzl
+    };
   }).catch(function (err) {
     logger.error(err);
   });

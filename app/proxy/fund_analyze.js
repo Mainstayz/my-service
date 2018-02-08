@@ -36,6 +36,14 @@ exports.find = function (query, opt) {
   return FundAnalyzeModel.find(query, {}, opt);
 };
 
+exports.findOne = function (query, opt) {
+  return FundAnalyzeModel.findOne(query, {}, opt);
+};
+
 exports.findBase = function (query, opt) {
   return FundAnalyzeModel.find(query, 'code valuation_tiantian valuation_haomai better_count valuation_date', opt);
+};
+
+exports.findOneBase = function (query, opt) {
+  return FundAnalyzeModel.findOne(query, 'code valuation_tiantian valuation_haomai better_count valuation_date', opt);
 };

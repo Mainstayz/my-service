@@ -23,7 +23,7 @@ let rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [new schedule.Range(1, 5)];
 rule.hour = [9, 10, 11, 13, 14, 15];
 let minute = [];
-for (let k = 0; k < 60; k += 20) {
+for (let k = 0; k < 60; k += 15) {
   minute.push(k);
 }
 rule.minute = minute;
