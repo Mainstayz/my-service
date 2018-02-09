@@ -56,9 +56,9 @@ exports.getFundsInfo = function () {
       }
     });
     return {
-      netValueDate: $('#oTable thead tr').eq(0).find('th').eq(7).text().substring(0, 10),
+      net_value_date: $('#oTable thead tr').eq(0).find('th').eq(7).text().substring(0, 10),
       funds,
-      valuationDate: $('#oTable thead tr').eq(0).find('th').eq(4).text().substring(0, 10)
+      valuation_date: $('#oTable thead tr').eq(0).find('th').eq(4).text().substring(0, 10)
     };
   }).catch(function (err) {
     logger.error(err);
@@ -91,9 +91,9 @@ exports.getFundsInfoHaomai = function () {
       });
     });
     return {
-      netValueDate: $('#nTab2_Con1 thead tr').eq(0).find('td').eq(7).text().substring(0, 10),
+      net_value_date: $('#nTab2_Con1 thead tr').eq(0).find('td').eq(7).text().substring(0, 10),
       funds,
-      valuationDate: $('#nTab2_Con1 thead tr').eq(0).find('td').eq(4).text().substring(0, 10)
+      valuation_date: $('#nTab2_Con1 thead tr').eq(0).find('td').eq(4).text().substring(0, 10)
     };
   }).catch(function (err) {
     logger.error(err);
@@ -115,11 +115,11 @@ exports.getRecentNetValue = function (code, days) {
     list.forEach(function (item) {
       list2.push({
         // 净值增长率
-        JZZZL: parseFloat(item.JZZZL || 0),
+        valuation_rate: parseFloat(item.JZZZL || 0),
         // 日期
-        FSRQ: item.FSRQ,
+        net_value_date: item.FSRQ,
         // 单位净值
-        DWJZ: parseFloat(item.DWJZ || 0),
+        net_value: parseFloat(item.DWJZ || 0),
       });
     });
     return list2;

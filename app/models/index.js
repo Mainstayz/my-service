@@ -18,4 +18,4 @@ exports.User = require('./user');
 exports.LogAudit = require('./log_audit');
 exports.Fund = require('./fund');
 exports.UserFund = require('./user_fund');
-exports.FundAnalyze = require('./fund_analyze');
+exports.fields_table = require('./fields_table');

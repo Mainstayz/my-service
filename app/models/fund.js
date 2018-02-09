@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const schema = new Schema({
-  fund_analyze: {type: Schema.Types.ObjectId, ref: 'FundAnalyze'},
   name: String,
   code: String,
   // 净值
@@ -14,6 +13,17 @@ const schema = new Schema({
   net_value_date: Date,
   // 是否可购
   sell: Boolean,
+  // 估值
+  valuation_tiantian: Number,
+  valuation_haomai: Number,
+  // 长度15天
+  better_count: {
+    type: String,
+    default: ''
+  },
+  // 近期数据
+  recent_net_value: String,
+  valuation_date: Date,
   create_at: {
     type: Date,
     default: Date.now

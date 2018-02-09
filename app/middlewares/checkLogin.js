@@ -19,7 +19,6 @@ module.exports = async function (ctx, next) {
   } else {
     ctx.logger.trace('in check route');
     const token = ctx.header.token || '';
-    console.log(token)
     try {
       ctx.tokenRaw = ctx.token.verify(token);
     } catch (err) {
@@ -27,6 +26,7 @@ module.exports = async function (ctx, next) {
       ctx.body = ctx.refail({
         code: '401'
       });
+      return;
     }
     await next();
   }

@@ -6,9 +6,9 @@ function getSame(list, index) {
   let end = index;
   let start = index;
   let values = [list[index]];
-  if (list[index]['JZZZL'] > 0 || list[index]['JZZZL'] === 0) {
+  if (list[index]['valuation_rate'] > 0 || list[index]['valuation_rate'] === 0) {
     for (let k = index + 1; k < list.length; k++) {
-      if (list[k]['JZZZL'] > 0 || list[k]['JZZZL'] === 0) {
+      if (list[k]['valuation_rate'] > 0 || list[k]['valuation_rate'] === 0) {
         values.push(list[k]);
         end = k;
       } else {
@@ -16,7 +16,7 @@ function getSame(list, index) {
       }
     }
     for (let k = index - 1; k >= 0; k--) {
-      if (list[k]['JZZZL'] > 0 || list[k]['JZZZL'] === 0) {
+      if (list[k]['valuation_rate'] > 0 || list[k]['valuation_rate'] === 0) {
         values.unshift(list[k]);
         start = k;
       } else {
@@ -25,7 +25,7 @@ function getSame(list, index) {
     }
   } else {
     for (let k = index + 1; k < list.length; k++) {
-      if (list[k]['JZZZL'] < 0 || list[k]['JZZZL'] === 0) {
+      if (list[k]['valuation_rate'] < 0 || list[k]['valuation_rate'] === 0) {
         values.push(list[k]);
         end = k;
       } else {
@@ -33,7 +33,7 @@ function getSame(list, index) {
       }
     }
     for (let k = index - 1; k >= 0; k--) {
-      if (list[k]['JZZZL'] < 0 || list[k]['JZZZL'] === 0) {
+      if (list[k]['valuation_rate'] < 0 || list[k]['valuation_rate'] === 0) {
         values.unshift(list[k]);
         start = k;
       } else {
@@ -61,7 +61,7 @@ exports.getUpAndDownCount = function (list) {
   let down = 0;
   let equal = 0;
   for (let i = 0; i < list.length; i++) {
-    let a = list[i]['JZZZL'];
+    let a = list[i]['valuation_rate'];
     if (a > 0) {
       up++;
     } else if (a === 0) {
@@ -86,7 +86,7 @@ exports.getUpAndDownDistribution = function (list) {
   const step = 0.5;
   let map = {};
   for (let i = 0; i < list.length; i++) {
-    let ratio = list[i]['JZZZL'];
+    let ratio = list[i]['valuation_rate'];
     for (let k = 0; k < 20; k++) {
       const start = k * step;
       const end = (k + 1) * step;
@@ -110,10 +110,10 @@ exports.getUpAndDownDistribution = function (list) {
             }
           };
         }
-        if (list[i + 1] && list[i + 1]['JZZZL'] > 0) {
+        if (list[i + 1] && list[i + 1]['valuation_rate'] > 0) {
           if (map[key].continues) {
             map[key].continues.times++;
-            map[key].continues.values.push(list[i + 1]['JZZZL']);
+            map[key].continues.values.push(list[i + 1]['valuation_rate']);
           }
         }
         break;
@@ -135,10 +135,10 @@ exports.getUpAndDownDistribution = function (list) {
             }
           };
         }
-        if (list[i + 1] && list[i + 1]['JZZZL'] < 0) {
+        if (list[i + 1] && list[i + 1]['valuation_rate'] < 0) {
           if (map[key].continues) {
             map[key].continues.times++;
-            map[key].continues.values.push(list[i + 1]['JZZZL']);
+            map[key].continues.values.push(list[i + 1]['valuation_rate']);
           }
         }
         break;
@@ -150,6 +150,8 @@ exports.getUpAndDownDistribution = function (list) {
   for (let k in map) {
     len += map[k].times;
     list1.push({
+      start: map[k].start,
+      end: map[k].end,
       range: k,
       values: map[k].values,
       times: map[k].times,
@@ -176,13 +178,13 @@ exports.getMaxUpAndDown = function (list) {
   }
   // 大的在右边
   newList.sort(function (a, b) {
-    return parseFloat(a['JZZZL']) - parseFloat(b['JZZZL'])
+    return parseFloat(a['valuation_rate']) - parseFloat(b['valuation_rate'])
   });
   return {
     // 单日最大涨幅
-    maxUp: newList[newList.length - 1]['JZZZL'],
+    maxUp: newList[newList.length - 1]['valuation_rate'],
     // 单日最大跌幅
-    maxDown: newList[0]['JZZZL']
+    maxDown: newList[0]['valuation_rate']
   };
 };
 // 连涨和连跌天数
@@ -205,13 +207,13 @@ exports.getMaxUpIntervalAndMaxDownInterval = function (list) {
     if (i === index) {
       // console.log(index)
       // 包括0
-      if (newList[i]['JZZZL'] > 0 || newList[i]['JZZZL'] === 0) {
+      if (newList[i]['valuation_rate'] > 0 || newList[i]['valuation_rate'] === 0) {
         maxUpTemp = 1;
-        let sum = newList[i]['JZZZL'];
+        let sum = newList[i]['valuation_rate'];
         for (let j = i + 1; j < newList.length; j++) {
           index = j;
-          if (newList[j]['JZZZL'] > 0 || newList[j]['JZZZL'] === 0) {
-            sum += newList[j]['JZZZL'];
+          if (newList[j]['valuation_rate'] > 0 || newList[j]['valuation_rate'] === 0) {
+            sum += newList[j]['valuation_rate'];
             maxUpTemp++;
           } else {
             break;
@@ -231,13 +233,13 @@ exports.getMaxUpIntervalAndMaxDownInterval = function (list) {
         }
       }
 
-      if (newList[i]['JZZZL'] < 0 || newList[i]['JZZZL'] === 0) {
+      if (newList[i]['valuation_rate'] < 0 || newList[i]['valuation_rate'] === 0) {
         maxDownTemp = 1;
-        let sum = newList[i]['JZZZL'];
+        let sum = newList[i]['valuation_rate'];
         for (let j = i + 1; j < newList.length; j++) {
           index = j;
-          if (newList[j]['JZZZL'] < 0 || newList[j]['JZZZL'] === 0) {
-            sum += newList[j]['JZZZL'];
+          if (newList[j]['valuation_rate'] < 0 || newList[j]['valuation_rate'] === 0) {
+            sum += newList[j]['valuation_rate'];
             maxDownTemp++;
           } else {
             break;
@@ -277,7 +279,7 @@ exports.continueDays = function (now, list) {
   maxUpTemp = 1;
   if (now > 0 || now === 0) {
     for (let j = 0; j < list.length; j++) {
-      if (list[j]['JZZZL'] > 0 || list[j]['JZZZL'] === 0) {
+      if (list[j]['valuation_rate'] > 0 || list[j]['valuation_rate'] === 0) {
         maxUpTemp++;
       } else {
         break;
@@ -285,7 +287,7 @@ exports.continueDays = function (now, list) {
     }
   } else {
     for (let j = 0; j < list.length; j++) {
-      if (list[j]['JZZZL'] < 0 || list[j]['JZZZL'] === 0) {
+      if (list[j]['valuation_rate'] < 0 || list[j]['valuation_rate'] === 0) {
         maxUpTemp++;
       } else {
         break;
@@ -293,4 +295,29 @@ exports.continueDays = function (now, list) {
     }
   }
   return maxUpTemp;
+};
+
+exports.getBetterValuation = function (betterCount) {
+  let haomaiCount = 0;
+  let tiantianCount = 0;
+  //统计
+  betterCount.forEach(function (item) {
+    if (item.type === 'tiantian') {
+      tiantianCount++;
+    } else {
+      haomaiCount++;
+    }
+  });
+  // 填充数据
+  if (haomaiCount > tiantianCount) {
+    return {
+      type: 'haomai',
+      name: '好买'
+    };
+  } else {
+    return {
+      type: 'tiantian',
+      name: '天天'
+    };
+  }
 };

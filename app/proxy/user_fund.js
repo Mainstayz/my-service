@@ -12,8 +12,8 @@ exports.newAndSave = function (data) {
   return UserFund.save();
 };
 
-exports.deleteUserFund = function (userId, fundId) {
-  return UserFundModel.remove({user: userId, fund: fundId});
+exports.delete = function (query) {
+  return UserFundModel.remove(query);
 };
 
 exports.updateCount = function (userId, fundId, count) {
@@ -27,19 +27,21 @@ exports.updateCount = function (userId, fundId, count) {
   });
 };
 
-exports.getUserFunds = function (userId) {
-  return UserFundModel.find({user: userId}).populate('fund');
+const baseInfo = models.fields_table.fundBase.join(' ');
+
+exports.findByUserIdWithFund = function (userId) {
+  return UserFundModel.find({user: userId}).populate('fund', baseInfo);
 };
 
-exports.getUserFund = function (userId, fundId) {
+exports.findByUserIdFundId = function (userId, fundId) {
   return UserFundModel.findOne({user: userId, fund: fundId});
 };
 
-exports.getByUserId = function (userId) {
+exports.findByUserId = function (userId) {
   return UserFundModel.find({user: userId});
 };
 
-exports.getById = function (UserFundId) {
+exports.findById = function (UserFundId) {
   return UserFundModel.findById(UserFundId);
 };
 
@@ -49,4 +51,8 @@ exports.find = function (query, opt) {
 
 exports.findOne = function (query) {
   return UserFundModel.findOne(query);
+};
+
+exports.check = function (query, opt) {
+  return UserFundModel.findOne(query, '_id', opt);
 };

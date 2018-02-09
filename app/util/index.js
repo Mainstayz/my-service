@@ -1,7 +1,6 @@
 /**
  * Created by xiaobxia on 2017/11/1.
  */
-const stringUtil = require('./stringUtil');
-module.exports = {
-  ...stringUtil
-};
+exports.fundUtil  = require('./fund');
+exports.analyzeUtil  = require('./analyze');
+exports.numberUtil  = require('./number');

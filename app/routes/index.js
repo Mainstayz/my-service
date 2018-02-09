@@ -29,7 +29,8 @@ router.get('/auth/checkLogin', controllers.authController.checkLogin);
 router.get('/auth/logout', controllers.authController.logout);
 
 //基金
-router.get('/fund/getFund', controllers.fundController.getFund);
+router.get('/fund/getFundSimple', controllers.fundController.getFundSimple);
+router.get('/fund/getFundBase', controllers.fundController.getFundBase);
 router.get('/fund/getFunds', controllers.fundController.getFunds);
 router.get('/fund/deleteFund', controllers.fundController.deleteFund);
 router.post('/fund/addFund', controllers.fundController.addFund);
@@ -40,18 +41,18 @@ router.get('/fund/getUserFunds', controllers.fundController.getUserFunds);
 router.get('/fund/deleteUserFund', controllers.fundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.fundController.updateUserFund);
 //分析路由
+router.get('/analyze/getStrategy', controllers.analyzeController.getStrategy);
 router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
-router.get('/analyze/getFundAnalyzeBase', controllers.analyzeController.getFundAnalyzeBase);
 router.get('/analyze/updateBaseInfo', controllers.analyzeController.updateBaseInfo);
 router.get('/analyze/updateValuation', controllers.analyzeController.updateValuation);
 router.get('/analyze/updateRecentNetValue', controllers.analyzeController.updateRecentNetValue);
 router.get('/analyze/betterValuation', controllers.analyzeController.betterValuation);
 router.get('/analyze/addRecentNetValue', controllers.analyzeController.addRecentNetValue);
 //文件上传
-router.post('/upload/importFund', upload.single('fundFile'), controllers.fundController.importFund);
-router.post('/upload/importMyFund', upload.single('fundFile'), controllers.fundController.importMyFund);
+router.post('/upload/importFund', upload.single('fundFile'), controllers.fundController.importFunds);
+router.post('/upload/importMyFund', upload.single('fundFile'), controllers.fundController.importMyFunds);
 
 //文件下载
-router.post('/download/exportMyFund', controllers.fundController.exportMyFund);
+router.post('/download/exportMyFund', controllers.fundController.exportMyFunds);
 
 module.exports = router;

@@ -6,83 +6,111 @@ const fundUtil = require('../util/fund');
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
-const FundAnalyzeProxy = Proxy.FundAnalyze;
 
+// 添加基金
 exports.addFund = async function (code) {
   const fetchData = await Promise.all([
     fundUtil.getFundInfo(code),
     fundUtil.getRecentNetValue(code, 260)
   ]);
+  // 基本数据
   const data = fetchData[0];
   // 近一年的涨跌数据
   const dataRecent = fetchData[1];
-  // 在分析表中添加数据
-  const fundAnalyze = await FundAnalyzeProxy.newAndSave({
-    code: code,
-    valuation_tiantian: data.valuation,
-    valuation_date: data.valuation_date,
-    recent_net_value: JSON.stringify({data: dataRecent})
-  });
+  // 添加数据
   return FundProxy.newAndSave({
     code: data.code,
     name: data.name,
     net_value: data.net_value,
     net_value_date: data.net_value_date,
     sell: true,
-    fund_analyze: fundAnalyze._id
+    valuation_tiantian: data.valuation,
+    valuation_date: data.valuation_date,
+    recent_net_value: JSON.stringify({data: dataRecent})
   })
 };
 
-exports.deleteFund = async function (code) {
-  const fund = await FundProxy.getByCode(code);
-  // 存在才删除
-  if (fund) {
-    await FundAnalyzeProxy.deleteByCode(fund.code);
-    return FundProxy.deleteByCode(fund.code)
-  }
+// 批量添加，要提前验证code
+exports.addFunds = async function (codeList) {
+  // 获取基金信息
+  let requestList = [fundUtil.getFundsInfo()];
+  // 获取基金近期信息
+  codeList.forEach(function (item) {
+    requestList.push(fundUtil.getRecentNetValue(item, 260));
+  });
+  const fetchData = await Promise.all(requestList);
+  // 基本数据
+  const data = fetchData[0];
+  const dataFunds = data.funds;
+  let optionList = [];
+  codeList.forEach(function (item, index) {
+    let fundData = {};
+    // 找到匹配的数据
+    for (let k = 0; k < dataFunds.length; k++) {
+      if (dataFunds[k].code === item) {
+        fundData = dataFunds[k];
+        break;
+      }
+    }
+    optionList.push(FundProxy.newAndSave({
+      code: fundData.code,
+      name: fundData.name,
+      net_value: fundData.net_value,
+      net_value_date: data.net_value_date,
+      sell: fundData.sell,
+      recent_net_value: JSON.stringify({data: fetchData[index + 1]})
+    }));
+  });
+  return Promise.all(optionList);
 };
 
-exports.getFundsByPaging = async function (query, opt) {
-  const data = await Promise.all([FundProxy.find(query, opt), FundProxy.count(query)]);
+//导入基金
+exports.importFunds = async function (codes) {
+  const fundsTemp = await FundProxy.findSimple({});
+  let codeList = [];
+  // 把没导入过的导入
+  codes.forEach(function (item) {
+    let has = false;
+    for (let k = 0; k < fundsTemp.length; k++) {
+      if (fundsTemp[k].code === item) {
+        has = true;
+        break;
+      }
+    }
+    if (!has) {
+      codeList.push(item);
+    }
+  });
+  return this.addFunds(codeList);
+};
+
+exports.deleteFundByCode = async function (code) {
+  return FundProxy.deleteByCode(code)
+};
+
+exports.getFundSimpleByCode = async function (code) {
+  return FundProxy.findOneSimple({code});
+};
+
+exports.getFundBaseByCode = async function (code) {
+  return FundProxy.findOneBase({code});
+};
+
+exports.getFundByCode = async function (code) {
+  return FundProxy.findOne({code});
+};
+
+exports.getFundsByIds = async function (ids) {
+  return FundProxy.find({_id: {$in: [...ids]}});
+};
+
+exports.getSimpleFundsByPaging = async function (query, opt) {
+  const data = await Promise.all([FundProxy.findSimple(query, opt), FundProxy.count(query)]);
   return {list: data[0], count: data[1]};
 };
 
-exports.importFund = async function (funds) {
-  // 在网络上得到基本信息
-  const fundInfos = await fundUtil.getFundsInfo();
-  const fundsData = fundInfos.funds;
-  let optionList = [];
-  // 遍历导入的基金
-  for (let k = 0; k < funds.length; k++) {
-    // 检查是否在基金库中
-    const fund = await FundProxy.getByCode(funds[k].code);
-    if (!fund) {
-      let fundAnalyze = null;
-      for (let i = 0; i < fundsData.length; i++) {
-        const fundData = fundsData[i];
-        // 找到数据
-        if (funds[k].code === fundData.code) {
-          // 近一年的涨跌数据
-          const data = await fundUtil.getRecentNetValue(funds[k].code, 260);
-          // 在分析表中添加数据
-          fundAnalyze = await FundAnalyzeProxy.newAndSave({
-            code: fundData.code,
-            recent_net_value: JSON.stringify({data})
-          });
-          optionList.push(FundProxy.newAndSave({
-            code: fundData.code,
-            name: fundData.name,
-            net_value: fundData.net_value,
-            net_value_date: fundInfos.netValueDate,
-            sell: fundData.sell,
-            fund_analyze: fundAnalyze._id
-          }));
-          break;
-        }
-      }
-    }
-  }
-  return Promise.all(optionList);
+exports.checkFundByQuery = async function (query) {
+  return FundProxy.check(query);
 };
 
 exports.addUserFund = async function (userId, fundId, count) {
@@ -94,31 +122,30 @@ exports.addUserFund = async function (userId, fundId, count) {
 };
 
 exports.deleteUserFund = async function (userId, fundId) {
-  return UserFundProxy.deleteUserFund(userId, fundId);
+  return UserFundProxy.delete({user: userId, fund: fundId});
 };
 
 exports.updateUserFund = async function (userId, fundId, count) {
   return UserFundProxy.updateCount(userId, fundId, count);
 };
 
-exports.getFundByCode = async function (code) {
-  return FundProxy.getByCode(code);
-};
-
 exports.getUserFund = async function (userId, fundId) {
-  return UserFundProxy.getUserFund(userId, fundId);
+  return UserFundProxy.findByUserIdFundId(userId, fundId);
 };
 
-exports.getUserFunds = async function (userId) {
-  return UserFundProxy.getUserFunds(userId);
+exports.getUserFundsByUserId = async function (userId) {
+  return UserFundProxy.findByUserId(userId);
+};
+
+exports.getUserFundsByUserIdWithFund = async function (userId) {
+  return UserFundProxy.findByUserIdWithFund(userId);
 };
 
 exports.getUserFundsByFundId = async function (fundId) {
-  return UserFundProxy.find(fundId);
+  return UserFundProxy.find({fund: fundId});
 };
 
-exports.getFundsByIds = async function (ids) {
-  return FundProxy.find({_id: {$in: [...ids]}});
+exports.checkUserFundByQuery = async function (query) {
+  return UserFundProxy.check(query);
 };
-
 

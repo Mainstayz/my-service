@@ -3,17 +3,19 @@
  */
 const moment = require('moment');
 const Proxy = require('../proxy');
-const fundUtil = require('../util/fund');
-const analyzeUtil = require('../util/analyze');
+const util = require('../util');
 const logger = require('../common/logger');
 
 const FundProxy = Proxy.Fund;
-const FundAnalyzeProxy = Proxy.FundAnalyze;
+const fundUtil = util.fundUtil;
+const numberUtil = util.numberUtil;
+const analyzeUtil = util.analyzeUtil;
 
-// 分析前，需要确定表中有数据了
+// 更新估值
 exports.updateValuation = async function () {
-  // 只更新表中已经有的
-  const funds = await FundAnalyzeProxy.findBase({});
+  // 获取基金
+  const funds = await FundProxy.findSimple({});
+  // 抓取数据
   const fetchList = Promise.all([
     fundUtil.getFundsInfo(),
     fundUtil.getFundsInfoHaomai(),
@@ -21,7 +23,7 @@ exports.updateValuation = async function () {
     fundUtil.getFundInfo('161725')
   ]);
   const fetchData = await fetchList;
-  logger.warn('request end');
+  logger.info('request end');
   const tiantianData = fetchData[0];
   const haomaiData = fetchData[1];
   // 估值时间
@@ -46,7 +48,7 @@ exports.updateValuation = async function () {
     for (let i = 0; i < valuationDataList.length; i++) {
       const valuationData = valuationDataList[i];
       if (valuationData.code === funds[k].code) {
-        updateList.push(FundAnalyzeProxy.updateByCode(funds[k].code, {
+        updateList.push(FundProxy.updateByCode(funds[k].code, {
           valuation_tiantian: valuationData.tiantian,
           valuation_haomai: valuationData.haomai || valuationData.tiantian,
           valuation_date: valuationDate
@@ -58,24 +60,9 @@ exports.updateValuation = async function () {
   return Promise.all(updateList);
 };
 
-exports.getFundAnalyzeByCode = async function (code) {
-  return FundAnalyzeProxy.findOne({code});
-};
-exports.getFundAnalyzesBase = async function (query) {
-  return FundAnalyzeProxy.findBase(query || {});
-};
-
-exports.getFundAnalyzeBase = async function (query) {
-  return FundAnalyzeProxy.findOneBase(query || {});
-};
-
-exports.getFundAnalyzeByIds = async function (ids) {
-  return FundAnalyzeProxy.find({_id: {$in: ids}});
-};
-
-// 记录最新一次的估值哪个更准
+// 更新估值准确记录
 exports.betterValuation = async function () {
-  const funds = await FundAnalyzeProxy.findBase({});
+  const funds = await FundProxy.findBase({});
   for (let k = 0; k < funds.length; k++) {
     const fund = funds[k];
     // 不是第一次添加
@@ -88,13 +75,12 @@ exports.betterValuation = async function () {
       }
     }
     let type = '';
-    const fundTemp = await FundProxy.getByCode(fund.code);
     // 验证估值和净值是不是同一天
-    if (!moment(fund['valuation_date']).isSame(fundTemp['net_value_date'], 'day')) {
+    if (!moment(fund['valuation_date']).isSame(fund['net_value_date'], 'day')) {
       continue;
     }
-    // 相同的时候也取天天
-    if (Math.abs(fund['valuation_tiantian'] - fundTemp['net_value']) > Math.abs(fund['valuation_haomai'] - fundTemp['net_value'])) {
+    // 对比差值的偏离
+    if (Math.abs(fund['valuation_tiantian'] - fund['net_value']) > Math.abs(fund['valuation_haomai'] - fundTemp['net_value'])) {
       type = 'haomai';
     } else {
       type = 'tiantian';
@@ -102,14 +88,14 @@ exports.betterValuation = async function () {
     // 添加数据
     betterCount.unshift({
       type,
-      date: fundTemp['net_value_date']
+      date: fund['net_value_date']
     });
     // 超过15天数据就截掉
     if (betterCount.length > 15) {
       betterCount = betterCount.slice(0, 15)
     }
     // 更新数据
-    await FundAnalyzeProxy.updateByCode(funds[k].code, {
+    await FundProxy.updateByCode(funds[k].code, {
       better_count: JSON.stringify({
         data: betterCount
       })
@@ -117,47 +103,51 @@ exports.betterValuation = async function () {
   }
 };
 
-// 产生近期涨跌数据，一般只有第一次产生数据时用
+// 产生所有的近期涨跌数据，一般只有第一次产生数据时用
 exports.updateRecentNetValue = async function () {
-  const funds = await FundAnalyzeProxy.findBase({});
-  for (let k = 0; k < funds.length; k++) {
-    // 近一年的数据
-    const data = await fundUtil.getRecentNetValue(funds[k].code, 260);
-    // 直接覆盖不验证，因为这个只在地产次造数据时候用
-    await FundAnalyzeProxy.updateByCode(funds[k].code, {
-      recent_net_value: JSON.stringify({data})
-    })
-  }
+  const funds = await FundProxy.findSimple({});
+  let requestList = [];
+  funds.forEach(function (item) {
+    requestList.push(fundUtil.getRecentNetValue(item.code, 260));
+  });
+  const fetchData = await Promise.all(requestList);
+  let optionList = [];
+  fetchData.forEach(function (item, index) {
+    optionList.push(FundProxy.updateByCode(funds[index].code, {
+      recent_net_value: JSON.stringify({data: item})
+    }));
+  });
+  return Promise.all(optionList);
 };
 
-// 添加近期涨跌数据，在执行这个之前要保证fund中的数据是最新的
+// 添加涨跌数据，在执行这个之前要保证fund中的数据是最新的
 exports.addRecentNetValue = async function () {
-  const funds = await FundAnalyzeProxy.find({});
+  const funds = await FundProxy.find({});
   for (let k = 0; k < funds.length; k++) {
     const fund = funds[k];
     let recentNetValue = [];
-    const fundTemp = await FundProxy.getByCode(fund.code);
     let newData = {};
     // 检查是否存在
     if (fund['recent_net_value']) {
       recentNetValue = JSON.parse(fund['recent_net_value']).data;
       // 检查是否添加过
-      if (moment(recentNetValue[0].FSRQ).isSame(fundTemp['net_value_date'], 'day')) {
+      if (moment(recentNetValue[0].net_value_date).isSame(fund['net_value_date'], 'day')) {
         continue;
       }
-      newData.JZZZL = parseInt(((fundTemp['net_value'] / recentNetValue[0].DWJZ) - 1) * 10000) / 100
+      // 拿最新净值和前一天净值对比，计算增长率
+      newData.valuation_rate = numberUtil.countRate(fund['net_value'] - recentNetValue[0].net_value, recentNetValue[0].net_value);
     } else {
-      newData.JZZZL = 0;
+      newData.valuation_rate = 0;
     }
-    newData.DWJZ = fundTemp['net_value'];
-    newData.FSRQ = moment(fundTemp['net_value_date']).format('YYYY-MM-DD');
+    newData.net_value = fund['net_value'];
+    newData.net_value_date = moment(fund['net_value_date']).format('YYYY-MM-DD');
     // 添加数据
     recentNetValue.unshift(newData);
     // 超过260天数据就截掉
     if (recentNetValue.length > 260) {
       recentNetValue = recentNetValue.slice(0, 260)
     }
-    await FundAnalyzeProxy.updateByCode(funds[k].code, {
+    await FundProxy.updateByCode(funds[k].code, {
       recent_net_value: JSON.stringify({data: recentNetValue})
     });
   }
@@ -166,7 +156,7 @@ exports.addRecentNetValue = async function () {
 // 更新基本信息
 exports.updateBaseInfo = async function () {
   // 得到基金，有的才更新
-  const funds = await FundProxy.find({});
+  const funds = await FundProxy.findSimple({});
   // 得到基金信息
   const fundsInfo = await fundUtil.getFundsInfo();
   const fundInfos = fundsInfo.funds;
@@ -179,7 +169,7 @@ exports.updateBaseInfo = async function () {
         optionList.push(FundProxy.updateByCode(temp.code, {
           name: info.name,
           net_value: info.net_value,
-          net_value_date: fundsInfo.netValueDate,
+          net_value_date: fundsInfo.net_value_date,
           sell: info.sell,
         }));
         break;
@@ -189,20 +179,92 @@ exports.updateBaseInfo = async function () {
   return Promise.all(optionList);
 };
 
-exports.getUpAndDownCount = function (list) {
-  return analyzeUtil.getUpAndDownCount(list);
+exports.getFundAnalyzeRecent = function (fund) {
+  const list = JSON.parse(fund['recent_net_value']).data;
+  // 获取估值
+  let valuationSource = {
+    type: 'tiantian',
+    name: '天天'
+  };
+  if (fund['better_count']) {
+    const betterCount = JSON.parse(fund['better_count']).data;
+    valuationSource = analyzeUtil.getBetterValuation(betterCount);
+  }
+  const valuation = fund[`valuation_${valuationSource.type}`];
+  const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
+  const upAndDownCount = analyzeUtil.getUpAndDownCount(list);
+  const maxUpAndDown = analyzeUtil.getMaxUpAndDown(list);
+  const upAndDownDistribution = analyzeUtil.getUpAndDownDistribution(list);
+  const maxUpIntervalAndMaxDownInterval = analyzeUtil.getMaxUpIntervalAndMaxDownInterval(list);
+  // 从涨跌分布上看
+  let distribution = 0;
+  upAndDownDistribution.list.forEach(function (item) {
+    if (item.start <= valuationRate && valuationRate < item.end) {
+      distribution = numberUtil.countRate(
+        valuationRate < 0 ? (1 - item.continues.times / item.times) : (item.continues.times / item.times),
+        1);
+    }
+  });
+  // 从连续性上看
+  let day = analyzeUtil.continueDays(valuationRate, list);
+  let internalData = {};
+  if (valuationRate <= 0) {
+    internalData = maxUpIntervalAndMaxDownInterval.downInterval;
+  } else {
+    internalData = maxUpIntervalAndMaxDownInterval.upInterval;
+  }
+  let allInterDays = 0;
+  let rateDays = 0;
+  for (let key in internalData) {
+    allInterDays += internalData[key].times;
+    if (day < parseInt(key)) {
+      rateDays += internalData[key].times;
+    }
+  }
+  const internal = numberUtil.countRate(
+    valuationRate < 0 ? (1 - rateDays / allInterDays) : (rateDays / allInterDays),
+    1);
+  return {
+    upAndDownCount,
+    maxUpAndDown,
+    upAndDownDistribution,
+    maxUpIntervalAndMaxDownInterval,
+    result: {
+      // 都是上涨的概率
+      distribution,
+      internal
+    }
+  };
 };
-exports.getMaxUpAndDown = function (list) {
-  return analyzeUtil.getMaxUpAndDown(list);
-};
-exports.getUpAndDownDistribution = function (list) {
-  return analyzeUtil.getUpAndDownDistribution(list);
-};
-exports.getMaxUpIntervalAndMaxDownInterval = function (list) {
-  return analyzeUtil.getMaxUpIntervalAndMaxDownInterval(list);
-};
-exports.continueDays = function (now, list) {
-  return analyzeUtil.continueDays(now, list);
+
+exports.getStrategy = async function () {
+  const funds = await FundProxy.find({});
+  let strategy = {};
+  funds.forEach((item) => {
+    if (item['recent_net_value']) {
+      strategy[item.code] = {
+        times: 0,
+        code: item.code
+      };
+      const result = this.getFundAnalyzeRecent(item).result;
+      if (result.distribution > 70) {
+        strategy[item.code].times++;
+      }
+      if (result.internal > 70) {
+        strategy[item.code].times++;
+      }
+    }
+  });
+  let strategyList = [];
+  for (let k in strategy) {
+    if (strategy[k].times !== 0) {
+      strategyList.push(strategy[k])
+    }
+  }
+  strategyList.sort(function (a, b) {
+    return b.times - a.times;
+  });
+  return strategyList;
 };
 
 

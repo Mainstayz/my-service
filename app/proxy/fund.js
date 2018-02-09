@@ -28,23 +28,39 @@ exports.updateByCode = function (code, data) {
   });
 };
 
-exports.getByCode = function (code) {
-  return FundModel.findOne({code: code});
-};
-
-exports.getByName = function (name) {
-  return FundModel.findOne({name: name});
-};
-
-exports.getById = function (fundId) {
-  return FundModel.findById(fundId);
-};
-
 exports.find = function (query, opt) {
   return FundModel.find(query, {}, opt);
 };
 
+exports.findOne = function (query, opt) {
+  return FundModel.findOne(query, {}, opt);
+};
+
 exports.count = function (query) {
   return FundModel.count(query);
+};
+
+const baseInfo = models.fields_table.fundBase.join(' ');
+
+exports.findBase = function (query, opt) {
+  return FundModel.find(query, baseInfo, opt);
+};
+
+exports.findOneBase = function (query, opt) {
+  return FundModel.findOne(query, baseInfo, opt);
+};
+
+const simpleInfo = models.fields_table.fundSimple.join(' ');
+
+exports.findSimple = function (query, opt) {
+  return FundModel.find(query, simpleInfo, opt);
+};
+
+exports.findOneSimple = function (query, opt) {
+  return FundModel.findOne(query, simpleInfo, opt);
+};
+
+exports.check = function (query, opt) {
+  return FundModel.findOne(query, '_id', opt);
 };
 
