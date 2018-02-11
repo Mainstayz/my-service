@@ -7,6 +7,7 @@ const util = require('../util');
 const logger = require('../common/logger');
 
 const FundProxy = Proxy.Fund;
+const StrategyProxy = Proxy.Strategy;
 const fundUtil = util.fundUtil;
 const numberUtil = util.numberUtil;
 const analyzeUtil = util.analyzeUtil;
@@ -190,12 +191,20 @@ exports.getFundAnalyzeRecent = function (fund) {
     const betterCount = JSON.parse(fund['better_count']).data;
     valuationSource = analyzeUtil.getBetterValuation(betterCount);
   }
+  // 目前估值
   const valuation = fund[`valuation_${valuationSource.type}`];
+  // 当日幅度
   const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
+  // 涨跌统计
   const upAndDownCount = analyzeUtil.getUpAndDownCount(list);
+  // 最大统计
   const maxUpAndDown = analyzeUtil.getMaxUpAndDown(list);
+  // 涨跌分布
   const upAndDownDistribution = analyzeUtil.getUpAndDownDistribution(list);
+  // 连续性分布
   const maxUpIntervalAndMaxDownInterval = analyzeUtil.getMaxUpIntervalAndMaxDownInterval(list);
+  // 净值分布
+  const netValueDistribution = analyzeUtil.getNetValueDistribution(list);
   // 从涨跌分布上看
   let distribution = 0;
   upAndDownDistribution.list.forEach(function (item) {
@@ -224,34 +233,62 @@ exports.getFundAnalyzeRecent = function (fund) {
   const internal = numberUtil.countRate(
     valuationRate < 0 ? (1 - rateDays / allInterDays) : (rateDays / allInterDays),
     1);
+  // 近几天涨跌
+  let recentRate5 = numberUtil.countDifferenceRate(valuation, list[4]['net_value']);
+  let recentRate10 = numberUtil.countDifferenceRate(valuation, list[9]['net_value']);
+  let recentRate15 = numberUtil.countDifferenceRate(valuation, list[14]['net_value']);
   return {
     upAndDownCount,
     maxUpAndDown,
     upAndDownDistribution,
     maxUpIntervalAndMaxDownInterval,
+    netValueDistribution,
+    recentSlump: [recentRate5, recentRate10, recentRate15],
     result: {
       // 都是上涨的概率
       distribution,
-      internal
+      internal,
+      // 是否新低
+      isMin: valuation < netValueDistribution[0].netValue,
+      // 是否暴跌
+      isSlump: recentRate5 < -7 || recentRate10 < -10 || recentRate15 < -12
     }
   };
 };
 
-exports.getStrategy = async function () {
+exports.getStrategyList = async function () {
   const funds = await FundProxy.find({});
   let strategy = {};
   funds.forEach((item) => {
     if (item['recent_net_value']) {
+      const fundAnalyzeRecent = this.getFundAnalyzeRecent(item);
+      const result = fundAnalyzeRecent.result;
       strategy[item.code] = {
         times: 0,
-        code: item.code
+        code: item.code,
+        name: item.name,
+        rule: [],
+        recentSlump: fundAnalyzeRecent.recentSlump
       };
-      const result = this.getFundAnalyzeRecent(item).result;
+      // 从幅度分布上看
       if (result.distribution > 70) {
         strategy[item.code].times++;
+        strategy[item.code].rule.push('distribution');
       }
+      // 从连续上看概率
       if (result.internal > 70) {
         strategy[item.code].times++;
+        strategy[item.code].rule.push('internal');
+      }
+      // 是否是历史新低
+      if (result.isMin) {
+        strategy[item.code].times++;
+        strategy[item.code].rule.push('isMin');
+      }
+      // 是否是暴跌
+      if (result.isSlump) {
+        strategy[item.code].times++;
+        strategy[item.code].rule.push('isSlump');
       }
     }
   });
@@ -264,6 +301,47 @@ exports.getStrategy = async function () {
   strategyList.sort(function (a, b) {
     return b.times - a.times;
   });
+  return strategyList;
+};
+
+exports.getStrategy = async function (force) {
+  const nowDay = moment().format('YYYY-MM-DD');
+  let strategyList = null;
+  let rawStrategy = null;
+  if (force) {
+    // 强制更新
+    strategyList = await this.getStrategyList();
+    rawStrategy = await StrategyProxy.check({
+      day: nowDay
+    });
+  } else {
+    // 不是强制
+    rawStrategy = await StrategyProxy.findOne({
+      day: nowDay
+    });
+    // 有数据
+    if (rawStrategy) {
+      // 验证是否超过一分钟
+      if (moment(rawStrategy['update_at']).add(1, 'minute').isBefore(moment())) {
+        // 重新获取
+        strategyList = await this.getStrategyList();
+      } else {
+        return JSON.parse(rawStrategy.list)
+      }
+    }
+  }
+  // 决定更新还是创建
+  if (rawStrategy) {
+    await StrategyProxy.updateByDay(nowDay, {
+      list: JSON.stringify(strategyList),
+      update_at: Date.now()
+    })
+  } else {
+    await StrategyProxy.newAndSave({
+      day: nowDay,
+      list: JSON.stringify(strategyList)
+    })
+  }
   return strategyList;
 };
 

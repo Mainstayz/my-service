@@ -40,8 +40,11 @@ router.post('/fund/addUserFund', controllers.fundController.addUserFund);
 router.get('/fund/getUserFunds', controllers.fundController.getUserFunds);
 router.get('/fund/deleteUserFund', controllers.fundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.fundController.updateUserFund);
-//分析路由
+
+//策略
 router.get('/analyze/getStrategy', controllers.analyzeController.getStrategy);
+
+//分析路由
 router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
 router.get('/analyze/updateBaseInfo', controllers.analyzeController.updateBaseInfo);
 router.get('/analyze/updateValuation', controllers.analyzeController.updateValuation);

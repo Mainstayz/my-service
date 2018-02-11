@@ -321,3 +321,47 @@ exports.getBetterValuation = function (betterCount) {
     };
   }
 };
+
+// 获取单位净值分布
+exports.getNetValueDistribution = function (list) {
+  let listFake = [];
+  let listMap = {};
+  list.forEach(function (item) {
+    if (listMap[item['net_value']]) {
+      listMap[item['net_value']]++;
+    } else {
+      listMap[item['net_value']] = 1;
+    }
+  });
+  for (let key in listMap) {
+    listFake.push({
+      netValue: parseFloat(key),
+      times: listMap[key]
+    });
+  }
+  //左小右打
+  listFake.sort(function (a, b) {
+    return a.netValue - b.netValue;
+  });
+  const min = listFake[0].netValue * 10000;
+  const max = listFake[listFake.length - 1].netValue * 10000;
+  let result = [];
+  const fluctuate = max - min;
+  const step = parseInt(fluctuate / 40);
+  for (let k = min; k < max + step; k += step) {
+    let value = {netValue: k / 10000, times: 0};
+    listFake.forEach(function (item) {
+      if (item.netValue * 10000 >= k && item.netValue * 10000 < k + step) {
+        value.times += item.times;
+      }
+    });
+    result.push(value);
+  }
+  return result;
+};
+
+//判断这个点位是否有支撑
+exports.judgeSupport = function () {
+
+};
+

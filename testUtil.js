@@ -14,7 +14,7 @@ axios({
   // url: 'http://127.0.0.1:3002/myService/analyze/betterValuation'
   // url: 'http://39.108.114.91:3002/myService/analyze/addRecentNetValue'
   // url: 'http://127.0.0.1:3002/myService/analyze/addRecentNetValue'
-  url: 'http://127.0.0.1:3002/myService/analyze/getStrategy'
+   url: 'http://127.0.0.1:3002/myService/analyze/getStrategy'
 }).then((data)=>{
   if (data.data.success) {
     console.log(data.data.data);
