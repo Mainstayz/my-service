@@ -57,6 +57,7 @@ exports.addFunds = async function (codeList) {
       name: fundData.name,
       net_value: fundData.net_value,
       net_value_date: data.net_value_date,
+
       sell: fundData.sell,
       recent_net_value: JSON.stringify({data: fetchData[index + 1]})
     }));

@@ -77,8 +77,12 @@ exports.getFundAnalyzeRecent = async function (ctx) {
 };
 
 exports.getStrategy = async function (ctx) {
+  const query = ctx.query;
   try {
-    const strategy = await ctx.services.analyze.getStrategy();
+    const data = ctx.validateData({
+      force: {required: false}
+    }, query);
+    const strategy = await ctx.services.analyze.getStrategy(data.force);
     ctx.body = ctx.resuccess({
       strategy
     });

@@ -321,8 +321,8 @@ exports.getStrategy = async function (force) {
     });
     // 有数据
     if (rawStrategy) {
-      // 验证是否超过一分钟
-      if (moment(rawStrategy['update_at']).add(1, 'minute').isBefore(moment())) {
+      // 验证是否超过5分钟
+      if (moment(rawStrategy['update_at']).add(5, 'minute').isBefore(moment())) {
         // 重新获取
         strategyList = await this.getStrategyList();
       } else {
