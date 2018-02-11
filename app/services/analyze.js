@@ -251,7 +251,7 @@ exports.getFundAnalyzeRecent = function (fund) {
       // 是否新低
       isMin: valuation < netValueDistribution[0].netValue,
       // 是否暴跌
-      isSlump: recentRate5 < -7 || recentRate10 < -10 || recentRate15 < -12
+      isSlump: recentRate5 < -6 || recentRate10 < -9 || recentRate15 < -12
     }
   };
 };
