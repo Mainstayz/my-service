@@ -238,12 +238,21 @@ exports.getFundAnalyzeRecent = function (fund) {
   let recentRate5 = numberUtil.countDifferenceRate(valuation, list[4]['net_value']);
   let recentRate10 = numberUtil.countDifferenceRate(valuation, list[9]['net_value']);
   let recentRate15 = numberUtil.countDifferenceRate(valuation, list[14]['net_value']);
-  // 看是不是在低位
+  // 看是不是在低位，落在30%的位置，比它小的数量
   const netValueSort = analyzeUtil.getNetValueSort(list);
   let valuationIndex = 0;
   netValueSort.forEach(function (item, index) {
     if (valuation > item.netValue) {
-      valuationIndex = index + 1;
+      valuationIndex += item.times;
+    }
+  });
+  const lowLine = netValueSort[0].netValue + 0.3 * (netValueSort[netValueSort.length - 1].netValue - netValueSort[0].netValue);
+  // 是不是有支撑
+  let supportCount = 0;
+  netValueSort.forEach(function (item) {
+    // 上下3个点
+    if (valuation * 1.03 > item.netValue && valuation * 0.97 < item.netValue) {
+      supportCount += item.times;
     }
   });
   return {
@@ -258,9 +267,11 @@ exports.getFundAnalyzeRecent = function (fund) {
       distribution,
       internal,
       // 是否新低
-      isMin: valuation < netValueDistribution[0].netValue,
+      isMin: valuation < netValueSort[0].netValue,
       // 是不是在低位
-      isLow: valuationIndex < 40,
+      isLow: valuationIndex < 260 * 0.3 || valuation < lowLine,
+      // 是否有支撑
+      isSupport: supportCount > 260 * 0.3,
       // 是否暴跌
       isSlump: recentRate5 < -6 || recentRate10 < -8 || recentRate15 < -10
     }
@@ -305,6 +316,11 @@ exports.analyzeStrategyMap = function (funds) {
       if (result.isSlump) {
         strategy[item.code].times++;
         strategy[item.code].rule.push('isSlump');
+      }
+      // 是否有支撑
+      if (result.isSupport) {
+        strategy[item.code].times++;
+        strategy[item.code].rule.push('isSupport');
       }
     }
   });

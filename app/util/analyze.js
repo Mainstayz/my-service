@@ -342,6 +342,7 @@ exports.getNetValueSort = function (list) {
   listFake.sort(function (a, b) {
     return a.netValue - b.netValue;
   });
+  // {netValue,times}
   return listFake;
 };
 
