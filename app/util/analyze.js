@@ -322,8 +322,7 @@ exports.getBetterValuation = function (betterCount) {
   }
 };
 
-// 获取单位净值分布
-exports.getNetValueDistribution = function (list) {
+exports.getNetValueSort = function (list) {
   let listFake = [];
   let listMap = {};
   list.forEach(function (item) {
@@ -343,8 +342,14 @@ exports.getNetValueDistribution = function (list) {
   listFake.sort(function (a, b) {
     return a.netValue - b.netValue;
   });
-  const min = listFake[0].netValue * 10000;
-  const max = listFake[listFake.length - 1].netValue * 10000;
+  return listFake;
+};
+
+// 获取单位净值分布
+exports.getNetValueDistribution = function (list) {
+  let listFake = this.getNetValueSort(list);
+  const min = parseInt(listFake[0].netValue * 10000);
+  const max = parseInt(listFake[listFake.length - 1].netValue * 10000);
   let result = [];
   const fluctuate = max - min;
   const step = parseInt(fluctuate / 40);

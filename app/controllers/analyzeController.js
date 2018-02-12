@@ -75,18 +75,3 @@ exports.getFundAnalyzeRecent = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
-
-exports.getStrategy = async function (ctx) {
-  const query = ctx.query;
-  try {
-    const data = ctx.validateData({
-      force: {required: false}
-    }, query);
-    const strategy = await ctx.services.analyze.getStrategy(data.force);
-    ctx.body = ctx.resuccess({
-      strategy
-    });
-  } catch (err) {
-    ctx.body = ctx.refail(err);
-  }
-};

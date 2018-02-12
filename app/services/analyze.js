@@ -7,6 +7,7 @@ const util = require('../util');
 const logger = require('../common/logger');
 
 const FundProxy = Proxy.Fund;
+const UserFundProxy = Proxy.UserFund;
 const StrategyProxy = Proxy.Strategy;
 const fundUtil = util.fundUtil;
 const numberUtil = util.numberUtil;
@@ -237,6 +238,14 @@ exports.getFundAnalyzeRecent = function (fund) {
   let recentRate5 = numberUtil.countDifferenceRate(valuation, list[4]['net_value']);
   let recentRate10 = numberUtil.countDifferenceRate(valuation, list[9]['net_value']);
   let recentRate15 = numberUtil.countDifferenceRate(valuation, list[14]['net_value']);
+  // 看是不是在低位
+  const netValueSort = analyzeUtil.getNetValueSort(list);
+  let valuationIndex = 0;
+  netValueSort.forEach(function (item, index) {
+    if (valuation > item.netValue) {
+      valuationIndex = index + 1;
+    }
+  });
   return {
     upAndDownCount,
     maxUpAndDown,
@@ -250,14 +259,15 @@ exports.getFundAnalyzeRecent = function (fund) {
       internal,
       // 是否新低
       isMin: valuation < netValueDistribution[0].netValue,
+      // 是不是在低位
+      isLow: valuationIndex < 40,
       // 是否暴跌
-      isSlump: recentRate5 < -6 || recentRate10 < -9 || recentRate15 < -12
+      isSlump: recentRate5 < -6 || recentRate10 < -8 || recentRate15 < -10
     }
   };
 };
 
-exports.getStrategyList = async function () {
-  const funds = await FundProxy.find({});
+exports.analyzeStrategyMap = function (funds) {
   let strategy = {};
   funds.forEach((item) => {
     if (item['recent_net_value']) {
@@ -265,6 +275,7 @@ exports.getStrategyList = async function () {
       const result = fundAnalyzeRecent.result;
       strategy[item.code] = {
         times: 0,
+        _id: item._id,
         code: item.code,
         name: item.name,
         rule: [],
@@ -285,6 +296,11 @@ exports.getStrategyList = async function () {
         strategy[item.code].times++;
         strategy[item.code].rule.push('isMin');
       }
+      // 处于低位
+      if (result.isLow) {
+        strategy[item.code].times++;
+        strategy[item.code].rule.push('isLow');
+      }
       // 是否是暴跌
       if (result.isSlump) {
         strategy[item.code].times++;
@@ -292,6 +308,12 @@ exports.getStrategyList = async function () {
       }
     }
   });
+  return strategy;
+};
+
+exports.getStrategyList = async function () {
+  const funds = await FundProxy.find({});
+  let strategy = this.analyzeStrategyMap(funds);
   let strategyList = [];
   for (let k in strategy) {
     if (strategy[k].times !== 0) {
@@ -342,6 +364,27 @@ exports.getStrategy = async function (force) {
       list: JSON.stringify(strategyList)
     })
   }
+  return strategyList;
+};
+
+exports.getMyStrategy = async function (userId) {
+  const userFund = await UserFundProxy.find({user: userId});
+  let fundIds = [];
+  userFund.forEach(function (item) {
+    fundIds.push(item.fund);
+  });
+  const funds = await FundProxy.find({
+    _id: {$in: fundIds}
+  });
+  let strategy = this.analyzeStrategyMap(funds);
+  let strategyList = [];
+  for (let k in strategy) {
+    strategy[k].has = true;
+    strategyList.push(strategy[k]);
+  }
+  strategyList.sort(function (a, b) {
+    return b.times - a.times;
+  });
   return strategyList;
 };
 

@@ -102,6 +102,7 @@ exports.getFunds = async function (ctx) {
   const query = ctx.query;
   try {
     const data = ctx.validateData({
+      keyword: {required: false},
       current: {type: 'int', required: true},
       pageSize: {type: 'int', required: true}
     }, query);
@@ -111,7 +112,16 @@ exports.getFunds = async function (ctx) {
       limit: paging.offset,
       sort: '-create_at'
     };
-    const funds = await ctx.services.fund.getSimpleFundsByPaging({}, opt);
+    let queryOption = {};
+    if (data.keyword) {
+      const keyExp = new RegExp(data.keyword, 'i');
+      queryOption = {
+        $or: [
+          { code: keyExp },
+          { name: keyExp }]
+      }
+    }
+    const funds = await ctx.services.fund.getSimpleFundsByPaging(queryOption, opt);
     paging.total = funds.count;
     ctx.body = ctx.resuccess({
       list: funds.list,

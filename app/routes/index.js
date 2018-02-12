@@ -42,7 +42,8 @@ router.get('/fund/deleteUserFund', controllers.fundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.fundController.updateUserFund);
 
 //策略
-router.get('/analyze/getStrategy', controllers.analyzeController.getStrategy);
+router.get('/strategy/getStrategy', controllers.strategyController.getStrategy);
+router.get('/strategy/getMyStrategy', controllers.strategyController.getMyStrategy);
 
 //分析路由
 router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
