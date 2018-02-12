@@ -271,7 +271,7 @@ exports.getFundAnalyzeRecent = function (fund) {
       // 是不是在低位
       isLow: valuationIndex < 260 * 0.3 || valuation < lowLine,
       // 是否有支撑
-      isSupport: supportCount > 260 * 0.3,
+      isSupport: supportCount >= 260 * 0.3,
       // 是否暴跌
       isSlump: recentRate5 < -6 || recentRate10 < -8 || recentRate15 < -10
     }
