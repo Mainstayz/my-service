@@ -273,7 +273,7 @@ exports.getMaxUpIntervalAndMaxDownInterval = function (list) {
   };
 };
 
-//获得已经延续的天数
+// 获得当前趋势已经延续的天数
 exports.continueDays = function (now, list) {
   let maxUpTemp = 0;
   maxUpTemp = 1;
@@ -297,6 +297,7 @@ exports.continueDays = function (now, list) {
   return maxUpTemp;
 };
 
+// 通过估值源准确性统计，获取更好的估值源
 exports.getBetterValuation = function (betterCount) {
   let haomaiCount = 0;
   let tiantianCount = 0;
@@ -322,6 +323,7 @@ exports.getBetterValuation = function (betterCount) {
   }
 };
 
+// 把净值从小到大排序
 exports.getNetValueSort = function (list) {
   let listFake = [];
   let listMap = {};
@@ -342,17 +344,20 @@ exports.getNetValueSort = function (list) {
   listFake.sort(function (a, b) {
     return a.netValue - b.netValue;
   });
-  // {netValue,times}
+  // [{netValue,times}]
   return listFake;
 };
 
-// 获取单位净值分布
+// 获取单位净值分布，分为40个区间段
 exports.getNetValueDistribution = function (list) {
   let listFake = this.getNetValueSort(list);
+  // 最大净值
   const min = parseInt(listFake[0].netValue * 10000);
+  // 最小净值
   const max = parseInt(listFake[listFake.length - 1].netValue * 10000);
   let result = [];
   const fluctuate = max - min;
+  // 计算步长，大致分成40个区间
   const step = parseInt(fluctuate / 40);
   for (let k = min; k < max + step; k += step) {
     let value = {netValue: k / 10000, times: 0};

@@ -192,10 +192,12 @@ exports.getFundAnalyzeRecent = function (fund) {
     const betterCount = JSON.parse(fund['better_count']).data;
     valuationSource = analyzeUtil.getBetterValuation(betterCount);
   }
+
   // 目前估值
   const valuation = fund[`valuation_${valuationSource.type}`];
   // 当日幅度
   const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
+
   // 涨跌统计
   const upAndDownCount = analyzeUtil.getUpAndDownCount(list);
   // 最大统计
@@ -206,7 +208,8 @@ exports.getFundAnalyzeRecent = function (fund) {
   const maxUpIntervalAndMaxDownInterval = analyzeUtil.getMaxUpIntervalAndMaxDownInterval(list);
   // 净值分布
   const netValueDistribution = analyzeUtil.getNetValueDistribution(list);
-  // 从涨跌分布上看
+
+  // 从涨跌分布上看上涨的概率
   let distribution = 0;
   upAndDownDistribution.list.forEach(function (item) {
     if (item.start <= valuationRate && valuationRate < item.end) {
@@ -215,7 +218,8 @@ exports.getFundAnalyzeRecent = function (fund) {
         1);
     }
   });
-  // 从连续性上看
+
+  // 从连续性上看上涨的概率
   let day = analyzeUtil.continueDays(valuationRate, list);
   let internalData = {};
   if (valuationRate <= 0) {
@@ -234,19 +238,24 @@ exports.getFundAnalyzeRecent = function (fund) {
   const internal = numberUtil.countRate(
     valuationRate < 0 ? (1 - rateDays / allInterDays) : (rateDays / allInterDays),
     1);
-  // 近几天涨跌
+
+  // 近几天净值变化幅度
   let recentRate5 = numberUtil.countDifferenceRate(valuation, list[4]['net_value']);
   let recentRate10 = numberUtil.countDifferenceRate(valuation, list[9]['net_value']);
   let recentRate15 = numberUtil.countDifferenceRate(valuation, list[14]['net_value']);
+
   // 看是不是在低位，落在30%的位置，比它小的数量
   const netValueSort = analyzeUtil.getNetValueSort(list);
   let valuationIndex = 0;
+  // 计算当前净值处于的位置
   netValueSort.forEach(function (item, index) {
     if (valuation > item.netValue) {
       valuationIndex += item.times;
     }
   });
+  // 净值30%的位置
   const lowLine = netValueSort[0].netValue + 0.3 * (netValueSort[netValueSort.length - 1].netValue - netValueSort[0].netValue);
+
   // 是不是有支撑
   let supportCount = 0;
   netValueSort.forEach(function (item) {
@@ -255,6 +264,7 @@ exports.getFundAnalyzeRecent = function (fund) {
       supportCount += item.times;
     }
   });
+
   return {
     upAndDownCount,
     maxUpAndDown,
