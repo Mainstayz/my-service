@@ -11,7 +11,7 @@ const env = process.env.NODE_ENV;
 const isDev = env === 'dev';
 const isOther = isDev;
 
-const address = 'http://120.27.209.16:3006/';
+const address = 'http://120.27.209.16:3006';
 
 // 天天得到单个基金的信息
 exports.getFundInfo = function (code) {
