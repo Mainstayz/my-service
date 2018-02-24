@@ -337,6 +337,7 @@ exports.analyzeStrategyMap = function (funds) {
   return strategy;
 };
 
+// 把分析排序
 exports.getStrategyList = async function () {
   const funds = await FundProxy.find({});
   let strategy = this.analyzeStrategyMap(funds);
@@ -352,31 +353,25 @@ exports.getStrategyList = async function () {
   return strategyList;
 };
 
+// 获取建议
 exports.getStrategy = async function (force) {
+  // 得到今天
   const nowDay = moment().format('YYYY-MM-DD');
   let strategyList = null;
-  let rawStrategy = null;
-  if (force) {
-    // 强制更新
-    strategyList = await this.getStrategyList();
-    rawStrategy = await StrategyProxy.check({
-      day: nowDay
-    });
-  } else {
-    // 不是强制
-    rawStrategy = await StrategyProxy.findOne({
-      day: nowDay
-    });
-    // 有数据
-    if (rawStrategy) {
-      // 验证是否超过5分钟
-      if (moment(rawStrategy['update_at']).add(5, 'minute').isBefore(moment())) {
-        // 重新获取
-        strategyList = await this.getStrategyList();
-      } else {
-        return JSON.parse(rawStrategy.list)
-      }
+  // 查找今天的建议
+  const rawStrategy = await StrategyProxy.findOne({
+    day: nowDay
+  });
+  if (!force && rawStrategy) {
+    // 验证是否超过5分钟
+    if (moment(rawStrategy['update_at']).add(5, 'minute').isBefore(moment())) {
+      // 重新获取
+      strategyList = await this.getStrategyList();
+    } else {
+      return JSON.parse(rawStrategy.list)
     }
+  } else {
+    strategyList = await this.getStrategyList();
   }
   // 决定更新还是创建
   if (rawStrategy) {
@@ -393,6 +388,7 @@ exports.getStrategy = async function (force) {
   return strategyList;
 };
 
+// 对我的持仓的建议
 exports.getMyStrategy = async function (userId) {
   const userFund = await UserFundProxy.find({user: userId});
   let fundIds = [];
