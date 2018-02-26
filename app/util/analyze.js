@@ -1,6 +1,7 @@
 /**
  * Created by xiaobxia on 2018/1/29.
  */
+const numberUtil = require('./number');
 // 获去连续相同正负的信息
 function getSame(list, index) {
   let end = index;
@@ -371,8 +372,14 @@ exports.getNetValueDistribution = function (list) {
   return result;
 };
 
-//判断这个点位是否有支撑
-exports.judgeSupport = function () {
-
+//判断是否暴跌
+exports.judgeSlump = function (valuation, list) {
+  let recentRate3 = numberUtil.countDifferenceRate(valuation, list[2]['net_value']) < -3;
+  let recentRate5 = numberUtil.countDifferenceRate(valuation, list[4]['net_value']) < -5;
+  let recentRate8 = numberUtil.countDifferenceRate(valuation, list[7]['net_value']) < -7;
+  let recentRate10 = numberUtil.countDifferenceRate(valuation, list[9]['net_value']) < -9;
+  let recentRate13 = numberUtil.countDifferenceRate(valuation, list[12]['net_value']) < -11;
+  let recentRate15 = numberUtil.countDifferenceRate(valuation, list[14]['net_value']) < -13;
+  return recentRate3 || recentRate5 || recentRate8 || recentRate10 || recentRate13 || recentRate15;
 };
 

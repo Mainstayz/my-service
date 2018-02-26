@@ -239,7 +239,7 @@ exports.getFundAnalyzeRecent = function (fund) {
     valuationRate < 0 ? (1 - rateDays / allInterDays) : (rateDays / allInterDays),
     1);
 
-  // 近几天净值变化幅度
+  // 近几天净值变化幅度， 包括了当天的
   let recentRate5 = numberUtil.countDifferenceRate(valuation, list[4]['net_value']);
   let recentRate10 = numberUtil.countDifferenceRate(valuation, list[9]['net_value']);
   let recentRate15 = numberUtil.countDifferenceRate(valuation, list[14]['net_value']);
@@ -259,8 +259,8 @@ exports.getFundAnalyzeRecent = function (fund) {
   // 是不是有支撑
   let supportCount = 0;
   netValueSort.forEach(function (item) {
-    // 上下3个点
-    if (valuation * 1.03 > item.netValue && valuation * 0.97 < item.netValue) {
+    // 上下3.5个点
+    if (valuation * 1.025 > item.netValue && valuation * 0.975 < item.netValue) {
       supportCount += item.times;
     }
   });
@@ -283,7 +283,7 @@ exports.getFundAnalyzeRecent = function (fund) {
       // 是否有支撑
       isSupport: supportCount >= 260 * 0.3,
       // 是否暴跌
-      isSlump: recentRate5 < -6 || recentRate10 < -8 || recentRate15 < -10
+      isSlump: analyzeUtil.judgeSlump(valuation, list)
     }
   };
 };
@@ -303,10 +303,10 @@ exports.analyzeStrategyMap = function (funds) {
         recentSlump: fundAnalyzeRecent.recentSlump
       };
       // 从幅度分布上看
-      if (result.distribution > 70) {
-        strategy[item.code].times++;
-        strategy[item.code].rule.push('distribution');
-      }
+      // if (result.distribution > 70) {
+      //   strategy[item.code].times++;
+      //   strategy[item.code].rule.push('distribution');
+      // }
       // 从连续上看概率
       if (result.internal > 70) {
         strategy[item.code].times++;

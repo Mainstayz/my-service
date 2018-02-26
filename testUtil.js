@@ -8,7 +8,7 @@ axios({
   method: 'get',
   // 更新估值
   // url: 'http://39.108.114.91:3002/myService/analyze/updateValuation'
-  url: 'http://127.0.0.1:3002/myService/analyze/updateValuation'
+  // url: 'http://127.0.0.1:3002/myService/analyze/updateValuation'
   // 更新净值
   // url: 'http://39.108.114.91:3002/myService/analyze/updateBaseInfo'
   // url: 'http://127.0.0.1:3002/myService/analyze/updateBaseInfo'
