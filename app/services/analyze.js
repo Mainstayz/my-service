@@ -82,7 +82,7 @@ exports.betterValuation = async function () {
       continue;
     }
     // 对比差值的偏离
-    if (Math.abs(fund['valuation_tiantian'] - fund['net_value']) > Math.abs(fund['valuation_haomai'] - fundTemp['net_value'])) {
+    if (Math.abs(fund['valuation_tiantian'] - fund['net_value']) > Math.abs(fund['valuation_haomai'] - fund['net_value'])) {
       type = 'haomai';
     } else {
       type = 'tiantian';
