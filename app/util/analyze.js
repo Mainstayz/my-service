@@ -374,12 +374,18 @@ exports.getNetValueDistribution = function (list) {
 
 //判断是否暴跌
 exports.judgeSlump = function (valuation, list) {
-  let recentRate3 = numberUtil.countDifferenceRate(valuation, list[2]['net_value']) < -3;
-  let recentRate5 = numberUtil.countDifferenceRate(valuation, list[4]['net_value']) < -5;
-  let recentRate8 = numberUtil.countDifferenceRate(valuation, list[7]['net_value']) < -7;
-  let recentRate10 = numberUtil.countDifferenceRate(valuation, list[9]['net_value']) < -9;
-  let recentRate13 = numberUtil.countDifferenceRate(valuation, list[12]['net_value']) < -11;
-  let recentRate15 = numberUtil.countDifferenceRate(valuation, list[14]['net_value']) < -13;
-  return recentRate3 || recentRate5 || recentRate8 || recentRate10 || recentRate13 || recentRate15;
+  let dayList = [3, 5, 8, 10, 13, 15];
+  let isSlump = false;
+  dayList.forEach(function (day, index) {
+    let tempRate = numberUtil.countDifferenceRate(valuation, list[day - 1]['net_value']);
+    if (!isSlump) {
+      isSlump = tempRate < -day;
+    }
+    dayList[index] = {day: day, rate: tempRate};
+  });
+  return {
+    RateList: dayList,
+    isSlump
+  };
 };
 
