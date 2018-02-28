@@ -308,7 +308,7 @@ exports.analyzeStrategyMap = function (funds) {
       //   strategy[item.code].rule.push('distribution');
       // }
       // 从连续上看概率
-      if (result.internal > 70) {
+      if (result.internal > 75) {
         strategy[item.code].times++;
         strategy[item.code].rule.push('internal');
       }
