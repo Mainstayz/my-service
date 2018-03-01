@@ -19,11 +19,12 @@ const config = reqlib('/config/index');
  └───────────────────────── second (0 - 59, OPTIONAL)
  */
 let rule = new schedule.RecurrenceRule();
-//工作日早上6点执行
+
 rule.dayOfWeek = [new schedule.Range(1, 5)];
-rule.hour = [9, 10, 11, 13, 14, 15];
+// 10-12,13-16
+rule.hour = [10, 11, 13, 14, 15];
 let minute = [];
-for (let k = 0; k < 60; k += 15) {
+for (let k = 0; k < 60; k += 5) {
   minute.push(k);
 }
 rule.minute = minute;

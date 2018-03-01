@@ -192,12 +192,13 @@ exports.getFundAnalyzeRecent = function (fund) {
     const betterCount = JSON.parse(fund['better_count']).data;
     valuationSource = analyzeUtil.getBetterValuation(betterCount);
   }
-
-  // 目前估值
+  /**
+   * 客观统计数据
+   */
+    // 目前估值
   const valuation = fund[`valuation_${valuationSource.type}`];
   // 当日幅度
   const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
-
   // 涨跌统计
   const upAndDownCount = analyzeUtil.getUpAndDownCount(list);
   // 最大统计
@@ -208,7 +209,14 @@ exports.getFundAnalyzeRecent = function (fund) {
   const maxUpIntervalAndMaxDownInterval = analyzeUtil.getMaxUpIntervalAndMaxDownInterval(list);
   // 净值分布
   const netValueDistribution = analyzeUtil.getNetValueDistribution(list);
-
+  /**
+   * 客观分析
+   */
+  let buyCount = 0;
+  // 从小到大排序，并记录次数
+  const netValueSort = analyzeUtil.getNetValueSort(list);
+  const costLine = analyzeUtil.getCostLine(netValueSort);
+  const supportLine= analyzeUtil.getSupportLine(netValueSort);
   // 从涨跌分布上看上涨的概率
   let distribution = 0;
   upAndDownDistribution.list.forEach(function (item) {
@@ -242,17 +250,8 @@ exports.getFundAnalyzeRecent = function (fund) {
   // 近几天的暴跌信息， 包括了当天的
   const slumpInfo = analyzeUtil.judgeSlump(valuation, list);
 
-  // 看是不是在低位，落在30%的位置，比它小的数量
-  const netValueSort = analyzeUtil.getNetValueSort(list);
-  let valuationIndex = 0;
-  // 计算当前净值处于的位置
-  netValueSort.forEach(function (item, index) {
-    if (valuation > item.netValue) {
-      valuationIndex += item.times;
-    }
-  });
-  // 净值30%的位置
-  const lowLine = netValueSort[0].netValue + 0.3 * (netValueSort[netValueSort.length - 1].netValue - netValueSort[0].netValue);
+  // 低位信息
+  const lowPointInfo = analyzeUtil.judgeLowPoint(valuation, netValueSort);
 
   // 是不是有支撑
   let supportCount = 0;
@@ -262,7 +261,6 @@ exports.getFundAnalyzeRecent = function (fund) {
       supportCount += item.times;
     }
   });
-
   return {
     upAndDownCount,
     maxUpAndDown,
@@ -270,6 +268,7 @@ exports.getFundAnalyzeRecent = function (fund) {
     maxUpIntervalAndMaxDownInterval,
     netValueDistribution,
     recentSlump: slumpInfo.RateList,
+    supportLine,
     result: {
       // 都是上涨的概率
       distribution,
@@ -277,11 +276,18 @@ exports.getFundAnalyzeRecent = function (fund) {
       // 是否新低
       isMin: valuation < netValueSort[0].netValue,
       // 是不是在低位
-      isLow: valuationIndex < 260 * 0.3 || valuation < lowLine,
+      // isLow: lowPointInfo.valuationIndex < 260 * 0.2 || valuation < lowPointInfo.lowLine,
+      isLow: lowPointInfo.count > 0,
       // 是否有支撑
       isSupport: supportCount >= 260 * 0.3,
       // 是否暴跌
-      isSlump: slumpInfo.isSlump
+      isSlump: slumpInfo.count > 20,
+      costLine
+    },
+    count: {
+      slumpCount: slumpInfo.count,
+      lowCount: lowPointInfo.count,
+      internalCount: internal
     }
   };
 };

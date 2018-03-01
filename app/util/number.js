@@ -11,3 +11,7 @@ exports.countDifferenceRate = function (numerator, denominator) {
 exports.keepTwoDecimals = function (number) {
   return Math.round(100 * number) / 100;
 };
+
+exports.keepFourDecimals = function (number) {
+  return Math.round(10000 * number) / 10000;
+};
