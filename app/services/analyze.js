@@ -262,6 +262,7 @@ exports.getFundAnalyzeRecent = function (fund) {
     }
   });
   return {
+    recentNetValue: list,
     upAndDownCount,
     maxUpAndDown,
     upAndDownDistribution,
