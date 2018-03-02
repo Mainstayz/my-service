@@ -298,12 +298,14 @@ exports.analyzeStrategyMap = function (funds) {
     if (item['recent_net_value']) {
       const fundAnalyzeRecent = this.getFundAnalyzeRecent(item);
       const result = fundAnalyzeRecent.result;
+      const count = fundAnalyzeRecent.count;
       strategy[item.code] = {
         times: 0,
         _id: item._id,
         code: item.code,
         name: item.name,
         rule: [],
+        slumpCount: count.slumpCount,
         recentSlump: fundAnalyzeRecent.recentSlump
       };
       // 从幅度分布上看
@@ -351,8 +353,9 @@ exports.getStrategyList = async function () {
       strategyList.push(strategy[k])
     }
   }
+  // 按暴跌指数排名
   strategyList.sort(function (a, b) {
-    return b.times - a.times;
+    return b.slumpCount - a.slumpCount;
   });
   return strategyList;
 };
@@ -408,8 +411,9 @@ exports.getMyStrategy = async function (userId) {
     strategy[k].has = true;
     strategyList.push(strategy[k]);
   }
+  // 按暴跌指数排名
   strategyList.sort(function (a, b) {
-    return b.times - a.times;
+    return b.slumpCount - a.slumpCount;
   });
   return strategyList;
 };
