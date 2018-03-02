@@ -269,6 +269,7 @@ exports.getFundAnalyzeRecent = function (fund) {
     netValueDistribution,
     recentSlump: slumpInfo.RateList,
     supportLine,
+    valuationRate,
     result: {
       // 都是上涨的概率
       distribution,
@@ -305,6 +306,7 @@ exports.analyzeStrategyMap = function (funds) {
         code: item.code,
         name: item.name,
         rule: [],
+        valuationRate: fundAnalyzeRecent.valuationRate,
         slumpCount: count.slumpCount,
         recentSlump: fundAnalyzeRecent.recentSlump
       };
