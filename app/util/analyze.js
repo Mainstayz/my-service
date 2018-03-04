@@ -417,7 +417,7 @@ exports.judgeSlump = function (valuation, list) {
 };
 
 // 判断低点
-exports.judgeLowPoint = function (valuation, netValueSort) {
+exports.judgeLowPoint = function (valuation, netValueSort, days) {
   let valuationIndex = 0;
   // 计算当前净值处于的位置
   netValueSort.forEach(function (item, index) {
@@ -431,7 +431,7 @@ exports.judgeLowPoint = function (valuation, netValueSort) {
   return {
     valuationIndex,
     lowLine,
-    count: ((260 * 0.2 - valuationIndex) * 10 + ((lowLine - valuation) / range) * 1000)
+    count: ((days * 0.2 - valuationIndex) * 10 + ((lowLine - valuation) / range) * 1000)
   };
 };
 // 获取支撑线

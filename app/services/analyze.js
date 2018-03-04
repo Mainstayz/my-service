@@ -208,7 +208,9 @@ exports.getFundAnalyzeRecent = function (fund) {
   let buyCount = 0;
   // 从小到大排序，并记录次数
   const netValueSort = analyzeUtil.getNetValueSort(list);
+  const netValueSortHalfYear = analyzeUtil.getNetValueSort(list.slice(0, 130));
   const costLine = analyzeUtil.getCostLine(netValueSort);
+  const costLineHalf = analyzeUtil.getCostLine(netValueSortHalfYear);
   const supportLine= analyzeUtil.getSupportLine(netValueSort);
   // 从涨跌分布上看上涨的概率
   let distribution = 0;
@@ -244,7 +246,8 @@ exports.getFundAnalyzeRecent = function (fund) {
   const slumpInfo = analyzeUtil.judgeSlump(valuation, list);
 
   // 低位信息
-  const lowPointInfo = analyzeUtil.judgeLowPoint(valuation, netValueSort);
+  const lowPointInfo = analyzeUtil.judgeLowPoint(valuation, netValueSort, 260);
+  const lowPointInfoHalf = analyzeUtil.judgeLowPoint(valuation, netValueSortHalfYear, 130);
 
   // 是不是有支撑
   let supportCount = 0;
@@ -273,11 +276,13 @@ exports.getFundAnalyzeRecent = function (fund) {
       // 是不是在低位
       // isLow: lowPointInfo.valuationIndex < 260 * 0.2 || valuation < lowPointInfo.lowLine,
       isLow: lowPointInfo.count > 0,
+      isLowHalf: lowPointInfoHalf.count > 0,
       // 是否有支撑
       isSupport: supportCount >= 260 * 0.3,
       // 是否暴跌
       isSlump: slumpInfo.count > 20,
-      costLine
+      costLine,
+      costLineHalf
     },
     count: {
       slumpCount: slumpInfo.count,
@@ -323,6 +328,10 @@ exports.analyzeStrategyMap = function (funds) {
       if (result.isLow) {
         strategy[item.code].times++;
         strategy[item.code].rule.push('isLow');
+      }
+      if (result.isLowHalf) {
+        strategy[item.code].times++;
+        strategy[item.code].rule.push('isLowHalf');
       }
       // 是否是暴跌
       if (result.isSlump) {
