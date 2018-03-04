@@ -184,19 +184,12 @@ exports.updateBaseInfo = async function () {
 exports.getFundAnalyzeRecent = function (fund) {
   const list = JSON.parse(fund['recent_net_value']).data;
   // 获取估值
-  let valuationSource = {
-    type: 'tiantian',
-    name: '天天'
-  };
-  if (fund['better_count']) {
-    const betterCount = JSON.parse(fund['better_count']).data;
-    valuationSource = analyzeUtil.getBetterValuation(betterCount);
-  }
+  const valuationInfo = analyzeUtil.getBetterValuation(fund);
   /**
    * 客观统计数据
    */
     // 目前估值
-  const valuation = fund[`valuation_${valuationSource.type}`];
+  const valuation = valuationInfo.valuation;
   // 当日幅度
   const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
   // 涨跌统计

@@ -299,29 +299,52 @@ exports.continueDays = function (now, list) {
 };
 
 // 通过估值源准确性统计，获取更好的估值源
-exports.getBetterValuation = function (betterCount) {
-  let haomaiCount = 0;
-  let tiantianCount = 0;
-  //统计
-  betterCount.forEach(function (item) {
-    if (item.type === 'tiantian') {
-      tiantianCount++;
+exports.getBetterValuation = function (fund) {
+  let valuationInfo = null;
+  // 如果有统计
+  if (fund['better_count']) {
+    const betterCount = JSON.parse(fund['better_count']).data;
+    console.log(betterCount)
+    let haomaiCount = 0;
+    let tiantianCount = 0;
+    const totalCount = betterCount.length;
+    const standard = (totalCount * 2) / 3;
+    //统计
+    betterCount.forEach(function (item) {
+      if (item.type === 'tiantian') {
+        tiantianCount++;
+      } else {
+        haomaiCount++;
+      }
+    });
+    // 超过3分之2
+    if (haomaiCount >= standard) {
+      valuationInfo = {
+        sourceType: 'haomai',
+        sourceName: '好买',
+        valuation: fund[`valuation_haomai`]
+      };
+    } else if (tiantianCount >= standard) {
+      valuationInfo = {
+        sourceType: 'tiantian',
+        sourceName: '天天',
+        valuation: fund[`valuation_tiantian`]
+      };
     } else {
-      haomaiCount++;
+      valuationInfo = {
+        sourceType: 'tiantian/haomai',
+        sourceName: '天天/好买',
+        valuation: (fund[`valuation_tiantian`] + fund[`valuation_haomai`]) / 2
+      };
     }
-  });
-  // 填充数据
-  if (haomaiCount > tiantianCount) {
-    return {
-      type: 'haomai',
-      name: '好买'
-    };
   } else {
-    return {
-      type: 'tiantian',
-      name: '天天'
+    valuationInfo = {
+      sourceType: 'tiantian',
+      sourceName: '天天',
+      valuation: fund[`valuation_tiantian`]
     };
   }
+  return valuationInfo;
 };
 
 // 把净值从小到大排序

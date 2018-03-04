@@ -71,14 +71,8 @@ exports.getFundBase = async function (ctx) {
       code: {type: 'string', required: true}
     }, query);
     const fund = await fundService.getFundBaseByCode(data.code);
-    let valuationSource = {
-      type: 'tiantian',
-      name: '天天'
-    };
-    if (fund['better_count']) {
-      const betterCount = JSON.parse(fund['better_count']).data;
-      valuationSource = analyzeUtil.getBetterValuation(betterCount);
-    }
+    const valuationInfo = analyzeUtil.getBetterValuation(fund);
+    console.log(valuationInfo)
     const result = {
       code: fund.code,
       name: fund.name,
@@ -88,8 +82,8 @@ exports.getFundBase = async function (ctx) {
       valuation_date: fund.valuation_date,
       valuation_haomai: fund.valuation_haomai,
       valuation_tiantian: fund.valuation_tiantian,
-      valuation: fund[`valuation_${valuationSource.type}`],
-      valuationSource: valuationSource.name
+      valuation: valuationInfo.valuation,
+      valuationSource: valuationInfo.sourceName
     };
     ctx.body = ctx.resuccess(result);
   } catch (err) {
@@ -117,8 +111,8 @@ exports.getFunds = async function (ctx) {
       const keyExp = new RegExp(data.keyword, 'i');
       queryOption = {
         $or: [
-          { code: keyExp },
-          { name: keyExp }]
+          {code: keyExp},
+          {name: keyExp}]
       }
     }
     const funds = await ctx.services.fund.getSimpleFundsByPaging(queryOption, opt);
@@ -228,14 +222,7 @@ exports.getUserFunds = async function (ctx) {
       // 持仓金额
       const sum = numberUtil.keepTwoDecimals(fund.net_value * userFund.count);
       totalSum += sum;
-      let valuationSource = {
-        type: 'tiantian',
-        name: '天天'
-      };
-      if (fund['better_count']) {
-        const betterCount = JSON.parse(fund['better_count']).data;
-        valuationSource = analyzeUtil.getBetterValuation(betterCount);
-      }
+      const valuationInfo = analyzeUtil.getBetterValuation(fund);
       let result = {
         name: fund.name,
         code: fund.code,
@@ -244,8 +231,8 @@ exports.getUserFunds = async function (ctx) {
         netValue: fund.net_value,
         // 持仓净值
         sum,
-        valuation: fund[`valuation_${valuationSource.type}`],
-        valuationSource: valuationSource.name
+        valuation: valuationInfo.valuation,
+        valuationSource: valuationInfo.sourceName
       };
       result.valuationSum = numberUtil.keepTwoDecimals(result.valuation * userFund.count);
       valuationTotalSum += result.valuationSum;
