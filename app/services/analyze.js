@@ -413,7 +413,9 @@ exports.getMyStrategy = async function (userId) {
   const userFund = await UserFundProxy.find({user: userId});
   let fundIds = [];
   userFund.forEach(function (item) {
-    fundIds.push(item.fund);
+    if (userFund.count > 0) {
+      fundIds.push(item.fund);
+    }
   });
   const funds = await FundProxy.find({
     _id: {$in: fundIds}
