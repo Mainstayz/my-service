@@ -280,7 +280,7 @@ exports.getFundAnalyzeRecent = function (fund) {
       // 是否有支撑
       isSupport: supportCount >= 260 * 0.3,
       // 是否暴跌
-      isSlump: slumpInfo.count > 20,
+      isSlump: slumpInfo.count > 40,
       costLine,
       costLineHalf
     },
@@ -340,7 +340,8 @@ exports.analyzeStrategyMap = function (funds) {
       }
       // 是否有支撑
       if (result.isSupport) {
-        strategy[item.code].times++;
+        // 不计分
+        // strategy[item.code].times++;
         strategy[item.code].rule.push('isSupport');
       }
     }
