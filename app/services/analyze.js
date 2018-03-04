@@ -211,7 +211,7 @@ exports.getFundAnalyzeRecent = function (fund) {
   const netValueSortHalfYear = analyzeUtil.getNetValueSort(list.slice(0, 130));
   const costLine = analyzeUtil.getCostLine(netValueSort);
   const costLineHalf = analyzeUtil.getCostLine(netValueSortHalfYear);
-  const supportLine= analyzeUtil.getSupportLine(netValueSort);
+  const supportLine = analyzeUtil.getSupportLine(netValueSort);
   // 从涨跌分布上看上涨的概率
   let distribution = 0;
   upAndDownDistribution.list.forEach(function (item) {
@@ -356,6 +356,13 @@ exports.getStrategyList = async function () {
   let strategyList = [];
   for (let k in strategy) {
     if (strategy[k].times !== 0) {
+      // 如果只有一种，那只能是暴跌
+      if (strategy[k].times === 1) {
+        if (strategy[k].rule.indexOf('isSlump') !== -1) {
+          continue;
+        }
+
+      }
       strategyList.push(strategy[k])
     }
   }
