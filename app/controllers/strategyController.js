@@ -14,7 +14,9 @@ exports.getStrategy = async function (ctx) {
     strategy.forEach(function (item) {
       for (let k = 0; k < userFunds.length; k++) {
         if (item._id.toString() === userFunds[k].fund.toString()) {
-          item.has = true;
+          if (userFunds[k].count > 0) {
+            item.has = true;
+          }
           break;
         }
       }
