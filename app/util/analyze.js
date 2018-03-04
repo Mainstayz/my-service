@@ -403,8 +403,8 @@ exports.judgeSlump = function (valuation, list) {
   for (let i = 0; i < 15; i++) {
     //0的时候是近一天的涨跌
     const tempRate = numberUtil.countDifferenceRate(valuation, list[i]['net_value']);
-    //记下分数
-    count += tempRate;
+    //记下分数，加大近期的权重
+    count += tempRate * (2.5 - (i / 10));
     if (dayList.indexOf(i + 1) !== -1) {
       rateList.push({day: i + 1, rate: tempRate});
     }
