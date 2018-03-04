@@ -304,7 +304,6 @@ exports.getBetterValuation = function (fund) {
   // 如果有统计
   if (fund['better_count']) {
     const betterCount = JSON.parse(fund['better_count']).data;
-    console.log(betterCount)
     let haomaiCount = 0;
     let tiantianCount = 0;
     const totalCount = betterCount.length;

@@ -72,7 +72,6 @@ exports.getFundBase = async function (ctx) {
     }, query);
     const fund = await fundService.getFundBaseByCode(data.code);
     const valuationInfo = analyzeUtil.getBetterValuation(fund);
-    console.log(valuationInfo)
     const result = {
       code: fund.code,
       name: fund.name,
