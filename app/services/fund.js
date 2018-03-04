@@ -33,7 +33,9 @@ exports.addFund = async function (code) {
 // 批量添加，要提前验证code
 exports.addFunds = async function (codeList) {
   // 获取基金信息
-  let requestList = [fundUtil.getFundsInfo()];
+  let requestList = [
+    fundUtil.getFundsInfo()
+  ];
   // 获取基金近期信息
   codeList.forEach(function (item) {
     requestList.push(fundUtil.getRecentNetValue(item, 260));
@@ -57,7 +59,8 @@ exports.addFunds = async function (codeList) {
       name: fundData.name,
       net_value: fundData.net_value,
       net_value_date: data.net_value_date,
-
+      valuation_tiantian: fundData.valuation,
+      valuation_date: data.valuation_date,
       sell: fundData.sell,
       recent_net_value: JSON.stringify({data: fetchData[index + 1]})
     }));
