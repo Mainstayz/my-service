@@ -399,8 +399,8 @@ exports.judgeSlump = function (valuation, list) {
   let dayList = [3, 5, 8, 10, 13, 15];
   let rateList = [];
   let count = 0;
-  // 之前的数据只要15个
-  for (let i = 0; i < 15; i++) {
+  // 之前的数据只要25个
+  for (let i = 0; i < 25; i++) {
     //0的时候是近一天的涨跌
     const tempRate = numberUtil.countDifferenceRate(valuation, list[i]['net_value']);
     //记下分数，加大近期的权重
