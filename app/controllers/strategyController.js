@@ -12,6 +12,7 @@ exports.getStrategy = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     const userFunds = await ctx.services.fund.getUserFundsByUserId(userRaw._id);
     strategy.forEach(function (item) {
+      item.has = false;
       for (let k = 0; k < userFunds.length; k++) {
         if (item._id.toString() === userFunds[k].fund.toString()) {
           item.has = userFunds[k].count > 0;
