@@ -333,7 +333,7 @@ exports.getBetterValuation = function (fund) {
       valuationInfo = {
         sourceType: 'tiantian/haomai',
         sourceName: '天天/好买',
-        valuation: (fund[`valuation_tiantian`] + fund[`valuation_haomai`]) / 2
+        valuation: numberUtil.keepFourDecimals((fund[`valuation_tiantian`] + fund[`valuation_haomai`]) / 2)
       };
     }
   } else {
