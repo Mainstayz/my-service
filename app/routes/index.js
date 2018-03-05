@@ -41,6 +41,11 @@ router.get('/fund/getUserFunds', controllers.fundController.getUserFunds);
 router.get('/fund/deleteUserFund', controllers.fundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.fundController.updateUserFund);
 
+//关注基金
+router.post('/focusFund/addFocusFund', controllers.focusFundController.addFocusFund);
+router.get('/focusFund/getFocusFunds', controllers.focusFundController.getFocusFunds);
+router.get('/focusFund/deleteFocusFund', controllers.focusFundController.deleteFocusFund);
+
 //策略
 router.get('/strategy/getStrategy', controllers.strategyController.getStrategy);
 router.get('/strategy/getMyStrategy', controllers.strategyController.getMyStrategy);
@@ -55,6 +60,7 @@ router.get('/analyze/addRecentNetValue', controllers.analyzeController.addRecent
 //文件上传
 router.post('/upload/importFund', upload.single('fundFile'), controllers.fundController.importFunds);
 router.post('/upload/importMyFund', upload.single('fundFile'), controllers.fundController.importMyFunds);
+router.post('/upload/importFocusFunds', upload.single('fundFile'), controllers.focusFundController.importFocusFunds);
 
 //文件下载
 router.post('/download/exportMyFund', controllers.fundController.exportMyFunds);
