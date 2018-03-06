@@ -7,5 +7,6 @@ const env = process.env.NODE_ENV;
 const isDev = env === 'dev';
 if (!isDev) {
   exports.updateValuation = require('./updateValuation');
+  exports.closeUpdateValuation = require('./closeUpdateValuation');
 }
 
