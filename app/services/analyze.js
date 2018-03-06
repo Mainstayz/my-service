@@ -447,6 +447,7 @@ exports.getFocusStrategy = async function (userId) {
   let strategy = this.analyzeStrategyMap(funds);
   let strategyList = [];
   for (let k in strategy) {
+    strategy[k].has = false;
     userFund.forEach(function (item) {
       if (item.fund.toString() === strategy[k]._id.toString()) {
         strategy[k].has = true;
