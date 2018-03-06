@@ -58,9 +58,9 @@ exports.getFocusFunds = async function (ctx) {
     const tokenRaw = ctx.tokenRaw;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 找到基金
-    const strategy = await ctx.services.analyze.getMyStrategy(userRaw._id);
+    const strategy = await ctx.services.analyze.getFocusStrategy(userRaw._id);
     ctx.body = ctx.resuccess({
-      strategy
+      list: strategy
     });
   } catch (err) {
     ctx.body = ctx.refail(err);
@@ -68,7 +68,7 @@ exports.getFocusFunds = async function (ctx) {
 };
 
 // 导入基金，如果基金不存在，就添加
-exports.importFocusFunds = async function (ctx) {
+exports.importFocusFund = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   const fundService = ctx.services.fund;
   console.log(ctx.req.file);
@@ -79,7 +79,7 @@ exports.importFocusFunds = async function (ctx) {
     const funds = data.funds;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 添加
-    if (funds.length > 0 && funds[0].code) {
+    if (funds.length > 0) {
       let optionList = [];
       for (let k = 0; k < funds.length; k++) {
         // 检查是否在基金库中

@@ -60,9 +60,15 @@ router.get('/analyze/addRecentNetValue', controllers.analyzeController.addRecent
 //文件上传
 router.post('/upload/importFund', upload.single('fundFile'), controllers.fundController.importFunds);
 router.post('/upload/importMyFund', upload.single('fundFile'), controllers.fundController.importMyFunds);
-router.post('/upload/importFocusFunds', upload.single('fundFile'), controllers.focusFundController.importFocusFunds);
+router.post('/upload/importFocusFund', upload.single('fundFile'), controllers.focusFundController.importFocusFund);
 
 //文件下载
 router.post('/download/exportMyFund', controllers.fundController.exportMyFunds);
+
+//定时任务
+router.post('/schedule/addSchedule', controllers.scheduleController.addSchedule);
+router.get('/schedule/getSchedules', controllers.scheduleController.getSchedules);
+router.get('/schedule/updateSchedule', controllers.scheduleController.updateSchedule);
+router.get('/schedule/deleteSchedule', controllers.scheduleController.deleteSchedule);
 
 module.exports = router;

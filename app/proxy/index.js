@@ -4,3 +4,4 @@ exports.Fund = require('./fund');
 exports.UserFund = require('./user_fund');
 exports.FocusFund = require('./focus_fund');
 exports.Strategy = require('./strategy');
+exports.Schedule = require('./schedule');

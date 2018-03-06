@@ -436,11 +436,10 @@ exports.getMyStrategy = async function (userId) {
 
 exports.getFocusStrategy = async function (userId) {
   const focusFund = await FocusFundProxy.find({user: userId});
+  const userFund = await UserFundProxy.find({user: userId});
   let fundIds = [];
   focusFund.forEach(function (item) {
-    if (item.count > 0) {
-      fundIds.push(item.fund);
-    }
+    fundIds.push(item.fund);
   });
   const funds = await FundProxy.find({
     _id: {$in: fundIds}
@@ -448,7 +447,11 @@ exports.getFocusStrategy = async function (userId) {
   let strategy = this.analyzeStrategyMap(funds);
   let strategyList = [];
   for (let k in strategy) {
-    strategy[k].has = true;
+    userFund.forEach(function (item) {
+      if (item.fund.toString() === strategy[k]._id.toString()) {
+        strategy[k].has = true;
+      }
+    });
     strategyList.push(strategy[k]);
   }
   // 按暴跌指数排名
