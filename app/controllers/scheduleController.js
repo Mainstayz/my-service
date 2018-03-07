@@ -67,3 +67,14 @@ exports.getSchedules = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.verifyOpening = async function (ctx) {
+  try {
+    const isOpening = await ctx.services.schedule.verifyOpening();
+    ctx.body = ctx.resuccess({
+      isOpening
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};

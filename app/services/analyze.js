@@ -250,6 +250,10 @@ exports.getFundAnalyzeRecent = function (fund) {
   const lowPointInfo = analyzeUtil.judgeLowPoint(valuation, netValueSort, 260);
   const lowPointInfoHalf = analyzeUtil.judgeLowPoint(valuation, netValueSortHalfYear, 130);
 
+  // 高位信息
+  const highPointInfo = analyzeUtil.judgeHighPoint(valuation, netValueSort, 260);
+  const highPointInfoHalf = analyzeUtil.judgeHighPoint(valuation, netValueSortHalfYear, 130);
+
   // 是不是有支撑
   let supportCount = 0;
   netValueSort.forEach(function (item) {
@@ -278,16 +282,23 @@ exports.getFundAnalyzeRecent = function (fund) {
       // isLow: lowPointInfo.valuationIndex < 260 * 0.2 || valuation < lowPointInfo.lowLine,
       isLow: lowPointInfo.count > 0,
       isLowHalf: lowPointInfoHalf.count > 0,
+      isHigh: highPointInfo.count > 0,
+      isHighHalf: highPointInfoHalf.count > 0,
       // 是否有支撑
       isSupport: supportCount >= 260 * 0.3,
       // 是否暴跌
-      isSlump: slumpInfo.count > 50,
+      isSlump: slumpInfo.count > 20,
+      isBoom: -slumpInfo.count > 20,
       costLine,
       costLineHalf
     },
     count: {
       slumpCount: slumpInfo.count,
+      boomCount: -slumpInfo.count,
       lowCount: lowPointInfo.count,
+      lowHalfCount: lowPointInfoHalf.count,
+      highCount: highPointInfo.count,
+      highHalfCount: highPointInfoHalf.count,
       internalCount: internal
     }
   };
@@ -308,7 +319,13 @@ exports.analyzeStrategyMap = function (funds) {
         rule: [],
         valuationRate: fundAnalyzeRecent.valuationRate,
         slumpCount: count.slumpCount,
-        recentSlump: fundAnalyzeRecent.recentSlump
+        boomCount: count.boomCount,
+        lowCount: count.lowCount,
+        lowHalfCount: count.lowHalfCount,
+        highCount: count.highCount,
+        highHalfCount: count.highHalfCount,
+        recentSlump: fundAnalyzeRecent.recentSlump,
+        saleRule: []
       };
       // 从幅度分布上看
       // if (result.distribution > 70) {
@@ -338,6 +355,17 @@ exports.analyzeStrategyMap = function (funds) {
       if (result.isSlump) {
         strategy[item.code].times++;
         strategy[item.code].rule.push('isSlump');
+      }
+      // 是否是暴涨
+      if (result.isBoom) {
+        strategy[item.code].saleRule.push('isBoom');
+      }
+      // 是否是高位
+      // if (result.isHigh) {
+      //   strategy[item.code].saleRule.push('isHigh');
+      // }
+      if (result.isHighHalf) {
+        strategy[item.code].saleRule.push('isHighHalf');
       }
       // 是否有支撑
       if (result.isSupport) {

@@ -400,16 +400,17 @@ exports.judgeSlump = function (valuation, list) {
   let rateList = [];
   let count = 0;
   // 之前的数据只要25个
+  const step = 1 / 25;
   for (let i = 0; i < 25; i++) {
     //0的时候是近一天的涨跌
     const tempRate = numberUtil.countDifferenceRate(valuation, list[i]['net_value']);
     //记下分数，加大近期的权重
-    count += tempRate * (2.5 - (i / 10));
+    count += tempRate * (2 - (i * step));
     if (dayList.indexOf(i + 1) !== -1) {
       rateList.push({day: i + 1, rate: tempRate});
     }
   }
-  count = -count;
+  count = parseInt(-count, 10);
   return {
     RateList: rateList,
     count
@@ -418,6 +419,7 @@ exports.judgeSlump = function (valuation, list) {
 
 // 判断低点
 exports.judgeLowPoint = function (valuation, netValueSort, days) {
+  // netValueSort是已经被处理过的
   let valuationIndex = 0;
   // 计算当前净值处于的位置
   netValueSort.forEach(function (item, index) {
@@ -427,13 +429,33 @@ exports.judgeLowPoint = function (valuation, netValueSort, days) {
   });
   // 幅度20%的位置
   const range = netValueSort[netValueSort.length - 1].netValue - netValueSort[0].netValue;
-  const lowLine = netValueSort[0].netValue + 0.2 * range;
+  const lowLine = netValueSort[0].netValue + 0.3 * range;
   return {
     valuationIndex,
     lowLine,
-    count: ((days * 0.2 - valuationIndex) * 10 + ((lowLine - valuation) / range) * 1000)
+    count: parseInt((days * 0.3 - valuationIndex) * 10 + ((lowLine - valuation) / range) * 1000)
   };
 };
+
+// 判断搞点
+exports.judgeHighPoint = function (valuation, netValueSort, days) {
+  let valuationIndex = 0;
+  // 计算当前净值处于的位置
+  netValueSort.forEach(function (item, index) {
+    if (valuation > item.netValue) {
+      valuationIndex += item.times;
+    }
+  });
+  // 幅度20%的位置
+  const range = netValueSort[netValueSort.length - 1].netValue - netValueSort[0].netValue;
+  const highLine = netValueSort[netValueSort.length - 1].netValue - 0.3 * range;
+  return {
+    valuationIndex,
+    highLine,
+    count: parseInt((valuationIndex - days * 0.7) * 10 + (( valuation - highLine) / range) * 1000)
+  };
+};
+
 // 获取支撑线
 exports.getSupportLine = function (netValueSort) {
   const start = netValueSort[0].netValue;

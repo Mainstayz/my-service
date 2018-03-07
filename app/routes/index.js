@@ -70,5 +70,6 @@ router.post('/schedule/addSchedule', controllers.scheduleController.addSchedule)
 router.get('/schedule/getSchedules', controllers.scheduleController.getSchedules);
 router.get('/schedule/updateSchedule', controllers.scheduleController.updateSchedule);
 router.get('/schedule/deleteSchedule', controllers.scheduleController.deleteSchedule);
+router.get('/schedule/verifyOpening', controllers.scheduleController.verifyOpening);
 
 module.exports = router;
