@@ -32,7 +32,7 @@ rule.minute = minute;
 
 function updateValuation() {
   scheduleService.getSchedule('updateValuation').then((data)=>{
-    if (data.open) {
+    if (data && data.open) {
       request({
         method: 'get',
         url: `http://localhost:${config.server.port || 8080}/myService/analyze/updateValuation`

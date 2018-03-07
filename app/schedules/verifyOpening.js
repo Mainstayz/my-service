@@ -22,18 +22,16 @@ const scheduleService = require('../services/schedule');
 let rule = new schedule.RecurrenceRule();
 
 rule.dayOfWeek = [new schedule.Range(1, 5)];
-rule.hour = [9];
-let minute = [];
-for (let k = 0; k < 60; k += 5) {
-  minute.push(k);
-}
-rule.minute = minute;
+// 平时不用
+rule.hour = [10, 13];
 
 function verifyOpening() {
   scheduleService.getSchedule('verifyOpening').then((data) => {
-    if (data.open) {
+    if (data && data.open) {
       scheduleService.verifyOpening().then((opening) => {
-        if (opening) {
+        if (opening === 'over') {
+          return false;
+        } else if (opening === true) {
           // 更新净值
           request({
             method: 'get',
@@ -49,6 +47,10 @@ function verifyOpening() {
             return request({
               method: 'get',
               url: `http://localhost:${config.server.port || 8080}/myService/analyze/addRecentNetValue`
+            });
+          }).then(() => {
+            // 开启估值更新
+            scheduleService.updateSchedule('updateValuation', true).then(()=>{
             });
           }).catch(function (err) {
             logger.error(err);

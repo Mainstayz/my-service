@@ -21,5 +21,6 @@ exports.UserFund = require('./user_fund');
 exports.FocusFund = require('./focus_fund');
 exports.Strategy = require('./strategy');
 exports.Schedule = require('./schedule');
+exports.OpeningAudit = require('./opening_audit');
 exports.fields_table = require('./fields_table');
 
