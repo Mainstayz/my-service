@@ -478,7 +478,9 @@ exports.getFocusStrategy = async function (userId) {
     strategy[k].has = false;
     userFund.forEach(function (item) {
       if (item.fund.toString() === strategy[k]._id.toString()) {
-        strategy[k].has = true;
+        if (item.count > 0) {
+          strategy[k].has = true;
+        }
       }
     });
     strategyList.push(strategy[k]);
