@@ -89,6 +89,10 @@ exports.importFunds = async function (codes) {
   return this.addFunds(codeList);
 };
 
+exports.updateFundByCode = async function (code, data) {
+  return FundProxy.updateByCode(code, data)
+};
+
 exports.deleteFundByCode = async function (code) {
   return FundProxy.deleteByCode(code)
 };
@@ -185,4 +189,3 @@ exports.getFocusFundsByUserIdWithFund = async function (userId) {
 exports.checkFocusFundByQuery = async function (query) {
   return FocusFundProxy.check(query);
 };
-

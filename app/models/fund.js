@@ -13,6 +13,8 @@ const schema = new Schema({
   net_value_date: Date,
   // 是否可购
   sell: Boolean,
+  // 是否低费率
+  lowRate: Boolean,
   // 估值
   valuation_tiantian: Number,
   valuation_haomai: Number,

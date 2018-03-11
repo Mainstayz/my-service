@@ -23,7 +23,7 @@ axios({
   // 强制更新净值
   // url: 'http://127.0.0.1:3002/myService/analyze/updateRecentNetValue'
   // 判断开盘
-  url: 'http://127.0.0.1:3002/myService/schedule/verifyOpening'
+  // url: 'http://127.0.0.1:3002/myService/schedule/verifyOpening'
 }).then((data) => {
   if (data.data.success) {
     console.log(data.data.data);

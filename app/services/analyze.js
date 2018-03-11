@@ -462,6 +462,30 @@ exports.getMyStrategy = async function (userId) {
   return strategyList;
 };
 
+// 低费率建议
+exports.getLowRateStrategy = async function (userId) {
+  const funds = await FundProxy.find({lowRate: true});
+  const userFund = await UserFundProxy.find({user: userId});
+  let strategy = this.analyzeStrategyMap(funds);
+  let strategyList = [];
+  for (let k in strategy) {
+    strategy[k].has = false;
+    userFund.forEach(function (item) {
+      if (item.fund.toString() === strategy[k]._id.toString()) {
+        if (item.count > 0) {
+          strategy[k].has = true;
+        }
+      }
+    });
+    strategyList.push(strategy[k]);
+  }
+  // 按暴跌指数排名
+  strategyList.sort(function (a, b) {
+    return b.slumpCount - a.slumpCount;
+  });
+  return strategyList;
+};
+
 exports.getFocusStrategy = async function (userId) {
   const focusFund = await FocusFundProxy.find({user: userId});
   const userFund = await UserFundProxy.find({user: userId});

@@ -40,3 +40,16 @@ exports.getMyStrategy = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.getLowRateStrategy = async function (ctx) {
+  const tokenRaw = ctx.tokenRaw;
+  try {
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    const strategy = await ctx.services.analyze.getLowRateStrategy(userRaw._id);
+    ctx.body = ctx.resuccess({
+      strategy
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
