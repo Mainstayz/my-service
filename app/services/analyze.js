@@ -358,7 +358,7 @@ exports.analyzeStrategyMap = function (funds) {
         strategy[item.code].times++;
         strategy[item.code].rule.push('isSlump');
       }
-      if (isWeekSlump) {
+      if (result.isWeekSlump) {
         strategy[item.code].rule.push('isWeekSlump');
       }
       // 是否是暴涨
