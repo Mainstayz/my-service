@@ -399,21 +399,28 @@ exports.judgeSlump = function (valuation, list) {
   let dayList = [3, 5, 8, 10, 13, 15];
   let rateList = [];
   let count = 0;
+  let weekCount = 0;
   // 之前的数据只要25个
   const step = 1 / 25;
   for (let i = 0; i < 25; i++) {
     //0的时候是近一天的涨跌
     const tempRate = numberUtil.countDifferenceRate(valuation, list[i]['net_value']);
+    const tempCount = tempRate * (2 - (i * step));
     //记下分数，加大近期的权重
-    count += tempRate * (2 - (i * step));
+    count += tempCount;
+    if (i < 5) {
+      weekCount += tempCount;
+    }
     if (dayList.indexOf(i + 1) !== -1) {
       rateList.push({day: i + 1, rate: tempRate});
     }
   }
   count = parseInt(-count, 10);
+  weekCount = parseInt(-weekCount, 10);
   return {
     RateList: rateList,
-    count
+    count,
+    weekCount
   };
 };
 
