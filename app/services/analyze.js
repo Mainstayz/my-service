@@ -111,7 +111,8 @@ exports.updateRecentNetValue = async function () {
   const funds = await FundProxy.findSimple({});
   let requestList = [];
   funds.forEach(function (item) {
-    requestList.push(fundUtil.getRecentNetValue(item.code, 260));
+    // 近两年数据
+    requestList.push(fundUtil.getRecentNetValue(item.code, 520));
   });
   const fetchData = await Promise.all(requestList);
   let optionList = [];
@@ -146,9 +147,9 @@ exports.addRecentNetValue = async function () {
     newData.net_value_date = moment(fund['net_value_date']).format('YYYY-MM-DD');
     // 添加数据
     recentNetValue.unshift(newData);
-    // 超过260天数据就截掉
-    if (recentNetValue.length > 260) {
-      recentNetValue = recentNetValue.slice(0, 260)
+    // 超过520天数据就截掉
+    if (recentNetValue.length > 520) {
+      recentNetValue = recentNetValue.slice(0, 520)
     }
     await FundProxy.updateByCode(funds[k].code, {
       recent_net_value: JSON.stringify({data: recentNetValue})
