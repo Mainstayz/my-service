@@ -522,3 +522,36 @@ exports.getFocusStrategy = async function (userId) {
   return strategyList;
 };
 
+// 回归测试
+exports.regressionTest = async function () {
+  const funds = await FundProxy.find({});
+  let result = [];
+  funds.forEach(function (fund) {
+    const list = JSON.parse(fund['recent_net_value']).data;
+    // 数据大于285天
+    if (list.length > 285) {
+      for (let i = 260; i > 25; i--) {
+        const day = i;
+        const valuation = list[day]['net_value'];
+        const slumpInfo = analyzeUtil.judgeSlump2(valuation, list, day);
+        if (slumpInfo.count > 20) {
+          const tempRate = analyzeUtil.countIncome(valuation, list, day)
+          result.push({
+            count: slumpInfo.count,
+            tempRate
+          })
+        }
+      }
+    }
+  });
+  // let map = {};
+  // result.forEach(function (item) {
+  //   for (let i = 20; i < 4000; i+=20) {
+  //     if (item.count>=i && item.count) {
+  //
+  //     }
+  //   }
+  // });
+  console.log(result)
+};
+

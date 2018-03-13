@@ -424,6 +424,35 @@ exports.judgeSlump = function (valuation, list) {
   };
 };
 
+exports.judgeSlump2 = function (valuation, list, index) {
+  let dayList = [3, 5, 8, 10, 13, 15];
+  let rateList = [];
+  let count = 0;
+  let weekCount = 0;
+  // 之前的数据只要25个
+  const step = 1 / 25;
+  for (let i = 0; i < 25; i++) {
+    //0的时候是近一天的涨跌
+    const tempRate = numberUtil.countDifferenceRate(valuation, list[i + index]['net_value']);
+    const tempCount = tempRate * (2 - (i * step));
+    //记下分数，加大近期的权重
+    count += tempCount;
+    if (i < 5) {
+      weekCount += tempCount;
+    }
+    if (dayList.indexOf(i + 1) !== -1) {
+      rateList.push({day: i + 1, rate: tempRate});
+    }
+  }
+  count = parseInt(-count, 10);
+  weekCount = parseInt(-weekCount, 10);
+  return {
+    RateList: rateList,
+    count,
+    weekCount
+  };
+};
+
 // 判断低点
 exports.judgeLowPoint = function (valuation, netValueSort, days) {
   // netValueSort是已经被处理过的
@@ -508,3 +537,14 @@ exports.getCostLine = function (netValueSort) {
   return numberUtil.keepFourDecimals(value / times);
 };
 
+exports.countIncome = function (valuation, list, index) {
+  let rateList = [];
+  for (let i = 0; i < 25; i++) {
+    rateList.push(list[index - i]['net_value']);
+    rateList.sort(function (a, b) {
+      return b - a;
+    });
+  }
+  const tempRate = numberUtil.countDifferenceRate(rateList[0], valuation);
+  return tempRate;
+};

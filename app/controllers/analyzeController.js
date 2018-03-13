@@ -90,3 +90,12 @@ exports.updateLowRateFund = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.regressionTest = async function (ctx) {
+  try {
+    await ctx.services.analyze.regressionTest();
+    ctx.body = ctx.resuccess();
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
