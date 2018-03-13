@@ -99,3 +99,15 @@ exports.regressionTest = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+
+exports.getRegressionSlump = async function (ctx) {
+  try {
+    const result = await ctx.services.analyze.getRegressionSlump();
+    ctx.body = ctx.resuccess({
+      result: JSON.parse(result)
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};

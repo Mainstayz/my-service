@@ -60,6 +60,8 @@ router.get('/analyze/betterValuation', controllers.analyzeController.betterValua
 router.get('/analyze/addRecentNetValue', controllers.analyzeController.addRecentNetValue);
 router.post('/analyze/updateLowRateFund', controllers.analyzeController.updateLowRateFund);
 router.get('/analyze/regressionTest', controllers.analyzeController.regressionTest);
+router.get('/analyze/getRegressionSlump', controllers.analyzeController.getRegressionSlump);
+
 
 //文件上传
 router.post('/upload/importFund', upload.single('fundFile'), controllers.fundController.importFunds);

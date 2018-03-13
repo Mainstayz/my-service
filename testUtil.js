@@ -25,7 +25,8 @@ axios({
   // 判断开盘
   // url: 'http://127.0.0.1:3002/myService/schedule/verifyOpening'
   // 回归
-  url: 'http://127.0.0.1:3002/myService/analyze/regressionTest'
+  // url: 'http://127.0.0.1:3002/myService/analyze/regressionTest',
+   url: 'http://127.0.0.1:3002/myService/analyze/getRegressionSlump'
 }).then((data) => {
   if (data.data.success) {
     console.log(data.data.data);
