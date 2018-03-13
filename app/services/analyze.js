@@ -26,7 +26,6 @@ exports.updateValuation = async function () {
     fundUtil.getFundInfo('161725')
   ]);
   const fetchData = await fetchList;
-  logger.info('request end');
   const tiantianData = fetchData[0];
   const haomaiData = fetchData[1];
   // 估值时间
@@ -184,7 +183,7 @@ exports.updateBaseInfo = async function () {
 };
 
 exports.getFundAnalyzeRecent = function (fund) {
-  const list = JSON.parse(fund['recent_net_value']).data;
+  const list = JSON.parse(fund['recent_net_value']).data.slice(0, 260);
   // 获取估值
   const valuationInfo = analyzeUtil.getBetterValuation(fund);
   /**
