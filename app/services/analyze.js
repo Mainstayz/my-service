@@ -344,6 +344,11 @@ exports.analyzeStrategyMap = function (funds) {
         strategy[item.code].times++;
         strategy[item.code].rule.push('internal');
       }
+      // 从连续上看概率
+      if (result.internal < 20) {
+        strategy[item.code].times++;
+        strategy[item.code].rule.push('downInternal');
+      }
       // 是否是历史新低
       if (result.isMin) {
         strategy[item.code].times++;
