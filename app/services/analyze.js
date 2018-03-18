@@ -288,10 +288,10 @@ exports.getFundAnalyzeRecent = function (fund) {
       // 是否有支撑
       isSupport: supportCount >= 260 * 0.3,
       // 是否暴跌
-      isSlump: slumpInfo.count > 20,
-      isWeekSlump: slumpInfo.weekCount > 15,
-      isBoom: -slumpInfo.count > 20,
-      isWeekBoom: -slumpInfo.weekCount > 13,
+      isSlump: slumpInfo.count > 10,
+      isWeekSlump: slumpInfo.weekCount > 5,
+      isBoom: -slumpInfo.count > 10,
+      isWeekBoom: -slumpInfo.weekCount > 3,
       costLine,
       costLineHalf
     },
