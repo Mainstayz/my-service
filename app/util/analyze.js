@@ -405,6 +405,7 @@ exports.judgeSlump = function (valuation, list) {
   for (let i = 0; i < 25; i++) {
     //0的时候是近一天的涨跌
     const tempRate = numberUtil.countDifferenceRate(i === 0 ? valuation : list[i - 1]['net_value'], list[i]['net_value']);
+    const tempRate2 = numberUtil.countDifferenceRate(valuation, list[i]['net_value']);
     const tempCount = tempRate * (2 - (i * step));
     //记下分数，加大近期的权重
     count += tempCount;
@@ -412,7 +413,7 @@ exports.judgeSlump = function (valuation, list) {
       weekCount += tempCount;
     }
     if (dayList.indexOf(i + 1) !== -1) {
-      rateList.push({day: i + 1, rate: tempRate});
+      rateList.push({day: i + 1, rate: tempRate2});
     }
   }
   count = parseInt(-count, 10);
