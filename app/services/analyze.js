@@ -112,7 +112,7 @@ exports.updateRecentNetValue = async function () {
   let requestList = [];
   funds.forEach(function (item) {
     // 近两年数据
-    requestList.push(fundUtil.getRecentNetValue(item.code,260));
+    requestList.push(fundUtil.getRecentNetValue(item.code, 260));
   });
   const fetchData = await Promise.all(requestList);
   let optionList = [];
@@ -148,7 +148,7 @@ exports.addRecentNetValue = async function () {
     // 添加数据
     recentNetValue.unshift(newData);
     // 超过260天数据就截掉
-    if (recentNetValue.length >260) {
+    if (recentNetValue.length > 260) {
       recentNetValue = recentNetValue.slice(0, 260)
     }
     await FundProxy.updateByCode(funds[k].code, {
@@ -299,6 +299,7 @@ exports.getFundAnalyzeRecent = function (fund) {
       slumpCount: slumpInfo.count,
       slumpWeekCount: slumpInfo.weekCount,
       boomCount: -slumpInfo.count,
+      boomWeekCount: -slumpInfo.weekCount,
       lowCount: lowPointInfo.count,
       lowHalfCount: lowPointInfoHalf.count,
       highCount: highPointInfo.count,
@@ -324,7 +325,9 @@ exports.analyzeStrategyMap = function (funds) {
         valuationRate: fundAnalyzeRecent.valuationRate,
         slumpCount: count.slumpCount,
         boomCount: count.boomCount,
+        boomWeekCount: count.boomWeekCount,
         lowCount: count.lowCount,
+        slumpWeekCount: count.slumpWeekCount,
         lowHalfCount: count.lowHalfCount,
         highCount: count.highCount,
         highHalfCount: count.highHalfCount,
@@ -408,7 +411,7 @@ exports.getStrategyList = async function () {
   }
   // 按暴跌指数排名
   strategyList.sort(function (a, b) {
-    return b.slumpCount - a.slumpCount;
+    return b.slumpWeekCount - a.slumpWeekCount;
   });
   return strategyList;
 };
@@ -468,7 +471,7 @@ exports.getMyStrategy = async function (userId) {
   }
   // 按暴跌指数排名
   strategyList.sort(function (a, b) {
-    return b.slumpCount - a.slumpCount;
+    return b.slumpWeekCount - a.slumpWeekCount;
   });
   return strategyList;
 };
@@ -492,7 +495,7 @@ exports.getLowRateStrategy = async function (userId) {
   }
   // 按暴跌指数排名
   strategyList.sort(function (a, b) {
-    return b.slumpCount - a.slumpCount;
+    return b.slumpWeekCount - a.slumpWeekCount;
   });
   return strategyList;
 };
@@ -522,7 +525,7 @@ exports.getFocusStrategy = async function (userId) {
   }
   // 按暴跌指数排名
   strategyList.sort(function (a, b) {
-    return b.slumpCount - a.slumpCount;
+    return b.slumpWeekCount - a.slumpWeekCount;
   });
   return strategyList;
 };
