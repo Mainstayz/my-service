@@ -289,7 +289,7 @@ exports.getFundAnalyzeRecent = function (fund) {
       isSupport: supportCount >= 260 * 0.3,
       // 是否暴跌
       isSlump: slumpInfo.count > 10,
-      isWeekSlump: slumpInfo.weekCount > 5,
+      isWeekSlump: slumpInfo.weekCount > 6,
       isBoom: -slumpInfo.count > 10,
       isWeekBoom: -slumpInfo.weekCount > 4,
       costLine,
@@ -377,7 +377,7 @@ exports.analyzeStrategyMap = function (funds) {
         strategy[item.code].saleRule.push('isBoom');
       }
       if (result.isWeekBoom) {
-        strategy[item.code].rule.push('isWeekBoom');
+        strategy[item.code].saleRule.push('isWeekBoom');
       }
       // 是否是高位
       // if (result.isHigh) {
