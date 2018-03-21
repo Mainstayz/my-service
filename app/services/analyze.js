@@ -406,10 +406,9 @@ exports.getStrategyList = async function () {
     if (strategy[k].times !== 0) {
       // 如果只有一种，那只能是暴跌
       if (strategy[k].times === 1) {
-        if (strategy[k].rule.indexOf('isSlump') === -1 || strategy[k].rule.indexOf('isWeekSlump')) {
+        if (strategy[k].rule.indexOf('isSlump') === -1 || strategy[k].rule.indexOf('isWeekSlump') === -1) {
           continue;
         }
-
       }
       strategyList.push(strategy[k])
     }
