@@ -414,7 +414,9 @@ exports.judgeSlump = function (valuation, list) {
     // 近11天
     if (i < 11) {
       weekCountList.push(tempRate + last);
-      weekCountList2.push(tempRate + last);
+      if (i < 6) {
+        weekCountList2.push(tempRate + last);
+      }
       last += tempRate;
     }
     if (dayList.indexOf(i + 1) !== -1) {
@@ -425,14 +427,14 @@ exports.judgeSlump = function (valuation, list) {
   weekCountList.sort(function (a, b) {
     return a - b;
   });
-  console.log(weekCountList2)
-  console.log(-(weekCountList[0]))
-  console.log(weekCountList[weekCountList.length-1])
+  weekCountList2.sort(function (a, b) {
+    return b - a;
+  });
   return {
     RateList: rateList,
     count,
     weekCount: -(weekCountList[0]),
-    weekCountBoom: weekCountList[weekCountList.length-1]
+    weekCountBoom: weekCountList2[0]
   };
 };
 
