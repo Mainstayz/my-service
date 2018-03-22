@@ -399,7 +399,9 @@ exports.judgeSlump = function (valuation, list) {
   let dayList = [3, 5, 8, 10, 13, 15];
   let rateList = [];
   let count = 0;
-  let weekCount = 0;
+  let weekCountList = [];
+  let weekCountList2 = [];
+  let last = 0;
   // 之前的数据只要25个
   const step = 1 / 25;
   for (let i = 0; i < 25; i++) {
@@ -409,19 +411,28 @@ exports.judgeSlump = function (valuation, list) {
     const tempCount = tempRate * (2 - (i * step));
     //记下分数，加大近期的权重
     count += tempCount;
-    if (i < 5) {
-      weekCount += tempCount;
+    // 近11天
+    if (i < 11) {
+      weekCountList.push(tempRate + last);
+      weekCountList2.push(tempRate + last);
+      last += tempRate;
     }
     if (dayList.indexOf(i + 1) !== -1) {
       rateList.push({day: i + 1, rate: tempRate2});
     }
   }
   count = parseInt(-count, 10);
-  weekCount = parseInt(-weekCount, 10);
+  weekCountList.sort(function (a, b) {
+    return a - b;
+  });
+  console.log(weekCountList2)
+  console.log(-(weekCountList[0]))
+  console.log(weekCountList[weekCountList.length-1])
   return {
     RateList: rateList,
     count,
-    weekCount
+    weekCount: -(weekCountList[0]),
+    weekCountBoom: weekCountList[weekCountList.length-1]
   };
 };
 
