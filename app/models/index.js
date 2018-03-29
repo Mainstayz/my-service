@@ -19,8 +19,8 @@ exports.LogAudit = require('./log_audit');
 exports.Fund = require('./fund');
 exports.UserFund = require('./user_fund');
 exports.FocusFund = require('./focus_fund');
-exports.Strategy = require('./strategy');
-exports.Schedule = require('./schedule');
-exports.OpeningAudit = require('./opening_audit');
+exports.OptionalFund = require('./optional_fund');
+exports.Dictionaries = require('./dictionaries');
+
 exports.fields_table = require('./fields_table');
 

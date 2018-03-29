@@ -8,6 +8,13 @@ const Schema = mongoose.Schema;
 const schema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User'},
   fund: {type: Schema.Types.ObjectId, ref: 'Fund'},
+  //关注时净值
+  focus_net_value: Number,
+  //关注日期
+  focus_date: {
+    type: Date,
+    default: Date.now
+  },
   create_at: {
     type: Date,
     default: Date.now

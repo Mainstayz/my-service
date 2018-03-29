@@ -1,5 +1,5 @@
 /**
- * Created by xiaobxia on 2018/1/25.
+ * Created by xiaobxia on 2018/3/29.
  */
 const mongoose = require('mongoose');
 
@@ -8,26 +8,20 @@ const Schema = mongoose.Schema;
 const schema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User'},
   fund: {type: Schema.Types.ObjectId, ref: 'Fund'},
-  //份额
-  shares: Number,
-  //所在策略组
-  strategy: String,
-  //持仓成本
-  cost: Number,
-  //买入日期
-  buy_date: {
+  //加入自选时净值
+  optional_net_value: Number,
+  //加入自选时日期
+  optional_date: {
     type: Date,
     default: Date.now
   },
-  //目标净值
-  target_net_value: Number,
   create_at: {
     type: Date,
     default: Date.now
   }
 });
 // 一般是以用户id查
-schema.index({user: 1, fund: 1}, {unique: true});
+schema.index({ user: 1, fund: 1 }, { unique: true });
 schema.index({create_at: -1});
 
-module.exports = mongoose.model('UserFund', schema);
+module.exports = mongoose.model('FocusFund', schema);

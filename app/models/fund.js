@@ -18,6 +18,7 @@ const schema = new Schema({
   // 估值
   valuation_tiantian: Number,
   valuation_haomai: Number,
+  valuation_date: Date,
   // 长度15天
   better_count: {
     type: String,
@@ -25,7 +26,6 @@ const schema = new Schema({
   },
   // 近期数据
   recent_net_value: String,
-  valuation_date: Date,
   create_at: {
     type: Date,
     default: Date.now
