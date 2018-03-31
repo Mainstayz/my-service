@@ -3,7 +3,7 @@
  */
 const moment = require('moment');
 const Proxy = require('../proxy');
-const fundUtil = require('../util/fund');
+const fundUtil = require('../util/fundInfo');
 
 const FundProxy = Proxy.Fund;
 const ScheduleProxy = Proxy.Schedule;

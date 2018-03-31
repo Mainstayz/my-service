@@ -2,7 +2,7 @@
  * Created by xiaobxia on 2018/1/26.
  */
 const Proxy = require('../proxy');
-const fundUtil = require('../util/fund');
+const fundUtil = require('../util/fundInfo');
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;

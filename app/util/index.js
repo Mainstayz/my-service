@@ -1,6 +1,7 @@
 /**
  * Created by xiaobxia on 2017/11/1.
  */
-exports.fundUtil  = require('./fund');
+exports.fundInfoUtil  = require('./fundInfo');
+exports.fundBaseUtil  = require('./fundBase');
 exports.analyzeUtil  = require('./analyze');
 exports.numberUtil  = require('./number');

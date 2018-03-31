@@ -10,7 +10,7 @@ function resolveRoot(dir) {
 module.exports = {
   root: path.resolve(__dirname, '../'),
   project: {
-    projectName: "myService"
+    projectName: "myServiceV2"
   },
   server: {
     port: 3002,
@@ -26,7 +26,7 @@ module.exports = {
     productLogLevel: 'info'
   },
   uploadDir: 'uploads',
-  db: 'mongodb://127.0.0.1:27017/myService',
+  db: 'mongodb://127.0.0.1:27017/myServiceV2',
   qiniu: {
     zone: 'Zone_z2'
   },
