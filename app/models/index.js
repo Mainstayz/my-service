@@ -16,10 +16,16 @@ mongoose.connect(config.db, {
 
 exports.User = require('./user');
 exports.LogAudit = require('./log_audit');
+
 exports.Fund = require('./fund');
+
+exports.UserFundAccount = require('./user_fund_account');
+exports.UserNetValue = require('./user_net_value');
 exports.UserFund = require('./user_fund');
 exports.FocusFund = require('./focus_fund');
 exports.OptionalFund = require('./optional_fund');
+
+
 exports.Dictionaries = require('./dictionaries');
 
 exports.fields_table = require('./fields_table');

@@ -7,6 +7,10 @@ const FundModel = models.Fund;
 
 exports.FundModel = FundModel;
 
+/**
+ * 基本
+ */
+
 exports.newAndSave = function (data) {
   const fund = new FundModel(data);
   return fund.save();
@@ -16,16 +20,14 @@ exports.delete = function (data) {
   return FundModel.remove(data);
 };
 
-exports.deleteByCode = function (code) {
-  return FundModel.remove({code});
-};
-
-exports.updateByCode = function (code, data) {
-  return FundModel.update({
-    code
-  }, {
+exports.update = function (query, data) {
+  return FundModel.update(query, {
     $set: data
   });
+};
+
+exports.check = function (query, opt) {
+  return FundModel.findOne(query, '_id', opt);
 };
 
 exports.find = function (query, opt) {
@@ -40,6 +42,16 @@ exports.count = function (query) {
   return FundModel.count(query);
 };
 
+
+
+exports.deleteByCode = function (code) {
+  return FundModel.remove({code});
+};
+
+
+
+
+
 const baseInfo = models.fields_table.fundBase.join(' ');
 
 exports.findBase = function (query, opt) {
@@ -50,17 +62,5 @@ exports.findOneBase = function (query, opt) {
   return FundModel.findOne(query, baseInfo, opt);
 };
 
-const simpleInfo = models.fields_table.fundSimple.join(' ');
 
-exports.findSimple = function (query, opt) {
-  return FundModel.find(query, simpleInfo, opt);
-};
-
-exports.findOneSimple = function (query, opt) {
-  return FundModel.findOne(query, simpleInfo, opt);
-};
-
-exports.check = function (query, opt) {
-  return FundModel.findOne(query, '_id', opt);
-};
 
