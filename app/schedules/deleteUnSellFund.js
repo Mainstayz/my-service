@@ -1,5 +1,5 @@
 /**
- * Created by xiaobxia on 2018/2/2.
+ * Created by xiaobxia on 2018/4/1.
  */
 const schedule = require('node-schedule');
 const request = require('request-promise');
@@ -22,20 +22,14 @@ const scheduleService = require('../services/schedule');
 let rule = new schedule.RecurrenceRule();
 
 rule.dayOfWeek = [new schedule.Range(1, 5)];
-// 10-12,13-16
-rule.hour = [10, 11, 13, 14, 15];
-let minute = [];
-for (let k = 0; k < 60; k += 3) {
-  minute.push(k);
-}
-rule.minute = minute;
+rule.hour = [12];
 
-function updateValuation() {
-  scheduleService.getSchedule('updateValuation').then((data)=>{
+function deleteUnSellFund() {
+  scheduleService.getSchedule('deleteUnSellFund').then((data)=>{
     if (data && data.value === 'open') {
       request({
         method: 'get',
-        url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/schedule/updateValuation`
+        url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/schedule/deleteUnSellFund`
       }).catch(function (err) {
         logger.error(err);
       });
@@ -43,6 +37,6 @@ function updateValuation() {
   });
 }
 
-const job = schedule.scheduleJob(rule, updateValuation);
+const job = schedule.scheduleJob(rule, deleteUnSellFund);
 
 module.exports = job;

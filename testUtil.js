@@ -25,7 +25,7 @@ axios({
   // 判断开盘
   // url: 'http://127.0.0.1:3002/${config.project.projectName}/schedule/verifyOpening'
   // 回归
-  url: 'http://127.0.0.1:3002/myServiceV2/schedule/deleteUnSellFund',
+  url: 'http://127.0.0.1:3002/myServiceV2/schedule/verifyOpening',
 }).then((data) => {
   if (data.data.success) {
     console.log(data.data.data);

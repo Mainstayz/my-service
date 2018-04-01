@@ -5,6 +5,7 @@ const Proxy = require('../proxy');
 const fundInfoUtil = require('../util/fundInfo');
 const localConst = require('../const');
 const client = require('../common/redis');
+const moment = require('moment');
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
@@ -157,13 +158,13 @@ exports.importFunds = async function (funds) {
 //验证开市
 exports.verifyOpening = async function () {
   const nowDay = moment().format('YYYY-MM-DD');
-  const fundData = await fundUtil.getFundsInfo();
+  const fundData = await fundInfoUtil.getFundsInfo();
   // 如果相同就说明开盘了
   const isToday = nowDay === fundData.valuation_date;
   let records = await client.getAsync(localConst.OPENING_RECORDS_REDIS_KEY);
   //如果有记录
   if (records) {
-    records = JOSN.parse(records);
+    records = JSON.parse(records);
     // 没开市，就不会有记录
     if (records[0] === nowDay) {
       return 'over';
@@ -180,6 +181,7 @@ exports.verifyOpening = async function () {
     }
   }
   records = records.slice(0, 60);
+  console.log(records)
   await client.setAsync(localConst.OPENING_RECORDS_REDIS_KEY, JSON.stringify(records));
   return isToday;
 };
@@ -191,10 +193,10 @@ exports.updateValuation = async function () {
   const funds = await FundProxy.findBase({});
   // 抓取数据
   const fetchList = Promise.all([
-    fundUtil.getFundsInfo(),
-    fundUtil.getFundsInfoHaomai(),
+    fundInfoUtil.getFundsInfo(),
+    fundInfoUtil.getFundsInfoHaomai(),
     // 估值时间以招商白酒为基准
-    fundUtil.getFundInfo('161725')
+    fundInfoUtil.getFundInfo('161725')
   ]);
   const fetchData = await fetchList;
   const tiantianData = fetchData[0];
@@ -281,7 +283,7 @@ exports.updateRecentNetValue = async function () {
   const funds = await FundProxy.findBase({});
   let requestList = [];
   funds.forEach(function (item) {
-    requestList.push(fundUtil.getRecentNetValue(item.code, localConst.RECENT_NET_VALUE_DAYS));
+    requestList.push(fundInfoUtil.getRecentNetValue(item.code, localConst.RECENT_NET_VALUE_DAYS));
   });
   const fetchData = await Promise.all(requestList);
   let optionList = [];
@@ -331,7 +333,7 @@ exports.updateBaseInfo = async function () {
   // 得到基金，有的才更新
   const funds = await FundProxy.findBase({});
   // 得到基金信息
-  const fundsInfo = await fundUtil.getFundsInfo();
+  const fundsInfo = await fundInfoUtil.getFundsInfo();
   const fundInfos = fundsInfo.funds;
   let optionList = [];
   for (let k = 0; k < funds.length; k++) {

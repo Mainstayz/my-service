@@ -36,18 +36,18 @@ function verifyOpening() {
           // 更新净值
           request({
             method: 'get',
-            url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/analyze/updateBaseInfo`
+            url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/schedule/updateBaseInfo`
           }).then(() => {
             // 更好的估值源
             return request({
               method: 'get',
-              url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/analyze/betterValuation`
+              url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/schedule/betterValuation`
             });
           }).then(() => {
             // 添加净值记录
             return request({
               method: 'get',
-              url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/analyze/addRecentNetValue`
+              url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/schedule/addRecentNetValue`
             });
           }).then(() => {
             // 开启估值更新

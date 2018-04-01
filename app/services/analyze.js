@@ -11,7 +11,7 @@ const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
 const StrategyProxy = Proxy.Strategy;
 const FocusFundProxy = Proxy.FocusFund;
-const fundUtil = util.fundUtil;
+const fundInfoUtil = util.fundInfoUtil;
 const numberUtil = util.numberUtil;
 const analyzeUtil = util.analyzeUtil;
 
