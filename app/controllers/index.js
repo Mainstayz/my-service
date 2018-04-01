@@ -8,5 +8,6 @@ exports.analyzeController = require('./analyzeController');
 exports.strategyController = require('./strategyController');
 exports.focusFundController = require('./focusFundController');
 exports.scheduleController = require('./scheduleController');
+exports.fundScheduleController = require('./fundScheduleController');
 exports.uploadController = require('./uploadController');
 exports.exportController = require('./exportController');

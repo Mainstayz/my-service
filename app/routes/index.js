@@ -67,7 +67,6 @@ router.get('/strategy/getLowRateStrategy', controllers.strategyController.getLow
  * 分析模块
  */
 router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
-router.post('/analyze/updateLowRateFund', controllers.analyzeController.updateLowRateFund);
 router.get('/analyze/regressionTest', controllers.analyzeController.regressionTest);
 router.get('/analyze/getRegressionSlump', controllers.analyzeController.getRegressionSlump);
 
@@ -90,13 +89,18 @@ router.post('/download/exportMyFund', controllers.exportController.exportMyFunds
  */
 router.post('/schedule/addSchedule', controllers.scheduleController.addSchedule);
 router.get('/schedule/deleteSchedule', controllers.scheduleController.deleteSchedule);
-router.get('/schedule/updateSchedule', controllers.scheduleController.updateSchedule);
+router.post('/schedule/updateSchedule', controllers.scheduleController.updateSchedule);
+router.post('/schedule/changeScheduleStatus', controllers.scheduleController.changeScheduleStatus);
 router.get('/schedule/getSchedules', controllers.scheduleController.getSchedules);
-router.get('/schedule/verifyOpening', controllers.scheduleController.verifyOpening);
-router.get('/analyze/updateBaseInfo', controllers.scheduleController.updateBaseInfo);
-router.get('/analyze/updateValuation', controllers.scheduleController.updateValuation);
-router.get('/analyze/updateRecentNetValue', controllers.scheduleController.updateRecentNetValue);
-router.get('/analyze/betterValuation', controllers.scheduleController.betterValuation);
-router.get('/analyze/addRecentNetValue', controllers.scheduleController.addRecentNetValue);
+
+router.get('/schedule/verifyOpening', controllers.fundScheduleController.verifyOpening);
+router.get('/schedule/updateBaseInfo', controllers.fundScheduleController.updateBaseInfo);
+router.get('/schedule/updateValuation', controllers.fundScheduleController.updateValuation);
+router.get('/schedule/updateRecentNetValue', controllers.fundScheduleController.updateRecentNetValue);
+router.get('/schedule/betterValuation', controllers.fundScheduleController.betterValuation);
+router.get('/schedule/addRecentNetValue', controllers.fundScheduleController.addRecentNetValue);
+router.get('/schedule/deleteUnSellFund', controllers.fundScheduleController.deleteUnSellFund);
+router.post('/schedule/updateLowRateFund', controllers.fundScheduleController.updateLowRateFund);
+
 
 module.exports = router;

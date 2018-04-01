@@ -91,6 +91,7 @@ exports.getFunds = async function (ctx) {
       const valuationInfo = fundBaseUtil.getBetterValuation(fund);
       fund.valuation = valuationInfo.valuation;
       fund.valuationSource = valuationInfo.sourceName;
+      fund.better_count = '';
     });
     ctx.body = ctx.resuccess({
       list: funds.list,

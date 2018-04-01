@@ -7,6 +7,7 @@ const reqlib = require('app-root-path').require;
 const logger = require('../common/logger');
 const config = reqlib('/config/index');
 const scheduleService = require('../services/schedule');
+const fundService = require('../services/fund');
 /**
  * cron风格的
  *    *    *    *    *    *
@@ -27,30 +28,32 @@ rule.hour = [10, 13];
 
 function verifyOpening() {
   scheduleService.getSchedule('verifyOpening').then((data) => {
-    if (data && data.open) {
-      scheduleService.verifyOpening().then((opening) => {
+    if (data && data.value === 'open') {
+      fundService.verifyOpening().then((opening) => {
         if (opening === 'over') {
           return false;
         } else if (opening === true) {
           // 更新净值
           request({
             method: 'get',
-            url: `http://localhost:${config.server.port || 8080}/myService/analyze/updateBaseInfo`
+            url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/analyze/updateBaseInfo`
           }).then(() => {
             // 更好的估值源
             return request({
               method: 'get',
-              url: `http://localhost:${config.server.port || 8080}/myService/analyze/betterValuation`
+              url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/analyze/betterValuation`
             });
           }).then(() => {
             // 添加净值记录
             return request({
               method: 'get',
-              url: `http://localhost:${config.server.port || 8080}/myService/analyze/addRecentNetValue`
+              url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/analyze/addRecentNetValue`
             });
           }).then(() => {
             // 开启估值更新
-            scheduleService.updateSchedule('updateValuation', true).then(()=>{
+            scheduleService.updateSchedule('updateValuation', {
+              value: 'open'
+            }).then(()=>{
             });
           }).catch(function (err) {
             logger.error(err);

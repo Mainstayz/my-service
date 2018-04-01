@@ -4,6 +4,7 @@
 const Proxy = require('../proxy');
 const fundInfoUtil = require('../util/fundInfo');
 const localConst = require('../const');
+const client = require('../common/redis');
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
@@ -103,7 +104,7 @@ exports.addFunds = async function (codeList) {
   ];
   // 获取基金近期信息
   codeList.forEach(function (item) {
-    requestList.push(fundInfoUtil.getRecentNetValue(item, 260));
+    requestList.push(fundInfoUtil.getRecentNetValue(item, localConst.RECENT_NET_VALUE_DAYS));
   });
   const fetchData = await Promise.all(requestList);
   // 基本数据
@@ -134,46 +135,262 @@ exports.addFunds = async function (codeList) {
 };
 
 //导入基金
-exports.importFunds = async function (codes) {
-  const fundsTemp = await FundProxy.findSimple({});
+exports.importFunds = async function (funds) {
+  const fundsTemp = await FundProxy.findBase({});
   let codeList = [];
   // 把没导入过的导入
-  codes.forEach(function (item) {
+  funds.forEach(function (item) {
     let has = false;
     for (let k = 0; k < fundsTemp.length; k++) {
-      if (fundsTemp[k].code === item) {
+      if (fundsTemp[k].code === item.code) {
         has = true;
         break;
       }
     }
     if (!has) {
-      codeList.push(item);
+      codeList.push(item.code);
     }
   });
   return this.addFunds(codeList);
 };
 
-exports.updateFundByCode = async function (code, data) {
-  return FundProxy.updateByCode(code, data)
+//验证开市
+exports.verifyOpening = async function () {
+  const nowDay = moment().format('YYYY-MM-DD');
+  const fundData = await fundUtil.getFundsInfo();
+  // 如果相同就说明开盘了
+  const isToday = nowDay === fundData.valuation_date;
+  let records = await client.getAsync(localConst.OPENING_RECORDS_REDIS_KEY);
+  //如果有记录
+  if (records) {
+    records = JOSN.parse(records);
+    // 没开市，就不会有记录
+    if (records[0] === nowDay) {
+      return 'over';
+    } else {
+      //是，就加记录
+      if (isToday) {
+        records.unshift(nowDay);
+      }
+    }
+  } else {
+    //是，就加记录
+    if (isToday) {
+      records = [nowDay];
+    }
+  }
+  records = records.slice(0, 60);
+  await client.setAsync(localConst.OPENING_RECORDS_REDIS_KEY, JSON.stringify(records));
+  return isToday;
 };
 
 
-exports.getFundSimpleByCode = async function (code) {
-  return FundProxy.findOneSimple({code});
+// 更新估值
+exports.updateValuation = async function () {
+  // 获取基金
+  const funds = await FundProxy.findBase({});
+  // 抓取数据
+  const fetchList = Promise.all([
+    fundUtil.getFundsInfo(),
+    fundUtil.getFundsInfoHaomai(),
+    // 估值时间以招商白酒为基准
+    fundUtil.getFundInfo('161725')
+  ]);
+  const fetchData = await fetchList;
+  const tiantianData = fetchData[0];
+  const haomaiData = fetchData[1];
+  // 估值时间
+  const valuationDate = fetchData[2].valuation_date;
+  let updateList = [];
+  let valuationDataList = [];
+  // 混合天天和好买数据
+  for (let i = 0; i < tiantianData.funds.length; i++) {
+    for (let j = 0; j < haomaiData.funds.length; j++) {
+      if (tiantianData.funds[i].code === haomaiData.funds[j].code) {
+        valuationDataList.push({
+          code: tiantianData.funds[i].code,
+          tiantian: tiantianData.funds[i].valuation,
+          haomai: haomaiData.funds[j].valuation
+        });
+        break;
+      }
+    }
+  }
+  // 更新
+  for (let k = 0; k < funds.length; k++) {
+    for (let i = 0; i < valuationDataList.length; i++) {
+      const valuationData = valuationDataList[i];
+      if (valuationData.code === funds[k].code) {
+        updateList.push(FundProxy.update({code: funds[k].code}, {
+          valuation_tiantian: valuationData.tiantian,
+          valuation_haomai: valuationData.haomai || valuationData.tiantian,
+          valuation_date: valuationDate
+        }));
+        break;
+      }
+    }
+  }
+  return Promise.all(updateList);
 };
 
-
-
-exports.getFundByCode = async function (code) {
-  return FundProxy.findOne({code});
+// 更新估值准确记录
+exports.betterValuation = async function () {
+  const funds = await FundProxy.findBase({});
+  for (let k = 0; k < funds.length; k++) {
+    const fund = funds[k];
+    let betterCount = [];
+    //如果有之前的记录
+    if (fund['better_count']) {
+      betterCount = JSON.parse(fund['better_count']).data;
+      // 如果当天的被添加过了，那就跳过
+      if (moment(fund['valuation_date']).isSame(betterCount[0].date, 'day')) {
+        continue;
+      }
+    }
+    let type = '';
+    // 估值和净值是不是同一天，那就跳过
+    if (!moment(fund['valuation_date']).isSame(fund['net_value_date'], 'day')) {
+      continue;
+    }
+    // 对比差值的偏离
+    if (Math.abs(fund['valuation_tiantian'] - fund['net_value']) > Math.abs(fund['valuation_haomai'] - fund['net_value'])) {
+      type = 'haomai';
+    } else {
+      type = 'tiantian';
+    }
+    // 添加数据
+    betterCount.unshift({
+      type,
+      date: fund['net_value_date']
+    });
+    // 超过15天数据就截掉
+    if (betterCount.length > 15) {
+      betterCount = betterCount.slice(0, 15)
+    }
+    // 更新数据
+    await FundProxy.update({code: funds[k].code}, {
+      better_count: JSON.stringify({
+        data: betterCount
+      })
+    })
+  }
 };
 
-exports.getFundsByIds = async function (ids) {
-  return FundProxy.find({_id: {$in: [...ids]}});
+// 产生所有的近期涨跌数据，一般只有第一次产生数据时用
+exports.updateRecentNetValue = async function () {
+  const funds = await FundProxy.findBase({});
+  let requestList = [];
+  funds.forEach(function (item) {
+    requestList.push(fundUtil.getRecentNetValue(item.code, localConst.RECENT_NET_VALUE_DAYS));
+  });
+  const fetchData = await Promise.all(requestList);
+  let optionList = [];
+  fetchData.forEach(function (item, index) {
+    optionList.push(FundProxy.update({code: funds[index].code}, {
+      recent_net_value: JSON.stringify({data: item})
+    }));
+  });
+  return Promise.all(optionList);
 };
 
+// 添加涨跌数据，在执行这个之前要保证fund中的数据是最新的
+exports.addRecentNetValue = async function () {
+  const funds = await FundProxy.find({});
+  for (let k = 0; k < funds.length; k++) {
+    const fund = funds[k];
+    let recentNetValue = [];
+    let newData = {};
+    // 如果有记录
+    if (fund['recent_net_value']) {
+      recentNetValue = JSON.parse(fund['recent_net_value']).data;
+      // 添加过那就跳过
+      if (moment(recentNetValue[0].net_value_date).isSame(fund['net_value_date'], 'day')) {
+        continue;
+      }
+      // 拿最新净值和前一天净值对比，计算增长率
+      newData.valuation_rate = numberUtil.countRate(fund['net_value'] - recentNetValue[0].net_value, recentNetValue[0].net_value);
+    } else {
+      newData.valuation_rate = 0;
+    }
+    newData.net_value = fund['net_value'];
+    newData.net_value_date = moment(fund['net_value_date']).format('YYYY-MM-DD');
+    // 添加数据
+    recentNetValue.unshift(newData);
+    // 超过260天数据就截掉
+    if (recentNetValue.length > localConst.RECENT_NET_VALUE_DAYS) {
+      recentNetValue = recentNetValue.slice(0, localConst.RECENT_NET_VALUE_DAYS)
+    }
+    await FundProxy.update({code: funds[k].code}, {
+      recent_net_value: JSON.stringify({data: recentNetValue})
+    });
+  }
+};
 
+// 更新基本信息
+exports.updateBaseInfo = async function () {
+  // 得到基金，有的才更新
+  const funds = await FundProxy.findBase({});
+  // 得到基金信息
+  const fundsInfo = await fundUtil.getFundsInfo();
+  const fundInfos = fundsInfo.funds;
+  let optionList = [];
+  for (let k = 0; k < funds.length; k++) {
+    const temp = funds[k];
+    for (let i = 0; i < fundInfos.length; i++) {
+      const info = fundInfos[i];
+      if (temp.code === info.code) {
+        optionList.push(FundProxy.update({code: temp.code}, {
+          name: info.name,
+          net_value: info.net_value,
+          net_value_date: fundsInfo.net_value_date,
+          sell: info.sell,
+        }));
+        break;
+      }
+    }
+  }
+  return Promise.all(optionList);
+};
 
-exports.checkFundByQuery = async function (query) {
-  return FundProxy.check(query);
+//删除不售的基金
+exports.deleteUnSellFund = async function () {
+  //获取不售的
+  const funds = await FundProxy.findBase({sell: false});
+  let optionList = [];
+  for (let i = 0; i < funds.length; i++) {
+    const code = funds[i].code;
+    const queryList = await Promise.all([
+      OptionalFundProxy.find({code}),
+      FocusFundProxy.find({code}),
+      UserFundProxy.find({code})
+    ]);
+    let use = false;
+    for (let i = 0; i < queryList.length; i++) {
+      if (queryList[i].length !== 0) {
+        use = true;
+      }
+    }
+    if (!use) {
+      optionList.push(FundProxy.delete({code}));
+    }
+  }
+  return Promise.all(optionList);
+};
+
+//更新费率信息
+exports.updateLowRateFund = async function (codes) {
+  const funds = await FundProxy.findBase({});
+  let optionList = [];
+  funds.forEach((fund)=>{
+    if (codes.indexOf(fund.code) === -1) {
+      optionList.push(FundProxy.update({code: fund.code}, {
+        lowRate: false
+      }));
+    } else {
+      optionList.push(FundProxy.update({code: fund.code}, {
+        lowRate: true
+      }));
+    }
+  });
+  return Promise.all(optionList);
 };

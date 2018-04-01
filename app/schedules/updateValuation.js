@@ -32,10 +32,10 @@ rule.minute = minute;
 
 function updateValuation() {
   scheduleService.getSchedule('updateValuation').then((data)=>{
-    if (data && data.open) {
+    if (data && data.value === 'open') {
       request({
         method: 'get',
-        url: `http://localhost:${config.server.port || 8080}/myService/analyze/updateValuation`
+        url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/analyze/updateValuation`
       }).catch(function (err) {
         logger.error(err);
       });

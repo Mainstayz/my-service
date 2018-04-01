@@ -24,21 +24,6 @@ exports.getFundAnalyzeRecent = async function (ctx) {
   }
 };
 
-// 更新低费率基金
-exports.updateLowRateFund = async function (ctx) {
-  const query = ctx.request.body;
-  const fundService = ctx.services.fund;
-  try {
-    const funds = JSON.parse(query.funds);
-    funds.forEach(function (code) {
-      fundService.updateFundByCode(code, {lowRate: true});
-    });
-    ctx.body = ctx.resuccess();
-  } catch (err) {
-    ctx.body = ctx.refail(err);
-  }
-};
-
 exports.regressionTest = async function (ctx) {
   try {
     await ctx.services.analyze.regressionTest();

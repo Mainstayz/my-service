@@ -26,8 +26,10 @@ rule.hour = [17];
 
 function closeUpdateValuation() {
   scheduleService.getSchedule('closeUpdateValuation').then((data)=>{
-    if (data && data.open) {
-      scheduleService.updateSchedule('updateValuation', false).then(()=>{
+    if (data && data.value === 'open') {
+      scheduleService.updateSchedule('updateValuation', {
+        value: 'close'
+      }).then(()=>{
       });
     }
   });

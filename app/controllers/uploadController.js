@@ -11,7 +11,7 @@ exports.importFunds = async function (ctx) {
   const filePath = `${ctx.localConfig.uploadDir}/${ctx.req.file.filename}`;
   const data = await fs.readJson(filePath);
   try {
-    const funds = data.fund;
+    const funds = data.funds;
     // 添加
     await ctx.services.fund.importFunds(funds);
     ctx.body = ctx.resuccess();
