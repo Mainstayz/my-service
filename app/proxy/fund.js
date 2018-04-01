@@ -42,16 +42,9 @@ exports.count = function (query) {
   return FundModel.count(query);
 };
 
-
-
-exports.deleteByCode = function (code) {
-  return FundModel.remove({code});
-};
-
-
-
-
-
+/**
+ * 扩展
+ */
 const baseInfo = models.fields_table.fundBase.join(' ');
 
 exports.findBase = function (query, opt) {

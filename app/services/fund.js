@@ -2,17 +2,27 @@
  * Created by xiaobxia on 2018/1/26.
  */
 const Proxy = require('../proxy');
-const fundUtil = require('../util/fundInfo');
+const fundInfoUtil = require('../util/fundInfo');
+const localConst = require('../const');
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
 const FocusFundProxy = Proxy.FocusFund;
+const OptionalFundProxy = Proxy.OptionalFund;
 
-// 添加基金
-exports.addFund = async function (code) {
+/**
+ * 添加基金
+ */
+exports.addFundByCode = async function (code) {
+  //检验是否存在
+  let fund = await FundProxy.check({code});
+  if (fund) {
+    return fund;
+  }
+  //获取网络数据
   const fetchData = await Promise.all([
-    fundUtil.getFundInfo(code),
-    fundUtil.getRecentNetValue(code, 260)
+    fundInfoUtil.getFundInfo(code),
+    fundInfoUtil.getRecentNetValue(code, localConst.RECENT_NET_VALUE_DAYS)
   ]);
   // 基本数据
   const data = fetchData[0];
@@ -31,15 +41,64 @@ exports.addFund = async function (code) {
   })
 };
 
+/**
+ * 删除基金
+ */
+exports.deleteFundByCode = async function (code) {
+  //检查是否被占用
+  const queryList = await Promise.all([
+    OptionalFundProxy.find({code}),
+    FocusFundProxy.find({code}),
+    UserFundProxy.find({code})
+  ]);
+  for (let i = 0; i < queryList.length; i++) {
+    if (queryList[i].length !== 0) {
+      throw new Error('基金已被使用，无法删除');
+    }
+  }
+  //删除
+  return FundProxy.delete({code})
+};
+
+/**
+ * 获取基金基本信息
+ */
+exports.getFundBaseByCode = async function (code) {
+  return FundProxy.findOneBase({code});
+};
+
+/**
+ * 分页获取基金基本信息
+ */
+exports.getFundsBaseByPaging = async function (query, paging) {
+  const opt = {
+    skip: paging.start,
+    limit: paging.offset,
+    sort: '-create_at'
+  };
+  let queryOption = {};
+  if (query.keyword) {
+    const keyExp = new RegExp(query.keyword, 'i');
+    queryOption = {
+      $or: [
+        {code: keyExp},
+        {name: keyExp}]
+    }
+  }
+  const data = await Promise.all([FundProxy.findBase(queryOption, opt), FundProxy.count(queryOption)]);
+  return {list: data[0], count: data[1]};
+};
+
+
 // 批量添加，要提前验证code
 exports.addFunds = async function (codeList) {
   // 获取基金信息
   let requestList = [
-    fundUtil.getFundsInfo()
+    fundInfoUtil.getFundsInfo()
   ];
   // 获取基金近期信息
   codeList.forEach(function (item) {
-    requestList.push(fundUtil.getRecentNetValue(item, 260));
+    requestList.push(fundInfoUtil.getRecentNetValue(item, 260));
   });
   const fetchData = await Promise.all(requestList);
   // 基本数据
@@ -93,17 +152,12 @@ exports.updateFundByCode = async function (code, data) {
   return FundProxy.updateByCode(code, data)
 };
 
-exports.deleteFundByCode = async function (code) {
-  return FundProxy.deleteByCode(code)
-};
 
 exports.getFundSimpleByCode = async function (code) {
   return FundProxy.findOneSimple({code});
 };
 
-exports.getFundBaseByCode = async function (code) {
-  return FundProxy.findOneBase({code});
-};
+
 
 exports.getFundByCode = async function (code) {
   return FundProxy.findOne({code});
@@ -113,10 +167,7 @@ exports.getFundsByIds = async function (ids) {
   return FundProxy.find({_id: {$in: [...ids]}});
 };
 
-exports.getSimpleFundsByPaging = async function (query, opt) {
-  const data = await Promise.all([FundProxy.findSimple(query, opt), FundProxy.count(query)]);
-  return {list: data[0], count: data[1]};
-};
+
 
 exports.checkFundByQuery = async function (query) {
   return FundProxy.check(query);

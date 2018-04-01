@@ -4,8 +4,10 @@
 const sysConsts = require('./sysConsts');
 const errorConsts = require('./errorConsts');
 const emailTemplate = require('./emailTemplate');
+const fundConsts = require('./fundConsts');
 module.exports = {
   ...sysConsts,
   ...errorConsts,
-  ...emailTemplate
+  ...emailTemplate,
+  ...fundConsts
 };

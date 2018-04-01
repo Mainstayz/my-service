@@ -36,19 +36,18 @@ router.get('/auth/logout', controllers.authController.logout);
 /**
  * 基金模块
  */
-router.get('/fund/getFundSimple', controllers.fundController.getFundSimple);
+router.post('/fund/addFund', controllers.fundController.addFund);
+router.get('/fund/deleteFund', controllers.fundController.deleteFund);
 router.get('/fund/getFundBase', controllers.fundController.getFundBase);
 router.get('/fund/getFunds', controllers.fundController.getFunds);
-router.get('/fund/deleteFund', controllers.fundController.deleteFund);
-router.post('/fund/addFund', controllers.fundController.addFund);
 
 /**
  * 用户基金模块
  */
 router.post('/fund/addUserFund', controllers.myFundController.addUserFund);
-router.get('/fund/getUserFunds', controllers.myFundController.getUserFunds);
 router.get('/fund/deleteUserFund', controllers.myFundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.myFundController.updateUserFund);
+router.get('/fund/getUserFunds', controllers.myFundController.getUserFunds);
 
 /**
  * 关注基金模块
@@ -78,18 +77,18 @@ router.get('/analyze/regressionTest', controllers.analyzeController.regressionTe
 router.get('/analyze/getRegressionSlump', controllers.analyzeController.getRegressionSlump);
 
 
-/**
- * 文件上传模块
- */
-router.post('/upload/importFund', upload.single('fundFile'), controllers.fundController.importFunds);
-router.post('/upload/importMyFund', upload.single('fundFile'), controllers.fundController.importMyFunds);
-router.post('/upload/importFocusFund', upload.single('fundFile'), controllers.focusFundController.importFocusFund);
-
-
-/**
- * 文件下载模块
- */
-router.post('/download/exportMyFund', controllers.fundController.exportMyFunds);
+// /**
+//  * 文件上传模块
+//  */
+// router.post('/upload/importFund', upload.single('fundFile'), controllers.fundController.importFunds);
+// router.post('/upload/importMyFund', upload.single('fundFile'), controllers.fundController.importMyFunds);
+// router.post('/upload/importFocusFund', upload.single('fundFile'), controllers.focusFundController.importFocusFund);
+//
+//
+// /**
+//  * 文件下载模块
+//  */
+// router.post('/download/exportMyFund', controllers.fundController.exportMyFunds);
 
 /**
  * 定时任务模块
