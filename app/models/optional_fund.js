@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+//自选基金是自己基金库
 const schema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User'},
   fund: {type: Schema.Types.ObjectId, ref: 'Fund'},

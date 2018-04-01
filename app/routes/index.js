@@ -67,36 +67,36 @@ router.get('/strategy/getLowRateStrategy', controllers.strategyController.getLow
  * 分析模块
  */
 router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
-router.get('/analyze/updateBaseInfo', controllers.analyzeController.updateBaseInfo);
-router.get('/analyze/updateValuation', controllers.analyzeController.updateValuation);
-router.get('/analyze/updateRecentNetValue', controllers.analyzeController.updateRecentNetValue);
-router.get('/analyze/betterValuation', controllers.analyzeController.betterValuation);
-router.get('/analyze/addRecentNetValue', controllers.analyzeController.addRecentNetValue);
 router.post('/analyze/updateLowRateFund', controllers.analyzeController.updateLowRateFund);
 router.get('/analyze/regressionTest', controllers.analyzeController.regressionTest);
 router.get('/analyze/getRegressionSlump', controllers.analyzeController.getRegressionSlump);
 
 
-// /**
-//  * 文件上传模块
-//  */
-// router.post('/upload/importFund', upload.single('fundFile'), controllers.fundController.importFunds);
-// router.post('/upload/importMyFund', upload.single('fundFile'), controllers.fundController.importMyFunds);
-// router.post('/upload/importFocusFund', upload.single('fundFile'), controllers.focusFundController.importFocusFund);
-//
-//
-// /**
-//  * 文件下载模块
-//  */
-// router.post('/download/exportMyFund', controllers.fundController.exportMyFunds);
+/**
+ * 文件上传模块
+ */
+router.post('/upload/importFund', upload.single('fundFile'), controllers.uploadController.importFunds);
+router.post('/upload/importMyFund', upload.single('fundFile'), controllers.uploadController.importMyFunds);
+// router.post('/upload/importFocusFund', upload.single('fundFile'), controllers.uploadController.importFocusFund);
+
+
+/**
+ * 文件下载模块
+ */
+router.post('/download/exportMyFund', controllers.exportController.exportMyFunds);
 
 /**
  * 定时任务模块
  */
 router.post('/schedule/addSchedule', controllers.scheduleController.addSchedule);
-router.get('/schedule/getSchedules', controllers.scheduleController.getSchedules);
-router.get('/schedule/updateSchedule', controllers.scheduleController.updateSchedule);
 router.get('/schedule/deleteSchedule', controllers.scheduleController.deleteSchedule);
+router.get('/schedule/updateSchedule', controllers.scheduleController.updateSchedule);
+router.get('/schedule/getSchedules', controllers.scheduleController.getSchedules);
 router.get('/schedule/verifyOpening', controllers.scheduleController.verifyOpening);
+router.get('/analyze/updateBaseInfo', controllers.scheduleController.updateBaseInfo);
+router.get('/analyze/updateValuation', controllers.scheduleController.updateValuation);
+router.get('/analyze/updateRecentNetValue', controllers.scheduleController.updateRecentNetValue);
+router.get('/analyze/betterValuation', controllers.scheduleController.betterValuation);
+router.get('/analyze/addRecentNetValue', controllers.scheduleController.addRecentNetValue);
 
 module.exports = router;
