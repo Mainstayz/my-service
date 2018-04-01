@@ -60,7 +60,7 @@ exports.updateUserFund = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
-      code: {type: 'string', required: true},
+      code: {required: true},
       shares: {required: false},
       strategy: {required: false},
       cost: {required: false},
@@ -69,9 +69,7 @@ exports.updateUserFund = async function (ctx) {
     }, query);
     // 验证基金
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    const fund = await fundService.getFundBaseByCode({
-      code: data.code
-    });
+    const fund = await fundService.getFundBaseByCode(data.code);
     // 更新基金用户关系
     delete data.code;
     await userFundService.updateUserFund(userRaw._id, fund._id, data);
