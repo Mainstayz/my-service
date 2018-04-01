@@ -101,3 +101,26 @@ exports.getFunds = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+// 获取近期分析数据
+exports.getFundAnalyzeRecent = async function (ctx) {
+  const query = ctx.query;
+  const fundService = ctx.services.fund;
+  try {
+    const data = ctx.validateData({
+      code: {type: 'string', required: true}
+    }, query);
+    const fund = await fundService.getFundByCode(data.code);
+    if (fund && fund['recent_net_value']) {
+      ctx.body = ctx.resuccess(
+        ctx.services.analyze.getFundAnalyzeRecent(fund)
+      );
+    } else {
+      ctx.body = ctx.refail({
+        message: '暂无数据分析'
+      });
+    }
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};

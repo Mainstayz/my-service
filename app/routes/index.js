@@ -48,6 +48,8 @@ router.post('/fund/addUserFund', controllers.myFundController.addUserFund);
 router.get('/fund/deleteUserFund', controllers.myFundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.myFundController.updateUserFund);
 router.get('/fund/getUserFunds', controllers.myFundController.getUserFunds);
+router.get('/fund/getMyAsset', controllers.myFundController.getMyAsset);
+
 
 /**
  * 关注基金模块
@@ -67,8 +69,6 @@ router.get('/strategy/getLowRateStrategy', controllers.strategyController.getLow
  * 分析模块
  */
 router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
-router.get('/analyze/regressionTest', controllers.analyzeController.regressionTest);
-router.get('/analyze/getRegressionSlump', controllers.analyzeController.getRegressionSlump);
 
 
 /**

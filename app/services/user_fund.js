@@ -5,6 +5,7 @@ const Proxy = require('../proxy');
 
 const UserFundProxy = Proxy.UserFund;
 const FocusFundProxy = Proxy.FocusFund;
+const UserFundAccountProxy = Proxy.UserFundAccount;
 
 
 exports.addUserFund = async function (userId, fundId, data) {
@@ -27,6 +28,10 @@ exports.getUserFundsByUserIdWithFund = async function (userId) {
   return UserFundProxy.findByUserIdWithFund(userId);
 };
 
+//资产部分
+exports.getMyAsset = async function (userId) {
+  return UserFundProxy.findOne({user: userId});
+};
 
 
 

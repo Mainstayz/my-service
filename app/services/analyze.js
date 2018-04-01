@@ -5,7 +5,6 @@ const moment = require('moment');
 const Proxy = require('../proxy');
 const util = require('../util');
 const logger = require('../common/logger');
-const redisClient = require('../common/redis');
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
@@ -14,13 +13,14 @@ const FocusFundProxy = Proxy.FocusFund;
 const fundInfoUtil = util.fundInfoUtil;
 const numberUtil = util.numberUtil;
 const analyzeUtil = util.analyzeUtil;
+const fundBaseUtil = util.fundBaseUtil;
 
 
 
 exports.getFundAnalyzeRecent = function (fund) {
-  const list = JSON.parse(fund['recent_net_value']).data.slice(0, 260);
+  const list = JSON.parse(fund['recent_net_value']).data;
   // 获取估值
-  const valuationInfo = analyzeUtil.getBetterValuation(fund);
+  const valuationInfo = fundBaseUtil.getBetterValuation(fund);
   /**
    * 客观统计数据
    */
@@ -28,16 +28,6 @@ exports.getFundAnalyzeRecent = function (fund) {
   const valuation = valuationInfo.valuation;
   // 当日幅度
   const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
-  // 涨跌统计
-  const upAndDownCount = analyzeUtil.getUpAndDownCount(list);
-  // 最大统计
-  const maxUpAndDown = analyzeUtil.getMaxUpAndDown(list);
-  // 涨跌分布
-  const upAndDownDistribution = analyzeUtil.getUpAndDownDistribution(list);
-  // 连续性分布
-  const maxUpIntervalAndMaxDownInterval = analyzeUtil.getMaxUpIntervalAndMaxDownInterval(list);
-  // 净值分布
-  const netValueDistribution = analyzeUtil.getNetValueDistribution(list);
   /**
    * 客观分析
    */
@@ -48,15 +38,6 @@ exports.getFundAnalyzeRecent = function (fund) {
   const costLine = analyzeUtil.getCostLine(netValueSort);
   const costLineHalf = analyzeUtil.getCostLine(netValueSortHalfYear);
   const supportLine = analyzeUtil.getSupportLine(netValueSort);
-  // 从涨跌分布上看上涨的概率
-  let distribution = 0;
-  upAndDownDistribution.list.forEach(function (item) {
-    if (item.start <= valuationRate && valuationRate < item.end) {
-      distribution = numberUtil.countRate(
-        valuationRate < 0 ? (1 - item.continues.times / item.times) : (item.continues.times / item.times),
-        1);
-    }
-  });
 
   // 从连续性上看上涨的概率
   let day = analyzeUtil.continueDays(valuationRate, list);
@@ -366,34 +347,5 @@ exports.getFocusStrategy = async function (userId) {
     return b.slumpWeekCount - a.slumpWeekCount;
   });
   return strategyList;
-};
-
-// 回归测试
-exports.regressionTest = async function () {
-  const funds = await FundProxy.find({});
-  let result = [];
-  funds.forEach(function (fund) {
-    const list = JSON.parse(fund['recent_net_value']).data;
-    // 数据大于60天
-    if (list.length > 285) {
-      for (let i = 260; i > 25; i--) {
-        const day = i;
-        const valuation = list[day]['net_value'];
-        const slumpInfo = analyzeUtil.judgeSlump2(valuation, list, day);
-        if (slumpInfo.count > 20) {
-          const tempRate = analyzeUtil.countIncome(valuation, list, day);
-          result.push({
-            count: slumpInfo.count,
-            tempRate
-          });
-        }
-      }
-    }
-  });
-  return redisClient.setAsync('regressionSlump', JSON.stringify(result));
-};
-
-exports.getRegressionSlump = async function () {
-  return redisClient.getAsync('regressionSlump');
 };
 

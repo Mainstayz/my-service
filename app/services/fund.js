@@ -74,6 +74,11 @@ exports.getFundBaseByCode = async function (code) {
   return FundProxy.findOneBase({code});
 };
 
+exports.getFundByCode = async function (code) {
+  return FundProxy.findOne({code});
+};
+
+
 /**
  * 分页获取基金基本信息
  */
