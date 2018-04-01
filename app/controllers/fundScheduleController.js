@@ -91,3 +91,16 @@ exports.deleteUnSellFund = async function (ctx) {
   }
 };
 
+// 删除高费率基金
+exports.deleteHighRateFund = async function (ctx) {
+  const query = ctx.request.body;
+  const fundService = ctx.services.fund;
+  try {
+    const codes = JSON.parse(query.codes);
+    await fundService.deleteHighRateFund(codes);
+    ctx.body = ctx.resuccess();
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+

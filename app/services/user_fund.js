@@ -1,12 +1,17 @@
 /**
  * Created by xiaobxia on 2018/4/1.
  */
+const Proxy = require('../proxy');
 
-exports.addUserFund = async function (userId, fundId, count) {
+const UserFundProxy = Proxy.UserFund;
+const FocusFundProxy = Proxy.FocusFund;
+
+
+exports.addUserFund = async function (userId, fundId, data) {
   return UserFundProxy.newAndSave({
     user: userId,
     fund: fundId,
-    count: count,
+    ...data
   });
 };
 
@@ -14,21 +19,28 @@ exports.deleteUserFund = async function (userId, fundId) {
   return UserFundProxy.delete({user: userId, fund: fundId});
 };
 
-exports.updateUserFund = async function (userId, fundId, count) {
-  return UserFundProxy.updateCount(userId, fundId, count);
+exports.updateUserFund = async function (userId, fundId, data) {
+  return UserFundProxy.update({user: userId, fund: fundId}, data);
+};
+
+exports.getUserFundsByUserIdWithFund = async function (userId) {
+  return UserFundProxy.findByUserIdWithFund(userId);
+};
+
+
+
+
+
+
+exports.getUserFundsByUserId = async function (userId) {
+  return UserFundProxy.findByUserId(userId);
 };
 
 exports.getUserFund = async function (userId, fundId) {
   return UserFundProxy.findByUserIdFundId(userId, fundId);
 };
 
-exports.getUserFundsByUserId = async function (userId) {
-  return UserFundProxy.findByUserId(userId);
-};
 
-exports.getUserFundsByUserIdWithFund = async function (userId) {
-  return UserFundProxy.findByUserIdWithFund(userId);
-};
 
 exports.getUserFundsByFundId = async function (fundId) {
   return UserFundProxy.find({fund: fundId});

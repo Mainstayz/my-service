@@ -7,3 +7,5 @@ exports.user = require('./user');
 exports.fund = require('./fund');
 exports.analyze = require('./analyze');
 exports.schedule = require('./schedule');
+exports.userFund = require('./user_fund');
+exports.dictionaries = require('./dictionaries');

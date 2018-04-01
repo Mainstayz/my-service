@@ -75,9 +75,6 @@ router.get('/analyze/getRegressionSlump', controllers.analyzeController.getRegre
  * 文件上传模块
  */
 router.post('/upload/importFund', upload.single('fundFile'), controllers.uploadController.importFunds);
-router.post('/upload/importMyFund', upload.single('fundFile'), controllers.uploadController.importMyFunds);
-// router.post('/upload/importFocusFund', upload.single('fundFile'), controllers.uploadController.importFocusFund);
-
 
 /**
  * 文件下载模块
@@ -101,6 +98,6 @@ router.get('/schedule/betterValuation', controllers.fundScheduleController.bette
 router.get('/schedule/addRecentNetValue', controllers.fundScheduleController.addRecentNetValue);
 router.get('/schedule/deleteUnSellFund', controllers.fundScheduleController.deleteUnSellFund);
 router.post('/schedule/updateLowRateFund', controllers.fundScheduleController.updateLowRateFund);
-
+router.post('/schedule/deleteHighRateFund', controllers.fundScheduleController.deleteHighRateFund);
 
 module.exports = router;

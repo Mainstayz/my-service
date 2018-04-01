@@ -4,13 +4,13 @@
 const Proxy = require('../proxy');
 const fundInfoUtil = require('../util/fundInfo');
 const localConst = require('../const');
-const client = require('../common/redis');
 const moment = require('moment');
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
 const FocusFundProxy = Proxy.FocusFund;
 const OptionalFundProxy = Proxy.OptionalFund;
+const DictionariesProxy = Proxy.Dictionaries;
 
 /**
  * 添加基金
@@ -161,10 +161,11 @@ exports.verifyOpening = async function () {
   const fundData = await fundInfoUtil.getFundsInfo();
   // 如果相同就说明开盘了
   const isToday = nowDay === fundData.valuation_date;
-  let records = await client.getAsync(localConst.OPENING_RECORDS_REDIS_KEY);
+  let result = await DictionariesProxy.findOne({key: localConst.OPENING_RECORDS_REDIS_KEY});
+  let records = [];
   //如果有记录
-  if (records) {
-    records = JSON.parse(records);
+  if (result) {
+    records = JSON.parse(result.value);
     // 没开市，就不会有记录
     if (records[0] === nowDay) {
       return 'over';
@@ -181,8 +182,9 @@ exports.verifyOpening = async function () {
     }
   }
   records = records.slice(0, 60);
-  console.log(records)
-  await client.setAsync(localConst.OPENING_RECORDS_REDIS_KEY, JSON.stringify(records));
+  await DictionariesProxy.update({key: localConst.OPENING_RECORDS_REDIS_KEY}, {
+    value: JSON.stringify(records)
+  });
   return isToday;
 };
 
@@ -394,5 +396,34 @@ exports.updateLowRateFund = async function (codes) {
       }));
     }
   });
+  return Promise.all(optionList);
+};
+
+//更新费率信息
+exports.deleteHighRateFund = async function (codes) {
+  //传进来的都是低和中等费率的
+  const funds = await FundProxy.findBase({});
+  let optionList = [];
+  for (let i = 0; i < funds.length; i++) {
+    const code = funds[i].code;
+    //不是低和中等费率的
+    if (codes.indexOf(code) === -1) {
+      const queryList = await Promise.all([
+        OptionalFundProxy.find({code}),
+        FocusFundProxy.find({code}),
+        UserFundProxy.find({code})
+      ]);
+      let use = false;
+      for (let i = 0; i < queryList.length; i++) {
+        if (queryList[i].length !== 0) {
+          use = true;
+        }
+      }
+      if (!use) {
+        console.log(code);
+        optionList.push(FundProxy.delete({code}));
+      }
+    }
+  }
   return Promise.all(optionList);
 };
