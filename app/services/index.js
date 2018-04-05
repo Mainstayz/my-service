@@ -10,3 +10,4 @@ exports.schedule = require('./schedule');
 exports.strategy = require('./strategy');
 exports.userFund = require('./user_fund');
 exports.dictionaries = require('./dictionaries');
+exports.userNetValue = require('./user_net_value');

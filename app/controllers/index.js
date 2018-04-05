@@ -10,3 +10,4 @@ exports.scheduleController = require('./scheduleController');
 exports.fundScheduleController = require('./fundScheduleController');
 exports.uploadController = require('./uploadController');
 exports.exportController = require('./exportController');
+exports.userNetValueController = require('./userNetValueController');

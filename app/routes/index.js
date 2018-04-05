@@ -52,11 +52,19 @@ router.get('/fund/getUserFunds', controllers.myFundController.getUserFunds);
 router.get('/fund/getMyAsset', controllers.myFundController.getMyAsset);
 
 /**
+ * 用户净值记录
+ */
+router.post('/fund/addUserNetValue', controllers.userNetValueController.addUserNetValue);
+router.get('/fund/deleteUserNetValue', controllers.userNetValueController.deleteUserNetValue);
+router.post('/fund/updateUserNetValue', controllers.userNetValueController.updateUserNetValue);
+router.get('/fund/getUserNetValues', controllers.userNetValueController.getUserNetValues);
+
+/**
  * 关注基金模块
  */
-router.post('/focusFund/addFocusFund', controllers.focusFundController.addFocusFund);
-router.get('/focusFund/getFocusFunds', controllers.focusFundController.getFocusFunds);
-router.get('/focusFund/deleteFocusFund', controllers.focusFundController.deleteFocusFund);
+router.post('/fund/addUserNetValue', controllers.focusFundController.addFocusFund);
+router.get('/fund/getFocusFunds', controllers.focusFundController.getFocusFunds);
+router.get('/fund/deleteFocusFund', controllers.focusFundController.getFocusFunds);
 
 /**
  * 策略
