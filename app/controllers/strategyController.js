@@ -8,7 +8,7 @@ exports.getStrategy = async function (ctx) {
     const data = ctx.validateData({
       force: {required: false}
     }, query);
-    const strategy = await ctx.services.analyze.getStrategy(data.force);
+    const strategy = await ctx.services.strategy.getStrategy(data.force);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     const userFunds = await ctx.services.fund.getUserFundsByUserId(userRaw._id);
     strategy.forEach(function (item) {
@@ -32,7 +32,7 @@ exports.getMyStrategy = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   try {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    const strategy = await ctx.services.analyze.getMyStrategy(userRaw._id);
+    const strategy = await ctx.services.strategy.getMyStrategy(userRaw._id);
     ctx.body = ctx.resuccess({
       strategy
     });
@@ -45,7 +45,7 @@ exports.getLowRateStrategy = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   try {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    const strategy = await ctx.services.analyze.getLowRateStrategy(userRaw._id);
+    const strategy = await ctx.services.strategy.getLowRateStrategy(userRaw._id);
     ctx.body = ctx.resuccess({
       strategy
     });

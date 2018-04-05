@@ -24,7 +24,7 @@ exports.getMaxRiseAndFallInfo = function (valuation, netValueList) {
   for (let i = 0; i < netValueList.length; i++) {
     //一个月
     if (i < 20) {
-      const rate = numberUtil.countDifferenceRate(valuation, netValueList[i]);
+      const rate = numberUtil.countDifferenceRate(valuation, netValueList[i]['net_value']);
       listMonth.push(rate);
       listMonthTemp.push(rate);
       //半个月

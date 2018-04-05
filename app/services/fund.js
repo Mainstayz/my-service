@@ -287,19 +287,16 @@ exports.betterValuation = async function () {
 
 // 产生所有的近期涨跌数据，一般只有第一次产生数据时用
 exports.updateRecentNetValue = async function () {
-  const funds = await FundProxy.findBase({});
+  const funds = await FundProxy.find({});
   let requestList = [];
-  funds.forEach(function (item) {
-    requestList.push(fundInfoUtil.getRecentNetValue(item.code, localConst.RECENT_NET_VALUE_DAYS));
-  });
-  const fetchData = await Promise.all(requestList);
-  let optionList = [];
-  fetchData.forEach(function (item, index) {
-    optionList.push(FundProxy.update({code: funds[index].code}, {
-      recent_net_value: JSON.stringify({data: item})
+  funds.forEach(function (fund) {
+    requestList.push(fundInfoUtil.getRecentNetValue(fund.code, localConst.RECENT_NET_VALUE_DAYS).then((item)=>{
+      return FundProxy.update({code: fund.code}, {
+        recent_net_value: JSON.stringify({data: item})
+      })
     }));
   });
-  return Promise.all(optionList);
+  return Promise.all(requestList);
 };
 
 // 添加涨跌数据，在执行这个之前要保证fund中的数据是最新的

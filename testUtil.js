@@ -21,11 +21,11 @@ axios({
   // 策略
   // url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/getStrategy'
   // 强制更新净值
-  // url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/updateRecentNetValue'
+  url: 'http://127.0.0.1:3002/myServiceV2/schedule/updateRecentNetValue'
   // 判断开盘
   // url: 'http://127.0.0.1:3002/${config.project.projectName}/schedule/verifyOpening'
   // 回归
-  url: 'http://127.0.0.1:3002/myServiceV2/schedule/verifyOpening',
+  // url: 'http://127.0.0.1:3002/myServiceV2/schedule/verifyOpening',
 }).then((data) => {
   if (data.data.success) {
     console.log(data.data.data);
