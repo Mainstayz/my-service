@@ -9,22 +9,20 @@ const fundBaseUtil = util.fundBaseUtil;
 
 exports.addUserNetValue = async function (ctx) {
   const query = ctx.request.body;
-  const fundService = ctx.services.fund;
   const userNetValueService = ctx.services.userNetValue;
   try {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
-      code: {type: 'string', required: true},
       shares: {required: true},
-      strategy: {required: true},
-      cost: {required: true},
-      buy_date: {required: true},
-      target_net_value: {required: true},
+      asset: {required: true},
+      net_value_date: {required: true},
     }, query);
-    // 添加基金
-    let fund = await fundService.addFundByCode(data.code);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    await userNetValueService.addUserNetValue(userRaw._id, fund._id, data);
+    await userNetValueService.addUserNetValue(userRaw._id, query.net_value_date, {
+      shares: data.shares,
+      asset: data.asset,
+      net_value: numberUtil.keepFourDecimals(data.asset / data.shares)
+    });
     ctx.body = ctx.resuccess();
   } catch (err) {
     ctx.body = ctx.refail(err);
@@ -33,20 +31,14 @@ exports.addUserNetValue = async function (ctx) {
 
 exports.deleteUserNetValue = async function (ctx) {
   const query = ctx.query;
-  const fundService = ctx.services.fund;
   const userNetValueService = ctx.services.userNetValue;
   try {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
-      code: {type: 'string', required: true}
+      net_value_date: {required: true},
     }, query);
-    // 得到基金信息
-    const fund = await fundService.getFundBaseByCode({
-      code: data.code
-    });
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    // 删除基金用户关系
-    await userNetValueService.deleteUserNetValue(userRaw._id, fund._id);
+    await userNetValueService.deleteUserNetValue(userRaw._id, data.net_value_date);
     ctx.body = ctx.resuccess();
   } catch (err) {
     ctx.body = ctx.refail(err);
@@ -55,24 +47,20 @@ exports.deleteUserNetValue = async function (ctx) {
 
 exports.updateUserNetValue = async function (ctx) {
   const query = ctx.request.body;
-  const fundService = ctx.services.fund;
   const userNetValueService = ctx.services.userNetValue;
   try {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
-      code: {required: true},
-      shares: {required: false},
-      strategy: {required: false},
-      cost: {required: false},
-      buy_date: {required: false},
-      target_net_value: {required: false},
+      shares: {required: true},
+      asset: {required: true},
+      net_value_date: {required: true},
     }, query);
-    // 验证基金
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    const fund = await fundService.getFundBaseByCode(data.code);
-    // 更新基金用户关系
-    delete data.code;
-    await userNetValueService.updateUserNetValue(userRaw._id, fund._id, data);
+    await userNetValueService.updateUserNetValue(userRaw._id, query.net_value_date, {
+      shares: data.shares,
+      asset: data.asset,
+      net_value: numberUtil.keepFourDecimals(data.asset / data.shares)
+    });
     ctx.body = ctx.resuccess();
   } catch (err) {
     ctx.body = ctx.refail(err);
