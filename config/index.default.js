@@ -10,7 +10,7 @@ function resolveRoot(dir) {
 module.exports = {
   root: path.resolve(__dirname, '../'),
   project: {
-    projectName: "myServiceV2"
+    projectName: "myService"
   },
   server: {
     port: 3002,
