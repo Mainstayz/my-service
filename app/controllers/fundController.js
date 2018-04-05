@@ -113,7 +113,7 @@ exports.getFundAnalyzeRecent = async function (ctx) {
     const fund = await fundService.getFundByCode(data.code);
     if (fund && fund['recent_net_value']) {
       ctx.body = ctx.resuccess(
-        ctx.services.analyze.getFundAnalyzeRecent(fund)
+        ctx.services.analyze.getFundAnalyzeRecent(fund, true)
       );
     } else {
       ctx.body = ctx.refail({

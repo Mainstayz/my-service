@@ -8,7 +8,7 @@ const analyzeUtil = util.analyzeUtil;
 const fundBaseUtil = util.fundBaseUtil;
 
 
-exports.getFundAnalyzeRecent = function (fund) {
+exports.getFundAnalyzeRecent = function (fund, hasNetValueList) {
   const list = JSON.parse(fund['recent_net_value']).data;
   // 获取估值
   const valuationInfo = fundBaseUtil.getBetterValuation(fund);
@@ -33,8 +33,7 @@ exports.getFundAnalyzeRecent = function (fund) {
   const positionInfo = analyzeUtil.getPositionInfo(valuation, netValueSort);
   const positionInfoHalf = analyzeUtil.getPositionInfo(valuation, netValueSortHalfYear);
   const rate = 0.1;
-  return {
-    recentNetValue: list,
+  let data = {
     valuationRate,
     ...recentInfo,
     result: {
@@ -52,6 +51,10 @@ exports.getFundAnalyzeRecent = function (fund) {
       costLineHalf
     }
   };
+  if (hasNetValueList) {
+    data.recentNetValue = list;
+  }
+  return data;
 };
 
 
