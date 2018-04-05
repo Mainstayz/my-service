@@ -22,7 +22,9 @@ exports.delete = function (data) {
 
 exports.update = function (query, data) {
   return FundModel.update(query, {
+
     $set: data
+
   });
 };
 

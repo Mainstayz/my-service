@@ -40,6 +40,7 @@ router.post('/fund/addFund', controllers.fundController.addFund);
 router.get('/fund/deleteFund', controllers.fundController.deleteFund);
 router.get('/fund/getFundBase', controllers.fundController.getFundBase);
 router.get('/fund/getFunds', controllers.fundController.getFunds);
+router.get('/fund/getFundAnalyzeRecent', controllers.fundController.getFundAnalyzeRecent);
 
 /**
  * 用户基金模块
@@ -49,7 +50,6 @@ router.get('/fund/deleteUserFund', controllers.myFundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.myFundController.updateUserFund);
 router.get('/fund/getUserFunds', controllers.myFundController.getUserFunds);
 router.get('/fund/getMyAsset', controllers.myFundController.getMyAsset);
-
 
 /**
  * 关注基金模块
@@ -64,12 +64,6 @@ router.get('/focusFund/deleteFocusFund', controllers.focusFundController.deleteF
 router.get('/strategy/getStrategy', controllers.strategyController.getStrategy);
 router.get('/strategy/getMyStrategy', controllers.strategyController.getMyStrategy);
 router.get('/strategy/getLowRateStrategy', controllers.strategyController.getLowRateStrategy);
-
-/**
- * 分析模块
- */
-//router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
-
 
 /**
  * 文件上传模块

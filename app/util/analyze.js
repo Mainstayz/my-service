@@ -62,8 +62,8 @@ exports.getPositionInfo = function (valuation, netValueSort) {
       break;
     }
   }
-  // 幅度20%的位置
-  const rate = 0.2;
+  // 幅度的位置
+  const rate = 0.1;
   const range = netValueSort[netValueSort.length - 1].netValue - netValueSort[0].netValue;
   const step = rate * range;
   const lowLine = numberUtil.keepFourDecimals(netValueSort[0].netValue + step);

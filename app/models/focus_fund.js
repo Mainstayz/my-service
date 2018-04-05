@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-//关注基金是跟踪基金
+//关注基金是跟踪基金，看看关注以后的变化
 const schema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User'},
   fund: {type: Schema.Types.ObjectId, ref: 'Fund'},

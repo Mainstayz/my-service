@@ -2,24 +2,10 @@
  * Created by xiaobxia on 2018/2/12.
  */
 exports.getStrategy = async function (ctx) {
-  const query = ctx.query;
   const tokenRaw = ctx.tokenRaw;
   try {
-    const data = ctx.validateData({
-      force: {required: false}
-    }, query);
-    const strategy = await ctx.services.strategy.getStrategy(data.force);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    const userFunds = await ctx.services.fund.getUserFundsByUserId(userRaw._id);
-    strategy.forEach(function (item) {
-      item.has = false;
-      for (let k = 0; k < userFunds.length; k++) {
-        if (item._id.toString() === userFunds[k].fund.toString()) {
-          item.has = userFunds[k].count > 0;
-          break;
-        }
-      }
-    });
+    const strategy  = await ctx.services.strategy.getStrategy(userRaw._id);
     ctx.body = ctx.resuccess({
       strategy
     });
@@ -28,6 +14,7 @@ exports.getStrategy = async function (ctx) {
   }
 };
 
+//我的基金的情况
 exports.getMyStrategy = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   try {
@@ -41,6 +28,7 @@ exports.getMyStrategy = async function (ctx) {
   }
 };
 
+//得到低费率基金的情况
 exports.getLowRateStrategy = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   try {

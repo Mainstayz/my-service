@@ -17,8 +17,6 @@ const schema = new Schema({
     default: Date.now
   }
 });
-// 一般是以用户id查
-schema.index({user: 1}, {unique: true});
-schema.index({create_at: -1});
+schema.index({net_value_date: -1}, {unique: true});
 
 module.exports = mongoose.model('UserNetValue', schema);

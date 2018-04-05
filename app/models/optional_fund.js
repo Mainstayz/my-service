@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-//自选基金是自己基金库
+//自选基金是自己基金库，买基金的时候会优先在这里选
 const schema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User'},
   fund: {type: Schema.Types.ObjectId, ref: 'Fund'},

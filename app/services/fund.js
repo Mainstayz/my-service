@@ -422,7 +422,6 @@ exports.deleteHighRateFund = async function (codes) {
         }
       }
       if (!use) {
-        console.log(code);
         optionList.push(FundProxy.delete({code}));
       }
     }
