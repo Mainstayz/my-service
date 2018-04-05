@@ -21,8 +21,9 @@ const scheduleService = require('../services/schedule');
  */
 let rule = new schedule.RecurrenceRule();
 
+//工作日，1点删除不出售的基金
 rule.dayOfWeek = [new schedule.Range(1, 5)];
-rule.hour = [12];
+rule.hour = [1];
 
 function deleteUnSellFund() {
   scheduleService.getSchedule('deleteUnSellFund').then((data)=>{

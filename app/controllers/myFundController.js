@@ -92,6 +92,7 @@ exports.getUserFunds = async function (ctx) {
     records = JSON.parse(records.value);
     let list = [];
     let totalSum = 0;
+    let costTotalSum = 0;
     let valuationTotalSum = 0;
     for (let i = 0; i < userFunds.length; i++) {
       const userFund = userFunds[i];
@@ -99,6 +100,8 @@ exports.getUserFunds = async function (ctx) {
       // 持仓金额
       const sum = fund.net_value * userFund.shares;
       totalSum += sum;
+      const costSum = userFund.cost * userFund.shares;
+      costTotalSum += costSum;
       const valuationInfo = fundBaseUtil.getBetterValuation(fund);
       const buyDate = moment(userFund.buy_date).format('YYYY-MM-DD');
       let result = {
@@ -114,6 +117,7 @@ exports.getUserFunds = async function (ctx) {
         netValue: fund.net_value,
         // 持仓净值
         sum: numberUtil.keepTwoDecimals(sum),
+        costSum:  numberUtil.keepTwoDecimals(costSum),
         valuation: valuationInfo.valuation,
         valuationSource: valuationInfo.sourceName
       };
@@ -127,8 +131,9 @@ exports.getUserFunds = async function (ctx) {
     ctx.body = ctx.resuccess({
       list,
       info: {
-        totalSum: Math.round(totalSum),
-        valuationTotalSum: Math.round(valuationTotalSum),
+        costTotalSum: numberUtil.keepTwoDecimals(valuationTotalSum),
+        totalSum: numberUtil.keepTwoDecimals(totalSum),
+        valuationTotalSum: numberUtil.keepTwoDecimals(valuationTotalSum),
         valuationDate: userFunds[0] ? moment(userFunds[0].fund['valuation_date']).format('YYYY-MM-DD HH:mm:ss') : ''
       }
     });
