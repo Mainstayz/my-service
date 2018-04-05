@@ -71,17 +71,32 @@ exports.updateUserNetValue = async function (ctx) {
 exports.getUserNetValues = async function (ctx) {
   const query = ctx.query;
   try {
+    const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
       current: {type: 'int', required: true},
       pageSize: {type: 'int', required: true}
     }, query);
     let paging = ctx.paging(data.current, data.pageSize);
     //分页获取
-    const userNetValues = await ctx.services.userNetValue.getUserNetValueByPaging(data, paging);
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    const userNetValues = await ctx.services.userNetValue.getUserNetValueByPaging({user: userRaw._id}, paging);
     paging.total = userNetValues.count;
     ctx.body = ctx.resuccess({
       list: userNetValues.list,
       page: paging
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
+exports.getUserNetValuesAll = async function (ctx) {
+  try {
+    const tokenRaw = ctx.tokenRaw;
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    const userNetValues = await ctx.services.userNetValue.getUserNetValue({user: userRaw._id});
+    ctx.body = ctx.resuccess({
+      list: userNetValues
     });
   } catch (err) {
     ctx.body = ctx.refail(err);

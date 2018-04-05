@@ -28,6 +28,13 @@ exports.getUserNetValueByPaging = async function (query, paging) {
     limit: paging.offset,
     sort: '-net_value_date'
   };
-  const data = await Promise.all([UserNetValue.find({}, opt), UserNetValue.count({})]);
+  const data = await Promise.all([UserNetValue.find(query, opt), UserNetValue.count(query)]);
   return {list: data[0], count: data[1]};
+};
+
+exports.getUserNetValue = async function (query) {
+  const opt = {
+    sort: 'net_value_date'
+  };
+  return UserNetValue.find(query, opt);
 };
