@@ -13,7 +13,7 @@ module.exports = {
     projectName: "myServiceV2"
   },
   server: {
-    port: 3002,
+    port: 3003,
     token: {
       key: 'xiaobxia',
       expiresIn: 60 * 60 * 24
