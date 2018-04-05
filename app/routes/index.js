@@ -68,7 +68,7 @@ router.get('/strategy/getLowRateStrategy', controllers.strategyController.getLow
 /**
  * 分析模块
  */
-router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
+//router.get('/analyze/getFundAnalyzeRecent', controllers.analyzeController.getFundAnalyzeRecent);
 
 
 /**

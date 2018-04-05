@@ -21,8 +21,8 @@ const scheduleService = require('../services/schedule');
  */
 let rule = new schedule.RecurrenceRule();
 
+//工作日定时更新估值
 rule.dayOfWeek = [new schedule.Range(1, 5)];
-// 10-12,13-16
 rule.hour = [10, 11, 13, 14, 15];
 let minute = [];
 for (let k = 0; k < 60; k += 3) {

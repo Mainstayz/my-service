@@ -22,8 +22,8 @@ const fundService = require('../services/fund');
  */
 let rule = new schedule.RecurrenceRule();
 
+//工作日，检验是否开盘
 rule.dayOfWeek = [new schedule.Range(1, 5)];
-// 平时不用
 rule.hour = [10, 13];
 
 function verifyOpening() {

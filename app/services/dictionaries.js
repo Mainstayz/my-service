@@ -3,6 +3,7 @@
  */
 const Proxy = require('../proxy');
 const Dictionaries = Proxy.Dictionaries;
+
 exports.getByKey = async function (key) {
   return Dictionaries.findOne({key});
 };

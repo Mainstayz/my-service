@@ -87,7 +87,6 @@ exports.getUserFunds = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 找到用户下的基金
     const userFunds = await userFundService.getUserFundsByUserIdWithFund(userRaw._id);
-    console.log(ctx.localConst.OPENING_RECORDS_REDIS_KEY)
     let records = await dictionariesService.getByKey(ctx.localConst.OPENING_RECORDS_REDIS_KEY);
     //如果有记录
     records = JSON.parse(records.value);
