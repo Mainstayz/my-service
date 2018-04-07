@@ -11,3 +11,4 @@ exports.fundScheduleController = require('./fundScheduleController');
 exports.uploadController = require('./uploadController');
 exports.exportController = require('./exportController');
 exports.userNetValueController = require('./userNetValueController');
+exports.webDataController = require('./webDataController');

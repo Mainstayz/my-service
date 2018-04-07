@@ -102,4 +102,9 @@ router.get('/schedule/deleteUnSellFund', controllers.fundScheduleController.dele
 router.post('/schedule/updateLowRateFund', controllers.fundScheduleController.updateLowRateFund);
 router.post('/schedule/deleteHighRateFund', controllers.fundScheduleController.deleteHighRateFund);
 
+/**
+ * 网络数据
+ */
+router.get('/webData/getWebStockdaybar', controllers.webDataController.getWebStockdaybar);
+
 module.exports = router;
