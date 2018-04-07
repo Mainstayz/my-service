@@ -15,3 +15,6 @@ pm2 list
 #停止
 pm2 delete <id|name>
 ```
+
+## 复制库
+db.copyDatabase('myServiceV2','myServiceV2','39.108.114.91:27017')
