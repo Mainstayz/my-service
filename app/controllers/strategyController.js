@@ -2,16 +2,13 @@
  * Created by xiaobxia on 2018/2/12.
  */
 exports.getStrategy = async function (ctx) {
-  const query = ctx.query;
   const tokenRaw = ctx.tokenRaw;
   try {
-    const data = ctx.validateData({
-      sort: {type: 'string', required: true}
-    }, query);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    const strategy  = await ctx.services.strategy.getStrategy(userRaw._id, data.sort);
+    const strategy  = await ctx.services.strategy.getStrategy(userRaw._id, true);
     ctx.body = ctx.resuccess({
-      strategy
+      slump: strategy.slump,
+      boom: strategy.boom
     });
   } catch (err) {
     ctx.body = ctx.refail(err);

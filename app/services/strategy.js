@@ -10,10 +10,11 @@ const FocusFundProxy = Proxy.FocusFund;
 const OptionalFundProxy = Proxy.OptionalFund;
 
 // 获取建议
-exports.getStrategy = async function (userId, sort) {
+exports.getStrategy = async function (userId, two) {
   const funds = await FundProxy.find({});
   const userFund = await UserFundProxy.find({user: userId});
   let list = [];
+  let listBoom = [];
   for (let i = 0; i < funds.length; i++) {
     const fund = funds[i];
     let analyzeInfo = analyzeService.getFundAnalyzeRecent(fund);
@@ -24,18 +25,9 @@ exports.getStrategy = async function (userId, sort) {
         break;
       }
     }
-    if (sort === 'boom') {
-      if (analyzeInfo.result.isMin || analyzeInfo.result.isMonthBoom|| analyzeInfo.result.isHalfMonthBoom) {
-        list.push({
-          _id: fund._id,
-          code: fund.code,
-          name: fund.name,
-          ...analyzeInfo
-        })
-      }
-    } else {
-      if (analyzeInfo.result.isMin || analyzeInfo.result.isMonthSlump|| analyzeInfo.result.isHalfMonthSlump) {
-        list.push({
+    if (two === true) {
+      if (analyzeInfo.result.isMin || analyzeInfo.result.isMonthBoom || analyzeInfo.result.isHalfMonthBoom) {
+        listBoom.push({
           _id: fund._id,
           code: fund.code,
           name: fund.name,
@@ -43,21 +35,33 @@ exports.getStrategy = async function (userId, sort) {
         })
       }
     }
+    if (analyzeInfo.result.isMin || analyzeInfo.result.isMonthSlump || analyzeInfo.result.isHalfMonthSlump) {
+      list.push({
+        _id: fund._id,
+        code: fund.code,
+        name: fund.name,
+        ...analyzeInfo
+      })
+    }
   }
-  if (sort === 'boom') {
+  if (two === true) {
     // 按暴涨排名
-    list.sort(function (a, b) {
+    listBoom.sort(function (a, b) {
       //大的在前面，halfMonthMax理论上是正数
       return b.halfMonthMax - a.halfMonthMax;
     });
-  } else {
-    // 按暴跌排名
-    list.sort(function (a, b) {
-      //小的在前面，halfMonthMin理论上是负数
-      return a.halfMonthMin - b.halfMonthMin;
-    });
   }
-
+  // 按暴跌排名
+  list.sort(function (a, b) {
+    //小的在前面，halfMonthMin理论上是负数
+    return a.halfMonthMin - b.halfMonthMin;
+  });
+  if (two === true) {
+    return{
+      slump: list,
+      boom: listBoom
+    }
+  }
   return list;
 };
 
