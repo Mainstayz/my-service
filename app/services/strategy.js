@@ -10,7 +10,7 @@ const FocusFundProxy = Proxy.FocusFund;
 const OptionalFundProxy = Proxy.OptionalFund;
 
 // 获取建议
-exports.getStrategy = async function (userId) {
+exports.getStrategy = async function (userId, sort) {
   const funds = await FundProxy.find({});
   const userFund = await UserFundProxy.find({user: userId});
   let list = [];
@@ -24,20 +24,40 @@ exports.getStrategy = async function (userId) {
         break;
       }
     }
-    if(analyzeInfo.result.isMin || analyzeInfo.result.isLow || analyzeInfo.result.isLowHalf || analyzeInfo.result.isHigh || analyzeInfo.result.isHighHalf) {
-      list.push({
-        _id: fund._id,
-        code: fund.code,
-        name: fund.name,
-        ...analyzeInfo
-      })
+    if (sort === 'boom') {
+      if (analyzeInfo.result.isMin || analyzeInfo.result.isMonthBoom|| analyzeInfo.result.isHalfMonthBoom) {
+        list.push({
+          _id: fund._id,
+          code: fund.code,
+          name: fund.name,
+          ...analyzeInfo
+        })
+      }
+    } else {
+      if (analyzeInfo.result.isMin || analyzeInfo.result.isMonthSlump|| analyzeInfo.result.isHalfMonthSlump) {
+        list.push({
+          _id: fund._id,
+          code: fund.code,
+          name: fund.name,
+          ...analyzeInfo
+        })
+      }
     }
   }
-  // 按暴跌排名
-  list.sort(function (a, b) {
-    //小的在前面，halfMonthMin理论上是负数
-    return a.halfMonthMin - b.halfMonthMin;
-  });
+  if (sort === 'boom') {
+    // 按暴涨排名
+    list.sort(function (a, b) {
+      //大的在前面，halfMonthMax理论上是正数
+      return b.halfMonthMax - a.halfMonthMax;
+    });
+  } else {
+    // 按暴跌排名
+    list.sort(function (a, b) {
+      //小的在前面，halfMonthMin理论上是负数
+      return a.halfMonthMin - b.halfMonthMin;
+    });
+  }
+
   return list;
 };
 
