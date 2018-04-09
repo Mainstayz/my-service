@@ -35,7 +35,7 @@ exports.getStrategy = async function (userId, two) {
         })
       }
     }
-    if (analyzeInfo.result.isMin || analyzeInfo.result.isMonthSlump || analyzeInfo.result.isHalfMonthSlump || ( analyzeInfo.result.isLow &&  analyzeInfo.result.isLowHalf)) {
+    if (analyzeInfo.result.isMin || analyzeInfo.result.isMonthSlump || analyzeInfo.result.isHalfMonthSlump) {
       list.push({
         _id: fund._id,
         code: fund.code,
