@@ -7,8 +7,8 @@ exports.getStrategy = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     const strategy  = await ctx.services.strategy.getStrategy(userRaw._id, true);
     ctx.body = ctx.resuccess({
-      slump: strategy.slump,
-      boom: strategy.boom
+      slump: strategy.slump.slice(0,50),
+      boom: strategy.boom.slice(0,50)
     });
   } catch (err) {
     ctx.body = ctx.refail(err);
