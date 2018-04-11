@@ -131,7 +131,7 @@ exports.getUserFunds = async function (ctx) {
     ctx.body = ctx.resuccess({
       list,
       info: {
-        costTotalSum: numberUtil.keepTwoDecimals(valuationTotalSum),
+        costTotalSum: numberUtil.keepTwoDecimals(costTotalSum),
         totalSum: numberUtil.keepTwoDecimals(totalSum),
         valuationTotalSum: numberUtil.keepTwoDecimals(valuationTotalSum),
         valuationDate: userFunds[0] ? moment(userFunds[0].fund['valuation_date']).format('YYYY-MM-DD HH:mm:ss') : ''
