@@ -5,7 +5,9 @@ const Proxy = require('../proxy');
 const fundInfoUtil = require('../util/fundInfo');
 const localConst = require('../const');
 const moment = require('moment');
+const util = require('../util');
 
+const numberUtil = util.numberUtil;
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
 const FocusFundProxy = Proxy.FocusFund;
@@ -310,7 +312,7 @@ exports.addRecentNetValue = async function () {
     if (fund['recent_net_value']) {
       recentNetValue = JSON.parse(fund['recent_net_value']).data;
       // 添加过那就跳过
-      if (moment(recentNetValue[0].date).isSame(fund['net_value_date'], 'day')) {
+      if (moment(recentNetValue[0]['net_value_date']).isSame(fund['net_value_date'], 'day')) {
         continue;
       }
       // 拿最新净值和前一天净值对比，计算增长率
@@ -319,7 +321,7 @@ exports.addRecentNetValue = async function () {
       newData.valuation_rate = 0;
     }
     newData.net_value = fund['net_value'];
-    newData.date = moment(fund['net_value_date']).format('YYYY-MM-DD');
+    newData['net_value_date'] = moment(fund['net_value_date']).format('YYYY-MM-DD');
     // 添加数据
     recentNetValue.unshift(newData);
     // 超过260天数据就截掉
