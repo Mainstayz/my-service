@@ -186,7 +186,7 @@ exports.verifyOpening = async function () {
       records = [nowDay];
     }
   }
-  records = records.slice(0, 60);
+  records = records.slice(0, 260);
   await DictionariesProxy.update({key: localConst.OPENING_RECORDS_REDIS_KEY}, {
     value: JSON.stringify(records)
   });
