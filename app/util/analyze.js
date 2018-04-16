@@ -54,10 +54,10 @@ exports.getMaxRiseAndFallInfo = function (valuation, netValueList) {
 // 判断当前点位所处的位置
 exports.getPositionInfo = function (valuation, netValueSort) {
   // netValueSort是已经被处理过的
-  let valuationIndex = netValueSort.length;
+  let valuationIndex = 0;
   // 计算当前净值处于的位置
   for (let i = 0; i < netValueSort.length; i++) {
-    if (valuation > netValueSort[i]) {
+    if (valuation < netValueSort[i]) {
       valuationIndex = i;
       break;
     }
