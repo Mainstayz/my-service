@@ -32,7 +32,7 @@ exports.getFundAnalyzeRecent = function (fund, hasNetValueList) {
   // 点位信息
   const positionInfo = analyzeUtil.getPositionInfo(valuation, netValueSort);
   const positionInfoHalf = analyzeUtil.getPositionInfo(valuation, netValueSortHalfYear);
-  const rate = 0.1;
+  const rate = 0.05;
   let data = {
     valuationRate,
     ...recentInfo,
