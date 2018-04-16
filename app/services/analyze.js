@@ -43,10 +43,10 @@ exports.getFundAnalyzeRecent = function (fund, hasNetValueList) {
       isHigh: valuation > positionInfo.highLine || positionInfo.valuationIndex > 260 * (1 - rate),
       isHighHalf: valuation > positionInfoHalf.highLine || positionInfoHalf.valuationIndex > 130 * (1 - rate),
       // 是否暴跌
-      isMonthSlump: recentInfo.monthMin < -10,
-      isHalfMonthSlump: recentInfo.halfMonthMin < -5,
-      isMonthBoom: recentInfo.monthMax > 10,
-      isHalfMonthBoom: recentInfo.halfMonthMax > 5,
+      isMonthSlump: recentInfo.monthMin < -7,
+      isHalfMonthSlump: recentInfo.halfMonthMin < -3,
+      isMonthBoom: recentInfo.monthMax > 7,
+      isHalfMonthBoom: recentInfo.halfMonthMax > 3,
       costLine,
       costLineHalf
     }
