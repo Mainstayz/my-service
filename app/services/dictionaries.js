@@ -7,3 +7,12 @@ const Dictionaries = Proxy.Dictionaries;
 exports.getByKey = async function (key) {
   return Dictionaries.findOne({key});
 };
+
+exports.getAnalyzeValue = async function () {
+  const data = await Dictionaries.find({type: 'analyze'});
+  let mapData = {};
+  data.forEach((item)=>{
+    mapData[item.key] = parseFloat(item.value);
+  });
+  return mapData;
+};

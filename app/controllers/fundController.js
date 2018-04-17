@@ -106,14 +106,16 @@ exports.getFunds = async function (ctx) {
 exports.getFundAnalyzeRecent = async function (ctx) {
   const query = ctx.query;
   const fundService = ctx.services.fund;
+  const dictionariesService = ctx.services.dictionaries;
   try {
     const data = ctx.validateData({
       code: {type: 'string', required: true}
     }, query);
     const fund = await fundService.getFundByCode(data.code);
     if (fund && fund['recent_net_value']) {
+      const analyzeValue = await dictionariesService.getAnalyzeValue();
       ctx.body = ctx.resuccess(
-        ctx.services.analyze.getFundAnalyzeRecent(fund, true)
+        ctx.services.analyze.getFundAnalyzeRecent(fund, analyzeValue, true)
       );
     } else {
       ctx.body = ctx.refail({

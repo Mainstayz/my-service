@@ -8,7 +8,7 @@ const analyzeUtil = util.analyzeUtil;
 const fundBaseUtil = util.fundBaseUtil;
 
 
-exports.getFundAnalyzeRecent = function (fund, hasNetValueList) {
+exports.getFundAnalyzeRecent = function (fund, analyzeValue, hasNetValueList) {
   const list = JSON.parse(fund['recent_net_value']).data;
   // 获取估值
   const valuationInfo = fundBaseUtil.getBetterValuation(fund);
@@ -43,10 +43,10 @@ exports.getFundAnalyzeRecent = function (fund, hasNetValueList) {
       isHigh: valuation > positionInfo.highLine || positionInfo.valuationIndex > 260 * (1 - rate),
       isHighHalf: valuation > positionInfoHalf.highLine || positionInfoHalf.valuationIndex > 130 * (1 - rate),
       // 是否暴跌
-      isMonthSlump: recentInfo.monthMin < -8,
-      isHalfMonthSlump: recentInfo.halfMonthMin < -4,
-      isMonthBoom: recentInfo.monthMax > 8,
-      isHalfMonthBoom: recentInfo.halfMonthMax > 4,
+      isMonthSlump: recentInfo.monthMin < (analyzeValue.monthSlumpValue || -8),
+      isHalfMonthSlump: recentInfo.halfMonthMin < (analyzeValue.halfMonthSlumpValue || -4),
+      isMonthBoom: recentInfo.monthMax > (analyzeValue.monthBoomValue || 8),
+      isHalfMonthBoom: recentInfo.halfMonthMax > (analyzeValue.halfMonthBoomValue || 4),
       costLine,
       costLineHalf
     }

@@ -2,6 +2,7 @@
  * Created by xiaobxia on 2018/4/5.
  */
 const analyzeService = require('./analyze');
+const dictionariesService = require('./dictionaries');
 const Proxy = require('../proxy');
 
 const FundProxy = Proxy.Fund;
@@ -13,11 +14,12 @@ const OptionalFundProxy = Proxy.OptionalFund;
 exports.getStrategy = async function (userId, two) {
   const funds = await FundProxy.find({});
   const userFund = await UserFundProxy.find({user: userId});
+  const analyzeValue = await dictionariesService.getAnalyzeValue();
   let list = [];
   let listBoom = [];
   for (let i = 0; i < funds.length; i++) {
     const fund = funds[i];
-    let analyzeInfo = analyzeService.getFundAnalyzeRecent(fund);
+    let analyzeInfo = analyzeService.getFundAnalyzeRecent(fund, analyzeValue);
     analyzeInfo.has = false;
     for (let j = 0; j < userFund.length; j++) {
       if (userFund[j].fund.toString() === fund._id.toString()) {
@@ -69,6 +71,7 @@ exports.getStrategy = async function (userId, two) {
 exports.getMyStrategy = async function (userId) {
   const userFund = await UserFundProxy.find({user: userId});
   let fundIds = [];
+  const analyzeValue = await dictionariesService.getAnalyzeValue();
   userFund.forEach(function (item) {
     //拥有份额的
     if (item.shares > 0) {
@@ -81,7 +84,7 @@ exports.getMyStrategy = async function (userId) {
   let list = [];
   for (let i = 0; i < funds.length; i++) {
     const fund = funds[i];
-    let analyzeInfo = analyzeService.getFundAnalyzeRecent(fund);
+    let analyzeInfo = analyzeService.getFundAnalyzeRecent(fund, analyzeValue);
     list.push({
       _id: fund._id,
       code: fund.code,
@@ -101,10 +104,11 @@ exports.getMyStrategy = async function (userId) {
 exports.getLowRateStrategy = async function (userId) {
   const funds = await FundProxy.find({lowRate: true});
   const userFund = await UserFundProxy.find({user: userId});
+  const analyzeValue = await dictionariesService.getAnalyzeValue();
   let list = [];
   for (let i = 0; i < funds.length; i++) {
     const fund = funds[i];
-    let analyzeInfo = analyzeService.getFundAnalyzeRecent(fund);
+    let analyzeInfo = analyzeService.getFundAnalyzeRecent(fund, analyzeValue);
     analyzeInfo.has = false;
     for (let j = 0; j < userFund.length; j++) {
       if (userFund[j].fund.toString() === fund._id.toString()) {
