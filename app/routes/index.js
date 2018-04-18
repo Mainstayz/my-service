@@ -72,7 +72,8 @@ router.get('/fund/deleteFocusFund', controllers.focusFundController.getFocusFund
 router.get('/strategy/getStrategy', controllers.strategyController.getStrategy);
 router.get('/strategy/getMyStrategy', controllers.strategyController.getMyStrategy);
 router.get('/strategy/getLowRateStrategy', controllers.strategyController.getLowRateStrategy);
-
+router.post('/strategy/updateAnalyzeValue', controllers.strategyController.updateAnalyzeValue);
+router.get('/strategy/getAnalyzeValue', controllers.strategyController.getAnalyzeValue);
 /**
  * 文件上传模块
  */

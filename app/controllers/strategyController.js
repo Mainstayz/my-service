@@ -42,3 +42,36 @@ exports.getLowRateStrategy = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.updateAnalyzeValue = async function (ctx) {
+  const query = ctx.request.body;
+  const dictionariesService = ctx.services.dictionaries;
+  try {
+    const data = ctx.validateData({
+      list: {required: true}
+    }, query);
+    await dictionariesService.updateAnalyzeValue(JSON.parse(data.list));
+    ctx.body = ctx.resuccess({});
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
+exports.getAnalyzeValue = async function (ctx) {
+  const dictionariesService = ctx.services.dictionaries;
+  try {
+    const mapData = await dictionariesService.getAnalyzeValue();
+    let list = [];
+    for(let key in mapData) {
+      list.push({
+        key: key,
+        value: mapData[key]
+      })
+    }
+    ctx.body = ctx.resuccess({
+      list
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
