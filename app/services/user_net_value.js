@@ -38,3 +38,10 @@ exports.getUserNetValue = async function (query) {
   };
   return UserNetValue.find(query, opt);
 };
+
+exports.getUserNetValueNewSort = async function (query) {
+  const opt = {
+    sort: '-net_value_date'
+  };
+  return UserNetValue.find(query, opt);
+};

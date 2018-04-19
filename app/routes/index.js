@@ -59,6 +59,7 @@ router.get('/fund/deleteUserNetValue', controllers.userNetValueController.delete
 router.post('/fund/updateUserNetValue', controllers.userNetValueController.updateUserNetValue);
 router.get('/fund/getUserNetValues', controllers.userNetValueController.getUserNetValues);
 router.get('/fund/getUserNetValuesAll', controllers.userNetValueController.getUserNetValuesAll);
+router.get('/fund/getUserNetValuesRecent', controllers.userNetValueController.getUserNetValuesRecent);
 /**
  * 关注基金模块
  */
