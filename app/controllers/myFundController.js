@@ -41,9 +41,7 @@ exports.deleteUserFund = async function (ctx) {
       code: {type: 'string', required: true}
     }, query);
     // 得到基金信息
-    const fund = await fundService.getFundBaseByCode({
-      code: data.code
-    });
+    const fund = await fundService.getFundBaseByCode(data.code);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 删除基金用户关系
     await userFundService.deleteUserFund(userRaw._id, fund._id);
