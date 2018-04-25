@@ -112,10 +112,12 @@ exports.getUserNetValuesRecent = async function (ctx) {
     const lastNetValue = userNetValues[lastIndex].net_value;
     const nowNetValue = userNetValues[0].net_value;
     const weekNetValue = userNetValues[5] ? userNetValues[5].net_value : lastNetValue;
+    const halfMonthNetValue = userNetValues[10] ? userNetValues[10].net_value : lastNetValue;
     const monthNetValue = userNetValues[21] ? userNetValues[21].net_value : lastNetValue;
     const yearNetValue = userNetValues[260] ? userNetValues[260].net_value : lastNetValue;
     ctx.body = ctx.resuccess({
       week: numberUtil.countDifferenceRate(nowNetValue, weekNetValue),
+      halfMonth: numberUtil.countDifferenceRate(nowNetValue, halfMonthNetValue),
       month: numberUtil.countDifferenceRate(nowNetValue, monthNetValue),
       year: numberUtil.countDifferenceRate(nowNetValue, yearNetValue)
     });
