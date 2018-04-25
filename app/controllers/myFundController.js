@@ -85,6 +85,7 @@ exports.getUserFunds = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 找到用户下的基金
     const userFunds = await userFundService.getUserFundsByUserIdWithFund(userRaw._id);
+    const strategy = await ctx.services.strategy.getMyStrategy(userRaw._id);
     let records = await dictionariesService.getByKey(ctx.localConst.OPENING_RECORDS_REDIS_KEY);
     //如果有记录
     records = JSON.parse(records.value);
@@ -102,7 +103,15 @@ exports.getUserFunds = async function (ctx) {
       costTotalSum += costSum;
       const valuationInfo = fundBaseUtil.getBetterValuation(fund);
       const buyDate = moment(userFund.buy_date).format('YYYY-MM-DD');
+      let strategyInfo = {};
+      for (let j = 0; j < strategy.length; j++) {
+        if (fund.code === strategy[j].code) {
+          strategyInfo = strategy[j];
+          break;
+        }
+      }
       let result = {
+        ...strategyInfo,
         name: fund.name,
         code: fund.code,
         shares: userFund.shares,
@@ -115,7 +124,7 @@ exports.getUserFunds = async function (ctx) {
         netValue: fund.net_value,
         // 持仓净值
         sum: numberUtil.keepTwoDecimals(sum),
-        costSum:  numberUtil.keepTwoDecimals(costSum),
+        costSum: numberUtil.keepTwoDecimals(costSum),
         valuation: valuationInfo.valuation,
         valuationSource: valuationInfo.sourceName
       };
