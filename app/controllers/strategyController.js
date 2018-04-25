@@ -75,3 +75,14 @@ exports.getAnalyzeValue = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.getFundsMaxMinDistribution = async function (ctx) {
+  try {
+    const result  = await ctx.services.strategy.getFundsMaxMinDistribution();
+    ctx.body = ctx.resuccess({
+      ...result
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};

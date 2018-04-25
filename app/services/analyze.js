@@ -57,4 +57,25 @@ exports.getFundAnalyzeRecent = function (fund, analyzeValue, hasNetValueList) {
   return data;
 };
 
+exports.getFundMaxMinDistribution = function (fund) {
+  const list = JSON.parse(fund['recent_net_value']).data;
+  // 近几天的暴跌信息， 包括了当天的
+  let max = [];
+  let min = [];
+  let halfMax = [];
+  let halfMin = [];
+  for (let i = 0; i < list.length - 22; i++) {
+    const recentInfo = analyzeUtil.getMaxRiseAndFallInfo(list[i]['net_value'], list.slice(i, i + 22));
+    max.push(recentInfo.monthMax);
+    min.push(recentInfo.monthMin);
+    halfMax.push(recentInfo.halfMonthMax);
+    halfMin.push(recentInfo.halfMonthMin);
+  }
+  return {
+    halfMax,
+    halfMin,
+    min,
+    max
+  }
+};
 

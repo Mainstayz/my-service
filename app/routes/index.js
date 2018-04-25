@@ -75,6 +75,7 @@ router.get('/strategy/getMyStrategy', controllers.strategyController.getMyStrate
 router.get('/strategy/getLowRateStrategy', controllers.strategyController.getLowRateStrategy);
 router.post('/strategy/updateAnalyzeValue', controllers.strategyController.updateAnalyzeValue);
 router.get('/strategy/getAnalyzeValue', controllers.strategyController.getAnalyzeValue);
+router.get('/strategy/getFundsMaxMinDistribution', controllers.strategyController.getFundsMaxMinDistribution);
 /**
  * 文件上传模块
  */

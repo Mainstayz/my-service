@@ -59,7 +59,7 @@ exports.getStrategy = async function (userId, two) {
     return a.halfMonthMin - b.halfMonthMin;
   });
   if (two === true) {
-    return{
+    return {
       slump: list,
       boom: listBoom
     }
@@ -159,4 +159,58 @@ exports.getFocusStrategy = async function (userId) {
     return b.slumpWeekCount - a.slumpWeekCount;
   });
   return strategyList;
+};
+
+exports.getFundsMaxMinDistribution = async function () {
+  let max = [];
+  let min = [];
+  let halfMax = [];
+  let halfMin = [];
+  let maxMap = {};
+  let minMap = {};
+  let halfMaxMap = {};
+  let halfMinMap = {};
+  const funds = await FundProxy.find({});
+  for (let i = 0; i < funds.length; i++) {
+    const fund = funds[i];
+    const result = analyzeService.getFundMaxMinDistribution(fund);
+    max = max.concat(result.max);
+    min = min.concat(result.min);
+    halfMax = halfMax.concat(result.halfMax);
+    halfMin = halfMin.concat(result.halfMin);
+  }
+  for (let i = 0; i < max.length; i++) {
+    if (maxMap[max[i]+'']) {
+      maxMap[max[i]+'']++;
+    } else {
+      maxMap[max[i]+''] = 1;
+    }
+  }
+  for (let i = 0; i < min.length; i++) {
+    if (minMap[min[i]+'']) {
+      minMap[min[i]+'']++;
+    } else {
+      minMap[min[i]+''] = 1;
+    }
+  }
+  for (let i = 0; i < halfMin.length; i++) {
+    if (halfMinMap[halfMin[i]+'']) {
+      halfMinMap[halfMin[i]+'']++;
+    } else {
+      halfMinMap[halfMin[i]+''] = 1;
+    }
+  }
+  for (let i = 0; i < halfMax.length; i++) {
+    if (halfMaxMap[halfMax[i]+'']) {
+      halfMaxMap[halfMax[i]+'']++;
+    } else {
+      halfMaxMap[halfMax[i]+''] = 1;
+    }
+  }
+  return {
+    halfMaxMap,
+    halfMinMap,
+    maxMap,
+    minMap
+  }
 };
