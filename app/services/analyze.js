@@ -25,23 +25,25 @@ exports.getFundAnalyzeRecent = function (fund, analyzeValue, hasNetValueList) {
     // 从小到大排序，并记录次数
   const netValueSort = analyzeUtil.getNetValueSort(list);
   const netValueSortHalfYear = analyzeUtil.getNetValueSort(list.slice(0, 130));
+  const netValueSortHalfMonth = analyzeUtil.getNetValueSort(list.slice(0, 10));
+  const netValueSortMonth = analyzeUtil.getNetValueSort(list.slice(0, 20));
   const costLine = analyzeUtil.getCostLine(netValueSort);
   const costLineHalf = analyzeUtil.getCostLine(netValueSortHalfYear);
   // 近几天的暴跌信息， 包括了当天的
   const recentInfo = analyzeUtil.getMaxRiseAndFallInfo(valuation, list);
   // 点位信息
-  const positionInfo = analyzeUtil.getPositionInfo(valuation, netValueSort);
-  const positionInfoHalf = analyzeUtil.getPositionInfo(valuation, netValueSortHalfYear);
-  const rate = 0.05;
+  const positionInfo = analyzeUtil.getPositionInfo(valuation, netValueSortMonth);
+  const positionInfoHalf = analyzeUtil.getPositionInfo(valuation, netValueSortHalfMonth);
+  const rate = 0.2;
   let data = {
     valuationRate,
     ...recentInfo,
     result: {
       isMin: valuation < netValueSort[0],
-      isLow: valuation < positionInfo.lowLine || positionInfo.valuationIndex < 260 * rate,
-      isLowHalf: valuation < positionInfoHalf.lowLine || positionInfoHalf.valuationIndex < 130 * rate,
-      isHigh: valuation > positionInfo.highLine || positionInfo.valuationIndex > 260 * (1 - rate),
-      isHighHalf: valuation > positionInfoHalf.highLine || positionInfoHalf.valuationIndex > 130 * (1 - rate),
+      isLow: valuation < positionInfo.lowLine || positionInfo.valuationIndex < 20 * rate,
+      isLowHalf: valuation < positionInfoHalf.lowLine || positionInfoHalf.valuationIndex < 10 * rate,
+      isHigh: valuation > positionInfo.highLine || positionInfo.valuationIndex > 20 * (1 - rate),
+      isHighHalf: valuation > positionInfoHalf.highLine || positionInfoHalf.valuationIndex > 10 * (1 - rate),
       // 是否暴跌
       isMonthSlump: recentInfo.monthMin < (analyzeValue.monthSlumpValue || -8),
       isHalfMonthSlump: recentInfo.halfMonthMin < (analyzeValue.halfMonthSlumpValue || -4),

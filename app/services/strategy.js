@@ -28,7 +28,7 @@ exports.getStrategy = async function (userId, two) {
       }
     }
     if (two === true) {
-      if (analyzeInfo.result.isMonthBoom || analyzeInfo.result.isHalfMonthBoom) {
+      if (analyzeInfo.result.isMonthBoom || analyzeInfo.result.isHalfMonthBoom|| (analyzeInfo.result.isHigh && analyzeInfo.result.isHighHalf)) {
         listBoom.push({
           _id: fund._id,
           code: fund.code,

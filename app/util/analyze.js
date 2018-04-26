@@ -63,7 +63,7 @@ exports.getPositionInfo = function (valuation, netValueSort) {
     }
   }
   // 幅度的位置
-  const rate = 0.05;
+  const rate = 0.2;
   const range = netValueSort[netValueSort.length - 1].netValue - netValueSort[0].netValue;
   const step = rate * range;
   const lowLine = numberUtil.keepFourDecimals(netValueSort[0].netValue + step);
