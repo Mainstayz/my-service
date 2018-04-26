@@ -2,6 +2,6 @@
 node_modules
 logs/
 config/index.js
-npm-debug
+npm-debug*
 uploads/
 sftp-config.json
