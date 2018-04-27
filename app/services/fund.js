@@ -455,7 +455,7 @@ exports.getMarket = async function (sort, paging) {
   const opt = {
     skip: paging.start,
     limit: paging.offset,
-    sort: sort === 'up' ? 'rise' : '-rise'
+    sort: sort === 'up' ? '-rise' : 'rise'
   };
   let queryOption = {};
   const data = await Promise.all([FundProxy.findBase(queryOption, opt), FundProxy.count(queryOption)]);
