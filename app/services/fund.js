@@ -449,3 +449,15 @@ exports.deleteHighRateFund = async function (codes) {
   }
   return Promise.all(optionList);
 };
+
+//得到行情
+exports.getMarket = async function (sort, paging) {
+  const opt = {
+    skip: paging.start,
+    limit: paging.offset,
+    sort: sort === 'up' ? 'rise' : '-rise'
+  };
+  let queryOption = {};
+  const data = await Promise.all([FundProxy.findBase(queryOption, opt), FundProxy.count(queryOption)]);
+  return {list: data[0], count: data[1]};
+};

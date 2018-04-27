@@ -41,7 +41,7 @@ router.get('/fund/deleteFund', controllers.fundController.deleteFund);
 router.get('/fund/getFundBase', controllers.fundController.getFundBase);
 router.get('/fund/getFunds', controllers.fundController.getFunds);
 router.get('/fund/getFundAnalyzeRecent', controllers.fundController.getFundAnalyzeRecent);
-
+router.get('/fund/getMarket', controllers.fundController.getMarket);
 /**
  * 用户基金模块
  */

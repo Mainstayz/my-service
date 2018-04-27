@@ -126,3 +126,25 @@ exports.getFundAnalyzeRecent = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+//得到行情
+exports.getMarket = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      sort: {required: false},
+      current: {type: 'int', required: true},
+      pageSize: {type: 'int', required: true}
+    }, query);
+    let paging = ctx.paging(data.current, data.pageSize);
+    //分页获取
+    const funds = await ctx.services.fund.getMarket(data.sort, paging);
+    paging.total = funds.count;
+    ctx.body = ctx.resuccess({
+      list: funds.list,
+      page: paging
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
