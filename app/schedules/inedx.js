@@ -10,5 +10,6 @@ if (!isDev) {
   exports.closeUpdateValuation = require('./closeUpdateValuation');
   exports.verifyOpening = require('./verifyOpening');
   exports.deleteUnSellFund = require('./deleteUnSellFund');
+  exports.updateRise = require('./updateRise');
 }
 

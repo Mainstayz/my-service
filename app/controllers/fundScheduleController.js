@@ -23,6 +23,16 @@ exports.updateValuation = async function (ctx) {
   }
 };
 
+//计算涨幅
+exports.updateRise = async function (ctx) {
+  try {
+    await ctx.services.fund.updateRise();
+    ctx.body = ctx.resuccess();
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
 // 统计估值准确
 exports.betterValuation = async function (ctx) {
   try {

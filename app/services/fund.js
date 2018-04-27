@@ -8,6 +8,7 @@ const moment = require('moment');
 const util = require('../util');
 
 const numberUtil = util.numberUtil;
+const fundBaseUtil = util.fundBaseUtil;
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
 const FocusFundProxy = Proxy.FocusFund;
@@ -244,6 +245,24 @@ exports.updateValuation = async function () {
   return Promise.all(updateList);
 };
 
+//更新涨幅
+exports.updateRise = async function () {
+  const funds = await FundProxy.findBase({});
+  for (let k = 0; k < funds.length; k++) {
+    const fund = funds[k];
+    // 获取估值
+    const valuationInfo = fundBaseUtil.getBetterValuation(fund);
+    // 目前估值
+    const valuation = valuationInfo.valuation;
+    // 当日幅度
+    const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
+    // 更新数据
+    FundProxy.update({code: fund.code}, {
+      rise: valuationRate
+    })
+  }
+};
+
 // 更新估值准确记录
 exports.betterValuation = async function () {
   const funds = await FundProxy.findBase({});
@@ -279,7 +298,7 @@ exports.betterValuation = async function () {
       betterCount = betterCount.slice(0, 15)
     }
     // 更新数据
-    await FundProxy.update({code: funds[k].code}, {
+    FundProxy.update({code: fund.code}, {
       better_count: JSON.stringify({
         data: betterCount
       })
@@ -292,7 +311,7 @@ exports.updateRecentNetValue = async function () {
   const funds = await FundProxy.find({});
   let requestList = [];
   funds.forEach(function (fund) {
-    requestList.push(fundInfoUtil.getRecentNetValue(fund.code, localConst.RECENT_NET_VALUE_DAYS).then((item)=>{
+    requestList.push(fundInfoUtil.getRecentNetValue(fund.code, localConst.RECENT_NET_VALUE_DAYS).then((item) => {
       return FundProxy.update({code: fund.code}, {
         recent_net_value: JSON.stringify({data: item})
       })
@@ -389,7 +408,7 @@ exports.deleteUnSellFund = async function () {
 exports.updateLowRateFund = async function (codes) {
   const funds = await FundProxy.findBase({});
   let optionList = [];
-  funds.forEach((fund)=>{
+  funds.forEach((fund) => {
     if (codes.indexOf(fund.code) === -1) {
       optionList.push(FundProxy.update({code: fund.code}, {
         lowRate: false
