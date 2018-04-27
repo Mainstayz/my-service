@@ -257,7 +257,7 @@ exports.updateRise = async function () {
     // 当日幅度
     const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
     // 更新数据
-    FundProxy.update({code: fund.code}, {
+    await FundProxy.update({code: fund.code}, {
       rise: valuationRate
     })
   }
@@ -298,7 +298,7 @@ exports.betterValuation = async function () {
       betterCount = betterCount.slice(0, 15)
     }
     // 更新数据
-    FundProxy.update({code: fund.code}, {
+    await FundProxy.update({code: fund.code}, {
       better_count: JSON.stringify({
         data: betterCount
       })
