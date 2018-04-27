@@ -55,6 +55,11 @@ function verifyOpening() {
               value: 'open'
             }).then(()=>{
             });
+            // 开启涨幅更新
+            scheduleService.updateSchedule('updateRise', {
+              value: 'open'
+            }).then(()=>{
+            });
           }).catch(function (err) {
             logger.error(err);
           });

@@ -11,5 +11,6 @@ if (!isDev) {
   exports.verifyOpening = require('./verifyOpening');
   exports.deleteUnSellFund = require('./deleteUnSellFund');
   exports.updateRise = require('./updateRise');
+  exports.closeUpdateRise = require('./closeUpdateRise');
 }
 
