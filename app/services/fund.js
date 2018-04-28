@@ -248,6 +248,7 @@ exports.updateValuation = async function () {
 //更新涨幅
 exports.updateRise = async function () {
   const funds = await FundProxy.findBase({});
+  let updateList = [];
   for (let k = 0; k < funds.length; k++) {
     const fund = funds[k];
     // 获取估值
@@ -257,15 +258,17 @@ exports.updateRise = async function () {
     // 当日幅度
     const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
     // 更新数据
-    await FundProxy.update({code: fund.code}, {
+    updateList.push(FundProxy.update({code: fund.code}, {
       rise: valuationRate
-    })
+    }));
   }
+  return Promise.all(updateList);
 };
 
 // 更新估值准确记录
 exports.betterValuation = async function () {
   const funds = await FundProxy.findBase({});
+  let updateList = [];
   for (let k = 0; k < funds.length; k++) {
     const fund = funds[k];
     let betterCount = [];
@@ -298,12 +301,13 @@ exports.betterValuation = async function () {
       betterCount = betterCount.slice(0, 15)
     }
     // 更新数据
-    await FundProxy.update({code: fund.code}, {
+    updateList.push(FundProxy.update({code: fund.code}, {
       better_count: JSON.stringify({
         data: betterCount
       })
-    })
+    }));
   }
+  return Promise.all(updateList);
 };
 
 // 产生所有的近期涨跌数据，一般只有第一次产生数据时用
