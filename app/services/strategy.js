@@ -4,6 +4,9 @@
 const analyzeService = require('./analyze');
 const dictionariesService = require('./dictionaries');
 const Proxy = require('../proxy');
+const util = require('../util');
+
+const analyzeUtil = util.analyzeUtil;
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
@@ -28,7 +31,7 @@ exports.getStrategy = async function (userId, two) {
       }
     }
     if (two === true) {
-      if (analyzeInfo.result.isMonthBoom || analyzeInfo.result.isHalfMonthBoom|| (analyzeInfo.result.isHigh && analyzeInfo.result.isHighHalf)) {
+      if (analyzeInfo.result.isMonthBoom || analyzeInfo.result.isHalfMonthBoom || (analyzeInfo.result.isHigh && analyzeInfo.result.isHighHalf)) {
         listBoom.push({
           _id: fund._id,
           code: fund.code,
@@ -85,11 +88,13 @@ exports.getMyStrategy = async function (userId) {
   for (let i = 0; i < funds.length; i++) {
     const fund = funds[i];
     let analyzeInfo = analyzeService.getFundAnalyzeRecent(fund, analyzeValue);
+    let analyzeInfoAverage = analyzeService.getAverageInfo(fund);
     list.push({
       _id: fund._id,
       code: fund.code,
       name: fund.name,
-      ...analyzeInfo
+      ...analyzeInfo,
+      ...analyzeInfoAverage
     })
   }
   // 按暴跌排名
@@ -180,31 +185,31 @@ exports.getFundsMaxMinDistribution = async function () {
     halfMin = halfMin.concat(result.halfMin);
   }
   for (let i = 0; i < max.length; i++) {
-    if (maxMap[max[i]+'']) {
-      maxMap[max[i]+'']++;
+    if (maxMap[max[i] + '']) {
+      maxMap[max[i] + '']++;
     } else {
-      maxMap[max[i]+''] = 1;
+      maxMap[max[i] + ''] = 1;
     }
   }
   for (let i = 0; i < min.length; i++) {
-    if (minMap[min[i]+'']) {
-      minMap[min[i]+'']++;
+    if (minMap[min[i] + '']) {
+      minMap[min[i] + '']++;
     } else {
-      minMap[min[i]+''] = 1;
+      minMap[min[i] + ''] = 1;
     }
   }
   for (let i = 0; i < halfMin.length; i++) {
-    if (halfMinMap[halfMin[i]+'']) {
-      halfMinMap[halfMin[i]+'']++;
+    if (halfMinMap[halfMin[i] + '']) {
+      halfMinMap[halfMin[i] + '']++;
     } else {
-      halfMinMap[halfMin[i]+''] = 1;
+      halfMinMap[halfMin[i] + ''] = 1;
     }
   }
   for (let i = 0; i < halfMax.length; i++) {
-    if (halfMaxMap[halfMax[i]+'']) {
-      halfMaxMap[halfMax[i]+'']++;
+    if (halfMaxMap[halfMax[i] + '']) {
+      halfMaxMap[halfMax[i] + '']++;
     } else {
-      halfMaxMap[halfMax[i]+''] = 1;
+      halfMaxMap[halfMax[i] + ''] = 1;
     }
   }
   return {
@@ -214,3 +219,61 @@ exports.getFundsMaxMinDistribution = async function () {
     minMap
   }
 };
+
+// 获取建议
+exports.getAverageStrategy = async function (userId) {
+  const funds = await FundProxy.find({});
+  const userFund = await UserFundProxy.find({user: userId});
+  let list = [];
+  for (let i = 0; i < funds.length; i++) {
+    const fund = funds[i];
+    let analyzeInfo = analyzeService.getAverageInfo(fund);
+    if (analyzeInfo.isUp) {
+      analyzeInfo.has = false;
+      for (let j = 0; j < userFund.length; j++) {
+        if (userFund[j].fund.toString() === fund._id.toString()) {
+          analyzeInfo.has = true;
+          break;
+        }
+      }
+      list.push({
+        _id: fund._id,
+        code: fund.code,
+        name: fund.name,
+        ...analyzeInfo
+      })
+    }
+  }
+  list.sort(function (a, b) {
+    return a.valuationRate - b.valuationRate;
+  });
+  return list;
+};
+
+// 对我的持仓的建议
+// exports.getMyStrategy = async function (userId) {
+//   const userFund = await UserFundProxy.find({user: userId});
+//   let fundIds = [];
+//   userFund.forEach(function (item) {
+//     //拥有份额的
+//     if (item.shares > 0) {
+//       fundIds.push(item.fund);
+//     }
+//   });
+//   const funds = await FundProxy.find({
+//     _id: {$in: fundIds}
+//   });
+//   let list = [];
+//   for (let i = 0; i < funds.length; i++) {
+//     const fund = funds[i];
+//     let analyzeInfo = analyzeService.getAverageInfo(fund);
+//     list.push({
+//       _id: fund._id,
+//       code: fund.code,
+//       name: fund.name,
+//       ...analyzeInfo
+//     })
+//   }
+//   return list;
+// };
+

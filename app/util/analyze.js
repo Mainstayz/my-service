@@ -83,3 +83,13 @@ exports.getCostLine = function (netValueList) {
   });
   return numberUtil.keepFourDecimals(value / (netValueList.length));
 };
+
+exports.getAverage = function (netValue, day, index) {
+  let start = index - day + 1;
+  start = start < 0 ? 0 : start;
+  let count = 0;
+  for (let i = index; i >= start; i--) {
+    count += netValue[i];
+  }
+  return numberUtil.keepFourDecimals(count / (index + 1 - start));
+};

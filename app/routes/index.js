@@ -72,6 +72,8 @@ router.get('/fund/deleteFocusFund', controllers.focusFundController.getFocusFund
  */
 router.get('/strategy/getStrategy', controllers.strategyController.getStrategy);
 router.get('/strategy/getMyStrategy', controllers.strategyController.getMyStrategy);
+router.get('/strategy/getAverageStrategy', controllers.strategyController.getAverageStrategy);
+router.get('/strategy/getMyAverageStrategy', controllers.strategyController.getMyAverageStrategy);
 router.get('/strategy/getLowRateStrategy', controllers.strategyController.getLowRateStrategy);
 router.post('/strategy/updateAnalyzeValue', controllers.strategyController.updateAnalyzeValue);
 router.get('/strategy/getAnalyzeValue', controllers.strategyController.getAnalyzeValue);

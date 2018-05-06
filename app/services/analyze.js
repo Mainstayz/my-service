@@ -81,3 +81,29 @@ exports.getFundMaxMinDistribution = function (fund) {
   }
 };
 
+exports.getAverageInfo = function (fund) {
+  const list = JSON.parse(fund['recent_net_value']).data;
+  // 获取估值
+  const valuationInfo = fundBaseUtil.getBetterValuation(fund);
+  // 目前估值
+  const valuation = valuationInfo.valuation;
+  // 当日幅度
+  const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
+  let newList = [];
+  list.forEach((item) => {
+    newList.unshift(item['net_value']);
+  });
+  newList.push(valuation);
+  const len = newList.length;
+  const monthAverage = analyzeUtil.getAverage(newList, 20, len - 1);
+  const weekAverage = analyzeUtil.getAverage(newList, 5, len - 1);
+  const rate = numberUtil.countDifferenceRate(weekAverage, monthAverage);
+  return {
+    monthAverage,
+    weekAverage,
+    isUp: rate > 1,
+    isDown: rate < 1,
+    valuationRate
+  }
+};
+
