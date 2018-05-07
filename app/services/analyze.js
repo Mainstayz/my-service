@@ -98,12 +98,25 @@ exports.getAverageInfo = function (fund) {
   const monthAverage = analyzeUtil.getAverage(newList, 20, len - 1);
   const weekAverage = analyzeUtil.getAverage(newList, 5, len - 1);
   const rate = numberUtil.countDifferenceRate(weekAverage, monthAverage);
+  let isDown = rate < -0.5;
+  let toDown = false;
+  for (let i = 2; i < 5; i++) {
+    const monthAverageTemp = analyzeUtil.getAverage(newList, 20, len - i);
+    const weekAverageTemp = analyzeUtil.getAverage(newList, 5, len - i);
+    const rateTemp = numberUtil.countDifferenceRate(weekAverageTemp, monthAverageTemp);
+    if (isDown) {
+      if (rateTemp > 0) {
+        toDown = true
+      }
+    }
+  }
   return {
     monthAverage,
     weekAverage,
     isUp: rate > 0.5,
-    isDown: rate < -0.5,
-    isReverse: rate< -2.5,
+    isDown,
+    toDown,
+    isReverse: rate < -2.5,
     valuationRate
   }
 };
