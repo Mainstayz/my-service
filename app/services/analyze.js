@@ -101,8 +101,9 @@ exports.getAverageInfo = function (fund) {
   return {
     monthAverage,
     weekAverage,
-    isUp: rate > 1,
-    isDown: rate < 1,
+    isUp: rate > 0.5,
+    isDown: rate < -0.5,
+    isReverse: rate< -2.5,
     valuationRate
   }
 };

@@ -250,30 +250,3 @@ exports.getAverageStrategy = async function (userId) {
   return list;
 };
 
-// 对我的持仓的建议
-// exports.getMyStrategy = async function (userId) {
-//   const userFund = await UserFundProxy.find({user: userId});
-//   let fundIds = [];
-//   userFund.forEach(function (item) {
-//     //拥有份额的
-//     if (item.shares > 0) {
-//       fundIds.push(item.fund);
-//     }
-//   });
-//   const funds = await FundProxy.find({
-//     _id: {$in: fundIds}
-//   });
-//   let list = [];
-//   for (let i = 0; i < funds.length; i++) {
-//     const fund = funds[i];
-//     let analyzeInfo = analyzeService.getAverageInfo(fund);
-//     list.push({
-//       _id: fund._id,
-//       code: fund.code,
-//       name: fund.name,
-//       ...analyzeInfo
-//     })
-//   }
-//   return list;
-// };
-
