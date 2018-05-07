@@ -88,25 +88,12 @@ exports.getFundsMaxMinDistribution = async function (ctx) {
 };
 
 exports.getAverageStrategy = async function (ctx) {
-  try {
-    const result = await ctx.services.strategy.getAverageStrategy();
-    ctx.body = ctx.resuccess({
-      result
-    });
-  } catch (err) {
-    ctx.body = ctx.refail(err);
-  }
-};
-
-
-//我的基金的情况
-exports.getMyAverageStrategy = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   try {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    const list = await ctx.services.strategy.getAverageStrategy(userRaw._id);
+    const result = await ctx.services.strategy.getAverageStrategy(userRaw._id);
     ctx.body = ctx.resuccess({
-      list
+      result
     });
   } catch (err) {
     ctx.body = ctx.refail(err);

@@ -228,7 +228,7 @@ exports.getAverageStrategy = async function (userId) {
   for (let i = 0; i < funds.length; i++) {
     const fund = funds[i];
     let analyzeInfo = analyzeService.getAverageInfo(fund);
-    if (analyzeInfo.isUp) {
+    if (analyzeInfo.isUp || analyzeInfo.isReverse) {
       analyzeInfo.has = false;
       for (let j = 0; j < userFund.length; j++) {
         if (userFund[j].fund.toString() === fund._id.toString()) {
