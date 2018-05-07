@@ -80,6 +80,7 @@ exports.updateUserFund = async function (ctx) {
 exports.getUserFunds = async function (ctx) {
   const dictionariesService = ctx.services.dictionaries;
   const userFundService = ctx.services.userFund;
+  const analyzeService = ctx.services.analyze;
   try {
     const tokenRaw = ctx.tokenRaw;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
@@ -110,6 +111,7 @@ exports.getUserFunds = async function (ctx) {
           break;
         }
       }
+      let analyzeInfo = analyzeService.getAverageInfo(fund);
       let result = {
         ...strategyInfo,
         name: fund.name,
@@ -126,7 +128,8 @@ exports.getUserFunds = async function (ctx) {
         sum: numberUtil.keepTwoDecimals(sum),
         costSum: numberUtil.keepTwoDecimals(costSum),
         valuation: valuationInfo.valuation,
-        valuationSource: valuationInfo.sourceName
+        valuationSource: valuationInfo.sourceName,
+        ...analyzeInfo
       };
       result.valuationSum = numberUtil.keepTwoDecimals(result.valuation * userFund.shares);
       valuationTotalSum += result.valuationSum;
