@@ -105,7 +105,7 @@ exports.getAverageInfo = function (fund) {
     const weekAverageTemp = analyzeUtil.getAverage(newList, 5, len - i);
     const rateTemp = numberUtil.countDifferenceRate(weekAverageTemp, monthAverageTemp);
     if (isDown) {
-      if (rateTemp > 0) {
+      if (rateTemp > 0.5) {
         toDown = true
       }
     }
