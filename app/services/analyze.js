@@ -100,6 +100,7 @@ exports.getAverageInfo = function (fund) {
   const rate = numberUtil.countDifferenceRate(weekAverage, monthAverage);
   let isDown = rate < -0.5;
   let isUp = rate > 0.5;
+  const isAbove = rate> 0;
   let toDown = false;
   let toUp = false;
   for (let i = 2; i < 5; i++) {
@@ -122,6 +123,7 @@ exports.getAverageInfo = function (fund) {
     weekAverage,
     isUp,
     isDown,
+    isAbove,
     toDown,
     toUp,
     isReverse: rate < -2.5,
