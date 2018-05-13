@@ -96,11 +96,12 @@ exports.getAverageInfo = function (fund) {
   newList.push(valuation);
   const len = newList.length;
   const monthAverage = analyzeUtil.getAverage(newList, 20, len - 1);
+  const halfMonthAverage = analyzeUtil.getAverage(newList, 10, len - 1);
   const weekAverage = analyzeUtil.getAverage(newList, 5, len - 1);
   const rate = numberUtil.countDifferenceRate(weekAverage, monthAverage);
   let isDown = rate < -0.5;
   let isUp = rate > 0.5;
-  const isAbove = rate> 0;
+  const isAbove = rate > 0;
   let toDown = false;
   let toUp = false;
   for (let i = 2; i < 5; i++) {
@@ -121,6 +122,7 @@ exports.getAverageInfo = function (fund) {
   return {
     monthAverage,
     weekAverage,
+    halfMonthAverage,
     isUp,
     isDown,
     isAbove,
