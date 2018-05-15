@@ -104,6 +104,7 @@ exports.getAverageInfo = function (fund) {
   const isAbove = rate > 0;
   let toDown = false;
   let toUp = false;
+  let ifKeepUp = true;
   for (let i = 2; i < 6; i++) {
     const halfMonthAverageTemp = analyzeUtil.getAverage(newList, 20, len - i);
     const weekAverageTemp = analyzeUtil.getAverage(newList, 5, len - i);
@@ -113,8 +114,15 @@ exports.getAverageInfo = function (fund) {
         toDown = true
       }
     }
+    // 需要保持3天
     if (isUp) {
-      if (rateTemp < -0.5) {
+      if ([2,3].indexOf(i) !== -1) {
+        if (rateTemp < 0) {
+          // 没保持住
+          ifKeepUp = false;
+        }
+      }
+      if (ifKeepUp && [4,5].indexOf(i) !== -1 && rateTemp < 0) {
         toUp = true
       }
     }
