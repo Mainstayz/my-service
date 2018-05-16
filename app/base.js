@@ -50,9 +50,9 @@ module.exports = function (app) {
   app.context.refail = function (err, data) {
     logger.warn(err);
     const message = err.message;
-    const code = err.code;
+    const code = err.code || '-1';
     return {
-      code: code || -1,
+      code: parseInt(code),
       success: false,
       message: message || codeMap[code || '-1'] || codeMap['-1'],
       data: data || null
