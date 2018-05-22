@@ -21,6 +21,7 @@ const schema = new Schema({
   },
   //目标净值
   target_net_value: Number,
+  stop_net_value: Number,
   create_at: {
     type: Date,
     default: Date.now

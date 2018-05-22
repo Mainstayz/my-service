@@ -20,6 +20,7 @@ exports.addUserFund = async function (ctx) {
       cost: {required: true},
       buy_date: {required: true},
       target_net_value: {required: true},
+      stop_net_value: {required: true}
     }, query);
     // 添加基金
     let fund = await fundService.addFundByCode(data.code);
@@ -64,6 +65,7 @@ exports.updateUserFund = async function (ctx) {
       cost: {required: false},
       buy_date: {required: false},
       target_net_value: {required: false},
+      stop_net_value: {required: false}
     }, query);
     // 验证基金
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
@@ -121,6 +123,7 @@ exports.getUserFunds = async function (ctx) {
         buy_date: buyDate,
         has_days: records.indexOf(buyDate),
         target_net_value: userFund.target_net_value,
+        stop_net_value: userFund.stop_net_value,
         // 净值
         netValue: fund.net_value,
         // 持仓净值
