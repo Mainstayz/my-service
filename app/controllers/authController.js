@@ -10,7 +10,7 @@ exports.login = async function (ctx) {
     const user = {
       name: userRaw.name
     };
-    const token = ctx.token.sign(user, 60 * 60 * 24);
+    const token = ctx.token.sign(user, 60 * 60 * 24 * 30);
     ctx.services.log.addLogAudit({
       log_type: 'login',
       platform: data.platform,

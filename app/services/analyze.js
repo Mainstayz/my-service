@@ -99,8 +99,9 @@ exports.getAverageInfo = function (fund) {
   const halfMonthAverage = analyzeUtil.getAverage(newList, 10, len - 1);
   const weekAverage = analyzeUtil.getAverage(newList, 5, len - 1);
   const rate = numberUtil.countDifferenceRate(weekAverage, halfMonthAverage);
-  let isDown = rate < -0.5;
-  let isUp = rate > 0;
+  const isDown = rate < -0.5;
+  const isUp = rate > 0;
+  const isBoom = rate > 0.2;
   const isAbove = rate > 0;
   let toDown = false;
   let toUp = false;
@@ -115,7 +116,7 @@ exports.getAverageInfo = function (fund) {
       }
     }
     // 需要保持3天
-    if (isUp) {
+    if (isBoom) {
       if ([2,3].indexOf(i) !== -1) {
         if (rateTemp < 0) {
           // 没保持住
