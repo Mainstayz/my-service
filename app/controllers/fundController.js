@@ -148,3 +148,15 @@ exports.getMarket = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.getAverageValuationRate = async function (ctx) {
+  try {
+    //分页获取
+    const rate = await ctx.services.fund.getAverageValuationRate();
+    ctx.body = ctx.resuccess({
+      rate
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};

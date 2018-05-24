@@ -465,3 +465,12 @@ exports.getMarket = async function (sort, paging) {
   const data = await Promise.all([FundProxy.findBase(queryOption, opt), FundProxy.count(queryOption)]);
   return {list: data[0], count: data[1]};
 };
+
+exports.getAverageValuationRate = async function () {
+  const funds = await FundProxy.findBase({});
+  let allRise = 0;
+  for (let i = 0; i < funds.length; i++) {
+    allRise += funds[i].rise || 0;
+  }
+  return numberUtil.keepFourDecimals(allRise/funds.length);
+};
