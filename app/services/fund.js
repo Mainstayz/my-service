@@ -472,5 +472,5 @@ exports.getAverageValuationRate = async function () {
   for (let i = 0; i < funds.length; i++) {
     allRise += funds[i].rise || 0;
   }
-  return numberUtil.keepFourDecimals(allRise/funds.length);
+  return numberUtil.keepTwoDecimals(allRise/funds.length);
 };
