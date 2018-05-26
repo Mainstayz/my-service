@@ -100,13 +100,13 @@ exports.getAverageInfo = function (fund) {
   const weekAverage = analyzeUtil.getAverage(newList, 5, len - 1);
   const rate = numberUtil.countDifferenceRate(weekAverage, halfMonthAverage);
   const isDown = rate < -0.5;
-  const isUp = rate > 0;
-  const isBoom = rate > 0.2;
+  let isUp = rate > 0;
+  const isBoom = rate > 0.5;
   const isAbove = rate > 0;
   let toDown = false;
   let toUp = false;
   let ifKeepUp = true;
-  for (let i = 2; i < 6; i++) {
+  for (let i = 2; i < 7; i++) {
     const halfMonthAverageTemp = analyzeUtil.getAverage(newList, 20, len - i);
     const weekAverageTemp = analyzeUtil.getAverage(newList, 5, len - i);
     const rateTemp = numberUtil.countDifferenceRate(weekAverageTemp, halfMonthAverageTemp);
@@ -115,15 +115,22 @@ exports.getAverageInfo = function (fund) {
         toDown = true
       }
     }
+    // up的也要保持
+    if ([2,3,4].indexOf(i) !== -1) {
+      if (rateTemp < 0) {
+        // up没保持住
+        isUp = false;
+      }
+    }
     // 需要保持3天
     if (isBoom) {
-      if ([2,3].indexOf(i) !== -1) {
+      if ([2,3,4].indexOf(i) !== -1) {
         if (rateTemp < 0) {
           // 没保持住
           ifKeepUp = false;
         }
       }
-      if (ifKeepUp && [4,5].indexOf(i) !== -1 && rateTemp < 0) {
+      if (ifKeepUp && [5, 6].indexOf(i) !== -1 && rateTemp < 0) {
         toUp = true
       }
     }
