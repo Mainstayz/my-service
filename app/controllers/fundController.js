@@ -160,3 +160,18 @@ exports.getAverageValuationRate = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.getRank = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      day: {type: 'int', required: true}
+    }, query);
+    const funds = await ctx.services.fund.getRank(data.day);
+    ctx.body = ctx.resuccess({
+      list: funds
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};

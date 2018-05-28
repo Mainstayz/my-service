@@ -43,6 +43,7 @@ router.get('/fund/getFunds', controllers.fundController.getFunds);
 router.get('/fund/getFundAnalyzeRecent', controllers.fundController.getFundAnalyzeRecent);
 router.get('/fund/getMarket', controllers.fundController.getMarket);
 router.get('/fund/getAverageValuationRate', controllers.fundController.getAverageValuationRate);
+router.get('/fund/getRank', controllers.fundController.getRank);
 /**
  * 用户基金模块
  */

@@ -474,3 +474,35 @@ exports.getAverageValuationRate = async function () {
   }
   return numberUtil.keepTwoDecimals(allRise/funds.length);
 };
+
+exports.getRank = async function (day) {
+  const funds = await FundProxy.find({});
+  let fundList = [];
+  for(let i=0;i<funds.length;i++) {
+    let fund = funds[i];
+    const list = JSON.parse(fund['recent_net_value']).data;
+    // 获取估值
+    const valuationInfo = fundBaseUtil.getBetterValuation(fund);
+    const valuation = valuationInfo.valuation;
+    const lastNetValue= list[day -1]['net_value'];
+    fundList.push({
+      name: fund.name,
+      code: fund.code,
+      net_value: fund.net_value,
+      net_value_date: fund.net_value_date,
+      sell: fund.sell,
+      rise: fund.rise,
+      lowRate: fund.lowRate,
+      valuation_tiantian: fund.valuation_tiantian,
+      valuation_haomai: fund.valuation_haomai,
+      valuation_date: fund.valuation_date,
+      valuation,
+      recentRate: numberUtil.countDifferenceRate(valuation, lastNetValue)
+    });
+  }
+  fundList.sort(function (a, b) {
+    return a.recentRate - b.recentRate;
+  });
+  return fundList;
+};
+
