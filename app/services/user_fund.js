@@ -55,7 +55,10 @@ exports.checkUserFundByQuery = async function (query) {
   return UserFundProxy.check(query);
 };
 
-// 关注基金
+/**
+ * 关注基金
+  */
+
 exports.addFocusFund = async function (userId, fundId) {
   return FocusFundProxy.newAndSave({
     user: userId,

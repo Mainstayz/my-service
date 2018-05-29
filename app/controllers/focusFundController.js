@@ -7,24 +7,25 @@ const del = require('del');
 exports.addFocusFund = async function (ctx) {
   const query = ctx.request.body;
   const fundService = ctx.services.fund;
+  const userFundService = ctx.services.userFund;
   try {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
       code: {type: 'string', required: true}
     }, query);
     // 添加基金
-    let fund = await fundService.checkFundByQuery({code: data.code});
+    let fund = await fundService.getFundBaseByCode({code: data.code});
     if (!fund) {
-      fund = await fundService.addFund(data.code);
+      fund = await fundService.addFundByCode(data.code);
     }
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 添加基金用户关系
-    const focusFund = await fundService.checkFocusFundByQuery({
+    const focusFund = await userFundService.checkFocusFundByQuery({
       user: userRaw._id,
       fund: fund._id
     });
     if (!focusFund) {
-      await fundService.addFocusFund(userRaw._id, fund._id);
+      await userFundService.addFocusFund(userRaw._id, fund._id);
     }
     ctx.body = ctx.resuccess();
   } catch (err) {
@@ -35,18 +36,19 @@ exports.addFocusFund = async function (ctx) {
 exports.deleteFocusFund = async function (ctx) {
   const query = ctx.query;
   const fundService = ctx.services.fund;
+  const userFundService = ctx.services.userFund;
   try {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
       code: {type: 'string', required: true}
     }, query);
     // 得到基金信息
-    const fund = await fundService.checkFundByQuery({
+    const fund = await fundService.getFundBaseByCode({
       code: data.code
     });
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 删除基金用户关系
-    await fundService.deleteFocusFund(userRaw._id, fund._id);
+    await userFundService.deleteFocusFund(userRaw._id, fund._id);
     ctx.body = ctx.resuccess();
   } catch (err) {
     ctx.body = ctx.refail(err);
@@ -54,13 +56,14 @@ exports.deleteFocusFund = async function (ctx) {
 };
 
 exports.getFocusFunds = async function (ctx) {
+  const userFundService = ctx.services.userFund;
   try {
     const tokenRaw = ctx.tokenRaw;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 找到基金
-    const strategy = await ctx.services.analyze.getFocusStrategy(userRaw._id);
+    const funds = await userFundService.getFocusFundsByUserIdWithFund(userRaw._id);
     ctx.body = ctx.resuccess({
-      list: strategy
+      list: funds
     });
   } catch (err) {
     ctx.body = ctx.refail(err);
@@ -83,7 +86,7 @@ exports.importFocusFund = async function (ctx) {
       let optionList = [];
       for (let k = 0; k < funds.length; k++) {
         // 检查是否在基金库中
-        let fund = await fundService.checkFundByQuery({
+        let fund = await fundService.getFundBaseByCode({
           code: funds[k]
         });
         if (fund) {
