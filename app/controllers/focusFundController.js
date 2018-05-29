@@ -14,7 +14,7 @@ exports.addFocusFund = async function (ctx) {
       code: {type: 'string', required: true}
     }, query);
     // 添加基金
-    let fund = await fundService.getFundBaseByCode({code: data.code});
+    let fund = await fundService.getFundBaseByCode(data.code);
     if (!fund) {
       fund = await fundService.addFundByCode(data.code);
     }
@@ -43,9 +43,7 @@ exports.deleteFocusFund = async function (ctx) {
       code: {type: 'string', required: true}
     }, query);
     // 得到基金信息
-    const fund = await fundService.getFundBaseByCode({
-      code: data.code
-    });
+    const fund = await fundService.getFundBaseByCode(data.code);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 删除基金用户关系
     await userFundService.deleteFocusFund(userRaw._id, fund._id);
@@ -74,6 +72,7 @@ exports.getFocusFunds = async function (ctx) {
 exports.importFocusFund = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   const fundService = ctx.services.fund;
+  const userFundService = ctx.services.userFund;
   console.log(ctx.req.file);
   // 获取上传数据
   const filePath = `${ctx.localConfig.uploadDir}/${ctx.req.file.filename}`;
@@ -86,21 +85,19 @@ exports.importFocusFund = async function (ctx) {
       let optionList = [];
       for (let k = 0; k < funds.length; k++) {
         // 检查是否在基金库中
-        let fund = await fundService.getFundBaseByCode({
-          code: funds[k]
-        });
+        let fund = await fundService.getFundBaseByCode(funds[k]);
         if (fund) {
           // 检查是否已经添加
-          const record = await fundService.checkFocusFundByQuery({
+          const record = await userFundService.checkFocusFundByQuery({
             user: userRaw._id,
             fund: fund._id
           });
           if (!record) {
-            optionList.push(fundService.addFocusFund(userRaw._id, fund._id));
+            optionList.push(userFundService.addFocusFund(userRaw._id, fund._id));
           }
         } else {
-          fund = await fundService.addFund(funds[k]);
-          optionList.push(fundService.addFocusFund(userRaw._id, fund._id));
+          fund = await fundService.addFundByCode(funds[k]);
+          optionList.push(userFundService.addFocusFund(userRaw._id, fund._id));
         }
       }
       await Promise.all(optionList);
