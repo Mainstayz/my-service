@@ -83,7 +83,7 @@ exports.checkFocusFund = async function (ctx) {
     if (!fund) {
       fund = await fundService.addFundByCode(data.code);
     }
-    const focusFund = await userFundService.getUserFund(userRaw._id, fund._id);
+    const focusFund = await userFundService.getFocusFund(userRaw._id, fund._id);
     let focus = false;
     if (focusFund) {
       focus = true;
