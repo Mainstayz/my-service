@@ -52,6 +52,10 @@ exports.findByUserIdWithFund = function (userId) {
   return FocusFundModel.find({user: userId}).populate('fund', baseInfo);
 };
 
+exports.findOneByUserIdWithFund = function (userId) {
+  return FocusFundModel.findOne({user: userId}).populate('fund', baseInfo);
+};
+
 exports.findByUserIdFundId = function (userId, fundId) {
   return FocusFundModel.findOne({user: userId, fund: fundId});
 };

@@ -68,7 +68,7 @@ router.get('/fund/getUserNetValuesRecent', controllers.userNetValueController.ge
 router.post('/fund/addFocusFund', controllers.focusFundController.addFocusFund);
 router.get('/fund/getFocusFunds', controllers.focusFundController.getFocusFunds);
 router.get('/fund/deleteFocusFund', controllers.focusFundController.deleteFocusFund);
-
+router.get('/fund/checkFocusFund', controllers.focusFundController.checkFocusFund);
 /**
  * 策略
  */

@@ -86,6 +86,10 @@ exports.getFocusFundsByUserIdWithFund = async function (userId) {
   return FocusFundProxy.findByUserIdWithFund(userId);
 };
 
+exports.getFocusFundByUserIdWithFund = async function (userId) {
+  return FocusFundProxy.findOneByUserIdWithFund(userId);
+};
+
 exports.checkFocusFundByQuery = async function (query) {
   return FocusFundProxy.check(query);
 };

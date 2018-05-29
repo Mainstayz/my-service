@@ -68,6 +68,25 @@ exports.getFocusFunds = async function (ctx) {
   }
 };
 
+exports.checkFocusFund = async function (ctx) {
+  const userFundService = ctx.services.userFund;
+  try {
+    const tokenRaw = ctx.tokenRaw;
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    // 找到基金
+    const fund = await userFundService.getUserFund(userRaw._id);
+    let focus = false;
+    if (fund) {
+      focus = true;
+    }
+    ctx.body = ctx.resuccess({
+      focus
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
 // 导入基金，如果基金不存在，就添加
 exports.importFocusFund = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
