@@ -69,14 +69,23 @@ exports.getFocusFunds = async function (ctx) {
 };
 
 exports.checkFocusFund = async function (ctx) {
+  const query = ctx.query;
   const userFundService = ctx.services.userFund;
+  const fundService = ctx.services.fund;
   try {
     const tokenRaw = ctx.tokenRaw;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    // 找到基金
-    const fund = await userFundService.getUserFund(userRaw._id);
+    const data = ctx.validateData({
+      code: {type: 'string', required: true}
+    }, query);
+    // 添加基金
+    let fund = await fundService.getFundBaseByCode(data.code);
+    if (!fund) {
+      fund = await fundService.addFundByCode(data.code);
+    }
+    const focusFund = await userFundService.getUserFund(userRaw._id, fund._id);
     let focus = false;
-    if (fund) {
+    if (focusFund) {
       focus = true;
     }
     ctx.body = ctx.resuccess({
