@@ -524,7 +524,7 @@ exports.getMarketInfo = async function () {
     upCount,
     downCount,
     upAverage: numberUtil.keepTwoDecimals(upAll / (upCount || 1)),
-    downAverage: numberUtil.keepTwoDecimals(downAll / (upCount || 1)),
+    downAverage: numberUtil.keepTwoDecimals(downAll / (downCount || 1)),
     distribution
   };
 };
