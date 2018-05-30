@@ -466,25 +466,79 @@ exports.getMarket = async function (sort, paging) {
   return {list: data[0], count: data[1]};
 };
 
-exports.getAverageValuationRate = async function () {
+// 得到市场涨跌信息
+exports.getMarketInfo = async function () {
   const funds = await FundProxy.findBase({});
   let allRise = 0;
+  let upCount = 0;
+  let downCount = 0;
+  let upAll = 0;
+  let downAll = 0;
+  let distribution = {
+    '>3': 0,
+    '2-3': 0,
+    '1-2': 0,
+    '0-1': 0,
+    '-1-0': 0,
+    '-2--1': 0,
+    '-3--2': 0,
+    '<-3': 0
+  };
   for (let i = 0; i < funds.length; i++) {
-    allRise += funds[i].rise || 0;
+    const rise = funds[i].rise || 0;
+    if (rise >= 0) {
+      if (rise<1) {
+        distribution['0-1']++;
+      }
+      if (rise>=1 && rise<2) {
+        distribution['1-2']++;
+      }
+      if (rise>=2 && rise<3) {
+        distribution['2-3']++;
+      }
+      if (rise>=3) {
+        distribution['>3']++;
+      }
+      upCount++;
+      upAll += rise;
+    } else {
+      if (rise>-1) {
+        distribution['-1-0']++;
+      }
+      if (rise<=-1 && rise>-2) {
+        distribution['-2--1']++;
+      }
+      if (rise<=-2 && rise>-3) {
+        distribution['-3--2']++;
+      }
+      if (rise<=-3) {
+        distribution['<-3']++;
+      }
+      downCount++;
+      downAll += rise;
+    }
+    allRise += rise;
   }
-  return numberUtil.keepTwoDecimals(allRise/funds.length);
+  return {
+    rise: numberUtil.keepTwoDecimals(allRise / funds.length),
+    upCount,
+    downCount,
+    upAverage: numberUtil.keepTwoDecimals(upAll / (upCount || 1)),
+    downAverage: numberUtil.keepTwoDecimals(downAll / (upCount || 1)),
+    distribution
+  };
 };
 
 exports.getRank = async function (day) {
   const funds = await FundProxy.find({});
   let fundList = [];
-  for(let i=0;i<funds.length;i++) {
+  for (let i = 0; i < funds.length; i++) {
     let fund = funds[i];
     const list = JSON.parse(fund['recent_net_value']).data;
     // 获取估值
     const valuationInfo = fundBaseUtil.getBetterValuation(fund);
     const valuation = valuationInfo.valuation;
-    const lastNetValue= list[day -1]['net_value'];
+    const lastNetValue = list[day - 1]['net_value'];
     fundList.push({
       name: fund.name,
       code: fund.code,
