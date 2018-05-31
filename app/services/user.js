@@ -3,6 +3,7 @@
  */
 const Proxy = require('../proxy');
 const UserProxy = Proxy.User;
+
 exports.getUserByName = async function (account, password) {
   const user = await UserProxy.getByName(account);
   if (!user) {

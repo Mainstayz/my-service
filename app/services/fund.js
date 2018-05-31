@@ -2,7 +2,7 @@
  * Created by xiaobxia on 2018/1/26.
  */
 const Proxy = require('../proxy');
-const fundInfoUtil = require('../util/fundInfo');
+const fundWebDataUtil = require('../util/fundInfo');
 const localConst = require('../const');
 const moment = require('moment');
 const util = require('../util');
@@ -26,8 +26,8 @@ exports.addFundByCode = async function (code) {
   }
   //获取网络数据
   const fetchData = await Promise.all([
-    fundInfoUtil.getFundInfo(code),
-    fundInfoUtil.getRecentNetValue(code, localConst.RECENT_NET_VALUE_DAYS)
+    fundWebDataUtil.getFundInfo(code),
+    fundWebDataUtil.getRecentNetValue(code, localConst.RECENT_NET_VALUE_DAYS)
   ]);
   // 基本数据
   const data = fetchData[0];
@@ -109,11 +109,11 @@ exports.getFundsBaseByPaging = async function (query, paging) {
 exports.addFunds = async function (codeList) {
   // 获取基金信息
   let requestList = [
-    fundInfoUtil.getFundsInfo()
+    fundWebDataUtil.getFundsInfo()
   ];
   // 获取基金近期信息
   codeList.forEach(function (item) {
-    requestList.push(fundInfoUtil.getRecentNetValue(item, localConst.RECENT_NET_VALUE_DAYS));
+    requestList.push(fundWebDataUtil.getRecentNetValue(item, localConst.RECENT_NET_VALUE_DAYS));
   });
   const fetchData = await Promise.all(requestList);
   // 基本数据
@@ -166,7 +166,7 @@ exports.importFunds = async function (funds) {
 //验证开市
 exports.verifyOpening = async function () {
   const nowDay = moment().format('YYYY-MM-DD');
-  const fundData = await fundInfoUtil.getFundsInfo();
+  const fundData = await fundWebDataUtil.getFundsInfo();
   // 如果相同就说明开盘了
   const isToday = nowDay === fundData.valuation_date;
   let result = await DictionariesProxy.findOne({key: localConst.OPENING_RECORDS_REDIS_KEY});
@@ -203,10 +203,10 @@ exports.updateValuation = async function () {
   const funds = await FundProxy.findBase({});
   // 抓取数据
   const fetchList = Promise.all([
-    fundInfoUtil.getFundsInfo(),
-    fundInfoUtil.getFundsInfoHaomai(),
+    fundWebDataUtil.getFundsInfo(),
+    fundWebDataUtil.getFundsInfoHaomai(),
     // 估值时间以招商白酒为基准
-    fundInfoUtil.getFundInfo('161725')
+    fundWebDataUtil.getFundInfo('161725')
   ]);
   const fetchData = await fetchList;
   const tiantianData = fetchData[0];
@@ -315,7 +315,7 @@ exports.updateRecentNetValue = async function () {
   const funds = await FundProxy.find({});
   let requestList = [];
   funds.forEach(function (fund) {
-    requestList.push(fundInfoUtil.getRecentNetValue(fund.code, localConst.RECENT_NET_VALUE_DAYS).then((item) => {
+    requestList.push(fundWebDataUtil.getRecentNetValue(fund.code, localConst.RECENT_NET_VALUE_DAYS).then((item) => {
       return FundProxy.update({code: fund.code}, {
         recent_net_value: JSON.stringify({data: item})
       })
@@ -362,7 +362,7 @@ exports.updateBaseInfo = async function () {
   // 得到基金，有的才更新
   const funds = await FundProxy.findBase({});
   // 得到基金信息
-  const fundsInfo = await fundInfoUtil.getFundsInfo();
+  const fundsInfo = await fundWebDataUtil.getFundsInfo();
   const fundInfos = fundsInfo.funds;
   let optionList = [];
   for (let k = 0; k < funds.length; k++) {

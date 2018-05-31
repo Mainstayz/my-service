@@ -2,7 +2,10 @@
  * Created by xiaobxia on 2018/3/31.
  */
 const numberUtil = require('./number');
-// 通过估值源准确性统计，获取更好的估值源
+
+/**
+ * 通过估值源准确性统计，获取更好的估值源
+ */
 exports.getBetterValuation = function (fund) {
   let valuationInfo = null;
   // 如果有统计

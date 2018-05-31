@@ -9,21 +9,39 @@ const UserModel = models.User;
 exports.UserModel = UserModel;
 
 exports.newAndSave = function (data) {
-  const fund = new UserModel(data);
-  return fund.save();
-};
-
-exports.update = function (id, user) {
-  return UserModel.update({
-    _id: user.id
-  }, {
-    $set: user
-  });
+  const user = new UserModel(data);
+  return user.save();
 };
 
 exports.delete = function (data) {
   return UserModel.remove(data);
 };
+
+exports.update = function (query, data) {
+  return UserModel.update(query, {
+    $set: data
+  });
+};
+
+exports.check = function (query, opt) {
+  return UserModel.findOne(query, '_id', opt);
+};
+
+exports.find = function (query, opt) {
+  return UserModel.find(query, {}, opt);
+};
+
+exports.findOne = function (query, opt) {
+  return UserModel.findOne(query, {}, opt);
+};
+
+exports.count = function (query) {
+  return UserModel.count(query);
+};
+
+/**
+ * 扩展
+ */
 
 exports.getByName = function (userName) {
   return UserModel.findOne({ name: userName });
@@ -31,8 +49,4 @@ exports.getByName = function (userName) {
 
 exports.getById = function (userId) {
   return UserModel.findById(userId);
-};
-
-exports.find = function (query, opt) {
-  return UserModel.find(query, {}, opt);
 };

@@ -3,7 +3,11 @@
  */
 const numberUtil = require('./number');
 
-// 把净值从小到大排序
+/**
+ * 把净值从小到大排序
+ * @param netValueList
+ * @returns {Array}
+ */
 exports.getNetValueSort = function (netValueList) {
   let listFake = [];
   netValueList.forEach(function (item) {
@@ -16,7 +20,12 @@ exports.getNetValueSort = function (netValueList) {
   return listFake;
 };
 
-//判断暴跌，近一月最大涨跌幅，近半月最大涨跌幅
+/**
+ * 判断暴跌，近一月最大涨跌幅，近半月最大涨跌幅
+ * @param valuation
+ * @param netValueList
+ * @returns {{listMonth: Array, halfMonthMax: *, halfMonthMin: *, monthMax: *, monthMin: *}}
+ */
 exports.getMaxRiseAndFallInfo = function (valuation, netValueList) {
   let listMonth = [];
   let listMonthTemp = [];
@@ -51,7 +60,12 @@ exports.getMaxRiseAndFallInfo = function (valuation, netValueList) {
   };
 };
 
-// 判断当前点位所处的位置
+/**
+ * 判断当前点位所处的位置
+ * @param valuation
+ * @param netValueSort
+ * @returns {{valuationIndex, lowLine, highLine}}
+ */
 exports.getPositionInfo = function (valuation, netValueSort) {
   // netValueSort是已经被处理过的
   let valuationIndex = netValueSort.length;
@@ -75,7 +89,10 @@ exports.getPositionInfo = function (valuation, netValueSort) {
   };
 };
 
-//获取平均成本线
+/**
+ * 获取平均成本线
+ * @param netValueList
+ */
 exports.getCostLine = function (netValueList) {
   let value = 0;
   netValueList.forEach(function (item) {
@@ -84,6 +101,12 @@ exports.getCostLine = function (netValueList) {
   return numberUtil.keepFourDecimals(value / (netValueList.length));
 };
 
+/**
+ * 一段区间内的均值
+ * @param netValue
+ * @param day
+ * @param index
+ */
 exports.getAverage = function (netValue, day, index) {
   let start = index - day + 1;
   start = start < 0 ? 0 : start;

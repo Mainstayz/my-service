@@ -42,7 +42,6 @@ exports.count = function (query) {
   return UserFundModel.count(query);
 };
 
-
 /**
  * 扩展
  */

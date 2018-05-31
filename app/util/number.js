@@ -4,6 +4,7 @@
 exports.countRate = function (numerator, denominator) {
   return Math.round(10000 * (numerator / denominator)) / 100;
 };
+
 exports.countDifferenceRate = function (numerator, denominator) {
   return Math.round(10000 * ((numerator - denominator) / denominator)) / 100;
 };
