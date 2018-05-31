@@ -9,11 +9,16 @@ const util = require('../util');
 
 const numberUtil = util.numberUtil;
 const fundBaseUtil = util.fundBaseUtil;
+const keepTwoDecimals = numberUtil.keepTwoDecimals;
+const countRate = numberUtil.countRate;
+const countDifferenceRate = numberUtil.countDifferenceRate;
+
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
 const FocusFundProxy = Proxy.FocusFund;
 const OptionalFundProxy = Proxy.OptionalFund;
 const DictionariesProxy = Proxy.Dictionaries;
+
 
 /**
  * 添加基金
@@ -77,6 +82,9 @@ exports.getFundBaseByCode = async function (code) {
   return FundProxy.findOneBase({code});
 };
 
+/**
+ * 获取基金所有信息
+ */
 exports.getFundByCode = async function (code) {
   return FundProxy.findOne({code});
 };
@@ -105,7 +113,11 @@ exports.getFundsBaseByPaging = async function (query, paging) {
 };
 
 
-// 批量添加，要提前验证code
+/**
+ * 批量添加基金，要提前验证code
+ * @param codeList
+ * @returns {Promise.<*>}
+ */
 exports.addFunds = async function (codeList) {
   // 获取基金信息
   let requestList = [
@@ -143,7 +155,11 @@ exports.addFunds = async function (codeList) {
   return Promise.all(optionList);
 };
 
-//导入基金
+/**
+ * 导入基金
+ * @param funds
+ * @returns {Promise}
+ */
 exports.importFunds = async function (funds) {
   const fundsTemp = await FundProxy.findBase({});
   let codeList = [];
@@ -163,7 +179,10 @@ exports.importFunds = async function (funds) {
   return this.addFunds(codeList);
 };
 
-//验证开市
+/**
+ * 验证开市
+ * @returns {Promise.<*>}
+ */
 exports.verifyOpening = async function () {
   const nowDay = moment().format('YYYY-MM-DD');
   const fundData = await fundWebDataUtil.getFundsInfo();
@@ -197,7 +216,10 @@ exports.verifyOpening = async function () {
 };
 
 
-// 更新估值
+/**
+ * 更新估值
+ * @returns {Promise.<*>}
+ */
 exports.updateValuation = async function () {
   // 获取基金
   const funds = await FundProxy.findBase({});
@@ -245,7 +267,10 @@ exports.updateValuation = async function () {
   return Promise.all(updateList);
 };
 
-//更新涨幅
+/**
+ * 更新涨幅
+ * @returns {Promise.<*>}
+ */
 exports.updateRise = async function () {
   const funds = await FundProxy.findBase({});
   let updateList = [];
@@ -256,7 +281,7 @@ exports.updateRise = async function () {
     // 目前估值
     const valuation = valuationInfo.valuation;
     // 当日幅度
-    const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
+    const valuationRate = countRate((valuation - fund['net_value']), fund['net_value']);
     // 更新数据
     updateList.push(FundProxy.update({code: fund.code}, {
       rise: valuationRate
@@ -265,7 +290,10 @@ exports.updateRise = async function () {
   return Promise.all(updateList);
 };
 
-// 更新估值准确记录
+/**
+ * 更新估值准确记录
+ * @returns {Promise.<*>}
+ */
 exports.betterValuation = async function () {
   const funds = await FundProxy.findBase({});
   let updateList = [];
@@ -310,7 +338,11 @@ exports.betterValuation = async function () {
   return Promise.all(updateList);
 };
 
-// 产生所有的近期涨跌数据，一般只有第一次产生数据时用
+/**
+ * 一般只有第一次产生数据时用
+ * 产生所有的近期涨跌数据
+ * @returns {Promise.<*>}
+ */
 exports.updateRecentNetValue = async function () {
   const funds = await FundProxy.find({});
   let requestList = [];
@@ -324,7 +356,10 @@ exports.updateRecentNetValue = async function () {
   return Promise.all(requestList);
 };
 
-// 添加涨跌数据，在执行这个之前要保证fund中的数据是最新的
+/**
+ * 添加涨跌数据，在执行这个之前要保证fund中的数据是最新的
+ * @returns {Promise.<void>}
+ */
 exports.addRecentNetValue = async function () {
   const funds = await FundProxy.find({});
   for (let k = 0; k < funds.length; k++) {
@@ -339,7 +374,7 @@ exports.addRecentNetValue = async function () {
         continue;
       }
       // 拿最新净值和前一天净值对比，计算增长率
-      newData.valuation_rate = numberUtil.countRate(fund['net_value'] - recentNetValue[0].net_value, recentNetValue[0].net_value);
+      newData.valuation_rate = countRate(fund['net_value'] - recentNetValue[0].net_value, recentNetValue[0].net_value);
     } else {
       newData.valuation_rate = 0;
     }
@@ -357,7 +392,10 @@ exports.addRecentNetValue = async function () {
   }
 };
 
-// 更新基本信息
+/**
+ * 更新基金的基本信息
+ * @returns {Promise.<*>}
+ */
 exports.updateBaseInfo = async function () {
   // 得到基金，有的才更新
   const funds = await FundProxy.findBase({});
@@ -383,7 +421,10 @@ exports.updateBaseInfo = async function () {
   return Promise.all(optionList);
 };
 
-//删除不售的基金
+/**
+ * 删除不在售的基金
+ * @returns {Promise.<*>}
+ */
 exports.deleteUnSellFund = async function () {
   //获取不售的
   const funds = await FundProxy.findBase({sell: false});
@@ -408,7 +449,11 @@ exports.deleteUnSellFund = async function () {
   return Promise.all(optionList);
 };
 
-//更新费率信息
+/**
+ * 更新基金是不是低费率的标记
+ * @param codes
+ * @returns {Promise.<*>}
+ */
 exports.updateLowRateFund = async function (codes) {
   const funds = await FundProxy.findBase({});
   let optionList = [];
@@ -426,7 +471,11 @@ exports.updateLowRateFund = async function (codes) {
   return Promise.all(optionList);
 };
 
-//更新费率信息
+/**
+ * 删除不是低费率的基金
+ * @param codes
+ * @returns {Promise.<*>}
+ */
 exports.deleteHighRateFund = async function (codes) {
   //传进来的都是低和中等费率的
   const funds = await FundProxy.findBase({});
@@ -454,7 +503,12 @@ exports.deleteHighRateFund = async function (codes) {
   return Promise.all(optionList);
 };
 
-//得到行情
+/**
+ * 获取基金当天涨跌幅排名
+ * @param sort
+ * @param paging
+ * @returns {Promise.<{list: *, count: *}>}
+ */
 exports.getMarket = async function (sort, paging) {
   const opt = {
     skip: paging.start,
@@ -462,11 +516,17 @@ exports.getMarket = async function (sort, paging) {
     sort: sort === 'up' ? '-rise' : 'rise'
   };
   let queryOption = {};
-  const data = await Promise.all([FundProxy.findBase(queryOption, opt), FundProxy.count(queryOption)]);
+  const data = await Promise.all([
+    FundProxy.findBase(queryOption, opt),
+    FundProxy.count(queryOption)
+  ]);
   return {list: data[0], count: data[1]};
 };
 
-// 得到市场涨跌信息
+/**
+ * 获取市场涨跌统计信息
+ * @returns {Promise.<{rise, upCount: number, downCount: number, upAverage, downAverage, distribution: {>3: number, 2~3: number, 1~2: number, 0~1: number, -1~0: number, -2~-1: number, -3~-2: number, <-3: number}}>}
+ */
 exports.getMarketInfo = async function () {
   const funds = await FundProxy.findBase({});
   let allRise = 0;
@@ -476,25 +536,25 @@ exports.getMarketInfo = async function () {
   let downAll = 0;
   let distribution = {
     '>3': 0,
-    '2-3': 0,
-    '1-2': 0,
-    '0-1': 0,
-    '-1-0': 0,
-    '-2--1': 0,
-    '-3--2': 0,
+    '2~3': 0,
+    '1~2': 0,
+    '0~1': 0,
+    '-1~0': 0,
+    '-2~-1': 0,
+    '-3~-2': 0,
     '<-3': 0
   };
   for (let i = 0; i < funds.length; i++) {
     const rise = funds[i].rise || 0;
     if (rise >= 0) {
       if (rise<1) {
-        distribution['0-1']++;
+        distribution['0~1']++;
       }
       if (rise>=1 && rise<2) {
-        distribution['1-2']++;
+        distribution['1~2']++;
       }
       if (rise>=2 && rise<3) {
-        distribution['2-3']++;
+        distribution['2~3']++;
       }
       if (rise>=3) {
         distribution['>3']++;
@@ -503,13 +563,13 @@ exports.getMarketInfo = async function () {
       upAll += rise;
     } else {
       if (rise>-1) {
-        distribution['-1-0']++;
+        distribution['-1~0']++;
       }
       if (rise<=-1 && rise>-2) {
-        distribution['-2--1']++;
+        distribution['-2~-1']++;
       }
       if (rise<=-2 && rise>-3) {
-        distribution['-3--2']++;
+        distribution['-3~-2']++;
       }
       if (rise<=-3) {
         distribution['<-3']++;
@@ -520,15 +580,20 @@ exports.getMarketInfo = async function () {
     allRise += rise;
   }
   return {
-    rise: numberUtil.keepTwoDecimals(allRise / funds.length),
+    rise: keepTwoDecimals(allRise / funds.length),
     upCount,
     downCount,
-    upAverage: numberUtil.keepTwoDecimals(upAll / (upCount || 1)),
-    downAverage: numberUtil.keepTwoDecimals(downAll / (downCount || 1)),
+    upAverage: keepTwoDecimals(upAll / (upCount || 1)),
+    downAverage: keepTwoDecimals(downAll / (downCount || 1)),
     distribution
   };
 };
 
+/**
+ * 获取一定天数内，基金的涨跌幅排名
+ * @param day
+ * @returns {Promise.<Array>}
+ */
 exports.getRank = async function (day) {
   const funds = await FundProxy.find({});
   let fundList = [];
@@ -551,7 +616,7 @@ exports.getRank = async function (day) {
       valuation_haomai: fund.valuation_haomai,
       valuation_date: fund.valuation_date,
       valuation,
-      recentRate: numberUtil.countDifferenceRate(valuation, lastNetValue)
+      recentRate: countDifferenceRate(valuation, lastNetValue)
     });
   }
   fundList.sort(function (a, b) {
