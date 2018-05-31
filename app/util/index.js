@@ -3,5 +3,5 @@
  */
 exports.fundWebDataUtil  = require('./fundWebData');
 exports.fundBaseUtil  = require('./fundBase');
-exports.analyzeUtil  = require('./analyze');
+exports.netValueAnalyzeUtil  = require('./netValueAnalyze');
 exports.numberUtil  = require('./number');

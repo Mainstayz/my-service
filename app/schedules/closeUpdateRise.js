@@ -2,10 +2,6 @@
  * Created by xiaobxia on 2018/3/6.
  */
 const schedule = require('node-schedule');
-const request = require('request-promise');
-const reqlib = require('app-root-path').require;
-const logger = require('../common/logger');
-const config = reqlib('/config/index');
 const scheduleService = require('../services/schedule');
 /**
  * cron风格的

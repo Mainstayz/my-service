@@ -4,14 +4,14 @@
 const util = require('../util');
 
 const numberUtil = util.numberUtil;
-const analyzeUtil = util.analyzeUtil;
+const netValueAnalyzeUtil = util.netValueAnalyzeUtil;
 const fundBaseUtil = util.fundBaseUtil;
 
-const getNetValueSort = analyzeUtil.getNetValueSort;
-const getCostLine = analyzeUtil.getCostLine;
-const getAverage = analyzeUtil.getAverage;
-const getPositionInfo = analyzeUtil.getPositionInfo;
-const getMaxRiseAndFallInfo = analyzeUtil.getMaxRiseAndFallInfo;
+const getNetValueSort = netValueAnalyzeUtil.getNetValueSort;
+const getCostLine = netValueAnalyzeUtil.getCostLine;
+const getAverage = netValueAnalyzeUtil.getAverage;
+const getPositionInfo = netValueAnalyzeUtil.getPositionInfo;
+const getMaxRiseAndFallInfo = netValueAnalyzeUtil.getMaxRiseAndFallInfo;
 
 const countRate = numberUtil.countRate;
 const countDifferenceRate = numberUtil.countDifferenceRate;
