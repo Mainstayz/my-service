@@ -25,7 +25,7 @@ exports.updateUserFund = async function (userId, fundId, data) {
 };
 
 exports.getUserFundsByUserIdWithFund = async function (userId) {
-  return UserFundProxy.findByUserIdWithFund(userId);
+  return UserFundProxy.findByUserIdWithFundBase(userId);
 };
 
 //资产部分
@@ -83,11 +83,11 @@ exports.getFocusFundsByFundId = async function (fundId) {
 };
 
 exports.getFocusFundsByUserIdWithFund = async function (userId) {
-  return FocusFundProxy.findByUserIdWithFund(userId);
+  return FocusFundProxy.findByUserIdWithFundBase(userId);
 };
 
 exports.getFocusFundByUserIdWithFund = async function (userId) {
-  return FocusFundProxy.findOneByUserIdWithFund(userId);
+  return FocusFundProxy.findOneByUserIdWithFundBase(userId);
 };
 
 exports.checkFocusFundByQuery = async function (query) {

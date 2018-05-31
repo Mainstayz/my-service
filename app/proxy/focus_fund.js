@@ -21,7 +21,7 @@ exports.delete = function (query) {
 };
 
 exports.update = function (query, data) {
-  return FundModel.update(query, {
+  return FocusFundModel.update(query, {
     $set: data
   });
 };
@@ -48,11 +48,11 @@ exports.count = function (query) {
 
 const baseInfo = models.fields_table.fundBase.join(' ');
 
-exports.findByUserIdWithFund = function (userId) {
+exports.findByUserIdWithFundBase = function (userId) {
   return FocusFundModel.find({user: userId}).populate('fund', baseInfo);
 };
 
-exports.findOneByUserIdWithFund = function (userId) {
+exports.findOneByUserIdWithFundBase = function (userId) {
   return FocusFundModel.findOne({user: userId}).populate('fund', baseInfo);
 };
 

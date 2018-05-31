@@ -5,11 +5,11 @@ const models = require('../models');
 
 const FundModel = models.Fund;
 
-exports.FundModel = FundModel;
-
 /**
  * 基本
  */
+
+exports.FundModel = FundModel;
 
 exports.newAndSave = function (data) {
   const fund = new FundModel(data);
@@ -22,9 +22,7 @@ exports.delete = function (data) {
 
 exports.update = function (query, data) {
   return FundModel.update(query, {
-
     $set: data
-
   });
 };
 

@@ -49,7 +49,7 @@ exports.count = function (query) {
 
 const baseInfo = models.fields_table.fundBase.join(' ');
 
-exports.findByUserIdWithFund = function (userId) {
+exports.findByUserIdWithFundBase = function (userId) {
   return UserFundModel.find({user: userId}).populate('fund', baseInfo);
 };
 

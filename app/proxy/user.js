@@ -2,6 +2,10 @@ const models = require('../models');
 
 const UserModel = models.User;
 
+/**
+ * 基本
+ */
+
 exports.UserModel = UserModel;
 
 exports.newAndSave = function (data) {
