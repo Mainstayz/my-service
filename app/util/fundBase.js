@@ -52,3 +52,7 @@ exports.getBetterValuation = function (fund) {
   }
   return valuationInfo;
 };
+
+exports.getNetValueList = function (fund) {
+  return JSON.parse(fund['recent_net_value']).data;
+};

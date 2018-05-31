@@ -368,7 +368,7 @@ exports.addRecentNetValue = async function () {
     let newData = {};
     // 如果有记录
     if (fund['recent_net_value']) {
-      recentNetValue = JSON.parse(fund['recent_net_value']).data;
+      recentNetValue = fundBaseUtil.getNetValueList(fund);
       // 添加过那就跳过
       if (moment(recentNetValue[0]['net_value_date']).isSame(fund['net_value_date'], 'day')) {
         continue;
@@ -599,7 +599,7 @@ exports.getRank = async function (day) {
   let fundList = [];
   for (let i = 0; i < funds.length; i++) {
     let fund = funds[i];
-    const list = JSON.parse(fund['recent_net_value']).data;
+    const list = fundBaseUtil.getNetValueList(fund);
     // 获取估值
     const valuationInfo = fundBaseUtil.getBetterValuation(fund);
     const valuation = valuationInfo.valuation;

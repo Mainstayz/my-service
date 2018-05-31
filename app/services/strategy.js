@@ -4,16 +4,17 @@
 const analyzeService = require('./analyze');
 const dictionariesService = require('./dictionaries');
 const Proxy = require('../proxy');
-const util = require('../util');
-
-const analyzeUtil = util.analyzeUtil;
 
 const FundProxy = Proxy.Fund;
 const UserFundProxy = Proxy.UserFund;
 const FocusFundProxy = Proxy.FocusFund;
-const OptionalFundProxy = Proxy.OptionalFund;
 
-// 获取建议
+/**
+ * 获取幅度策略
+ * @param userId
+ * @param two
+ * @returns {Promise.<*>}
+ */
 exports.getStrategy = async function (userId, two) {
   const funds = await FundProxy.find({});
   const userFund = await UserFundProxy.find({user: userId});
@@ -70,7 +71,11 @@ exports.getStrategy = async function (userId, two) {
   return list;
 };
 
-// 对我的持仓的建议
+/**
+ * 我的持仓的幅度策略
+ * @param userId
+ * @returns {Promise.<Array>}
+ */
 exports.getMyStrategy = async function (userId) {
   const userFund = await UserFundProxy.find({user: userId});
   let fundIds = [];
@@ -220,7 +225,11 @@ exports.getFundsMaxMinDistribution = async function () {
   }
 };
 
-// 获取建议
+/**
+ * 获取均线策略
+ * @param userId
+ * @returns {Promise.<Array>}
+ */
 exports.getAverageStrategy = async function (userId) {
   const funds = await FundProxy.find({});
   const userFund = await UserFundProxy.find({user: userId});

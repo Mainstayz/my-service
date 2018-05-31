@@ -47,6 +47,15 @@ exports.updateUserFund = async function (userId, fundId, data) {
 };
 
 /**
+ * 获取用户基金
+ * @param userId
+ * @returns {Promise.<void>}
+ */
+exports.getUserFundsByUserId = async function (userId) {
+  return UserFundProxy.findByUserId(userId);
+};
+
+/**
  * 获取用户基金以及基金信息
  * @param userId
  * @returns {Promise.<void>}
@@ -55,23 +64,21 @@ exports.getUserFundsByUserIdWithFundBase = async function (userId) {
   return UserFundProxy.findByUserIdWithFundBase(userId);
 };
 
-//资产部分
-exports.getMyAsset = async function (userId) {
-  return UserFundProxy.findOne({user: userId});
-};
-
-exports.getUserFundsByUserId = async function (userId) {
-  return UserFundProxy.findByUserId(userId);
-};
-
+/**
+ * 获取单个用户基金
+ * @param userId
+ * @param fundId
+ * @returns {Promise.<void>}
+ */
 exports.getUserFund = async function (userId, fundId) {
   return UserFundProxy.findByUserIdFundId(userId, fundId);
 };
 
-exports.getUserFundsByFundId = async function (fundId) {
-  return UserFundProxy.find({fund: fundId});
-};
-
+/**
+ * 检查用户基金是否存在
+ * @param query
+ * @returns {Promise.<void>}
+ */
 exports.checkUserFundByQuery = async function (query) {
   return UserFundProxy.check(query);
 };

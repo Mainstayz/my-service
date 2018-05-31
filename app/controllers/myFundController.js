@@ -153,16 +153,3 @@ exports.getUserFunds = async function (ctx) {
   }
 };
 
-exports.getMyAsset = async function (ctx) {
-  const userFundService = ctx.services.userFund;
-  try {
-    const tokenRaw = ctx.tokenRaw;
-    // 验证基金
-    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    await userFundService.getMyAsset(userRaw._id);
-    ctx.body = ctx.resuccess();
-  } catch (err) {
-    ctx.body = ctx.refail(err);
-  }
-};
-

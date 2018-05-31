@@ -51,7 +51,6 @@ router.post('/fund/addUserFund', controllers.myFundController.addUserFund);
 router.get('/fund/deleteUserFund', controllers.myFundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.myFundController.updateUserFund);
 router.get('/fund/getUserFunds', controllers.myFundController.getUserFunds);
-router.get('/fund/getMyAsset', controllers.myFundController.getMyAsset);
 
 /**
  * 用户净值记录

@@ -7,33 +7,51 @@ const numberUtil = util.numberUtil;
 const analyzeUtil = util.analyzeUtil;
 const fundBaseUtil = util.fundBaseUtil;
 
+const getNetValueSort = analyzeUtil.getNetValueSort;
+const getCostLine = analyzeUtil.getCostLine;
+const getAverage = analyzeUtil.getAverage;
+const getPositionInfo = analyzeUtil.getPositionInfo;
+const getMaxRiseAndFallInfo = analyzeUtil.getMaxRiseAndFallInfo;
 
+const countRate = numberUtil.countRate;
+const countDifferenceRate = numberUtil.countDifferenceRate;
+
+const getNetValueList = fundBaseUtil.getNetValueList;
+const getBetterValuation = fundBaseUtil.getBetterValuation;
+
+/**
+ * 分析基金近期的数据
+ * @param fund
+ * @param analyzeValue
+ * @param hasNetValueList
+ * @returns {{valuationRate, result: {isMin: boolean, isLow: boolean, isLowHalf: boolean, isHigh: boolean, isHighHalf: boolean, isMonthSlump: boolean, isHalfMonthSlump: boolean, isMonthBoom: boolean, isHalfMonthBoom: boolean, costLine, costLineHalf}}}
+ */
 exports.getFundAnalyzeRecent = function (fund, analyzeValue, hasNetValueList) {
-  const list = JSON.parse(fund['recent_net_value']).data;
+  const list = getNetValueList(fund);
   // 获取估值
-  const valuationInfo = fundBaseUtil.getBetterValuation(fund);
+  const valuationInfo = getBetterValuation(fund);
   /**
    * 客观统计数据
    */
     // 目前估值
   const valuation = valuationInfo.valuation;
   // 当日幅度
-  const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
+  const valuationRate = countRate((valuation - fund['net_value']), fund['net_value']);
   /**
    * 客观分析
    */
     // 从小到大排序，并记录次数
-  const netValueSort = analyzeUtil.getNetValueSort(list);
-  const netValueSortHalfYear = analyzeUtil.getNetValueSort(list.slice(0, 130));
-  const netValueSortHalfMonth = analyzeUtil.getNetValueSort(list.slice(0, 10));
-  const netValueSortMonth = analyzeUtil.getNetValueSort(list.slice(0, 20));
-  const costLine = analyzeUtil.getCostLine(netValueSort);
-  const costLineHalf = analyzeUtil.getCostLine(netValueSortHalfYear);
+  const netValueSort = getNetValueSort(list);
+  const netValueSortHalfYear = getNetValueSort(list.slice(0, 130));
+  const netValueSortHalfMonth = getNetValueSort(list.slice(0, 10));
+  const netValueSortMonth = getNetValueSort(list.slice(0, 20));
+  const costLine = getCostLine(netValueSort);
+  const costLineHalf = getCostLine(netValueSortHalfYear);
   // 近几天的暴跌信息， 包括了当天的
-  const recentInfo = analyzeUtil.getMaxRiseAndFallInfo(valuation, list);
+  const recentInfo = getMaxRiseAndFallInfo(valuation, list);
   // 点位信息
-  const positionInfo = analyzeUtil.getPositionInfo(valuation, netValueSortMonth);
-  const positionInfoHalf = analyzeUtil.getPositionInfo(valuation, netValueSortHalfMonth);
+  const positionInfo = getPositionInfo(valuation, netValueSortMonth);
+  const positionInfoHalf = getPositionInfo(valuation, netValueSortHalfMonth);
   const rate = 0.1;
   let data = {
     valuationRate,
@@ -59,15 +77,20 @@ exports.getFundAnalyzeRecent = function (fund, analyzeValue, hasNetValueList) {
   return data;
 };
 
+/**
+ * 获取基金近一月最大涨跌幅，近半月最大涨跌幅
+ * @param fund
+ * @returns {{halfMax: Array, halfMin: Array, min: Array, max: Array}}
+ */
 exports.getFundMaxMinDistribution = function (fund) {
-  const list = JSON.parse(fund['recent_net_value']).data;
+  const list = getNetValueList(fund);
   // 近几天的暴跌信息， 包括了当天的
   let max = [];
   let min = [];
   let halfMax = [];
   let halfMin = [];
   for (let i = 0; i < list.length - 22; i++) {
-    const recentInfo = analyzeUtil.getMaxRiseAndFallInfo(list[i]['net_value'], list.slice(i, i + 22));
+    const recentInfo = getMaxRiseAndFallInfo(list[i]['net_value'], list.slice(i, i + 22));
     max.push(recentInfo.monthMax);
     min.push(recentInfo.monthMin);
     halfMax.push(recentInfo.halfMonthMax);
@@ -81,24 +104,26 @@ exports.getFundMaxMinDistribution = function (fund) {
   }
 };
 
+/**
+ * 获取均线分析信息
+ * @param fund
+ * @returns {{monthAverage, weekAverage, halfMonthAverage, isUp: boolean, isDown: boolean, isAbove: boolean, toDown: boolean, toUp: boolean, isReverse: boolean, valuationRate}}
+ */
 exports.getAverageInfo = function (fund) {
-  const list = JSON.parse(fund['recent_net_value']).data;
-  // 获取估值
-  const valuationInfo = fundBaseUtil.getBetterValuation(fund);
-  // 目前估值
+  const list = getNetValueList(fund);
+  const valuationInfo = getBetterValuation(fund);
   const valuation = valuationInfo.valuation;
-  // 当日幅度
-  const valuationRate = numberUtil.countRate((valuation - fund['net_value']), fund['net_value']);
+  const valuationRate = countRate((valuation - fund['net_value']), fund['net_value']);
   let newList = [];
   list.forEach((item) => {
     newList.unshift(item['net_value']);
   });
   newList.push(valuation);
   const len = newList.length;
-  const monthAverage = analyzeUtil.getAverage(newList, 20, len - 1);
-  const halfMonthAverage = analyzeUtil.getAverage(newList, 10, len - 1);
-  const weekAverage = analyzeUtil.getAverage(newList, 5, len - 1);
-  const rate = numberUtil.countDifferenceRate(weekAverage, halfMonthAverage);
+  const monthAverage = getAverage(newList, 20, len - 1);
+  const halfMonthAverage = getAverage(newList, 10, len - 1);
+  const weekAverage = getAverage(newList, 5, len - 1);
+  const rate = countDifferenceRate(weekAverage, halfMonthAverage);
   const isDown = rate < -0.5;
   let isUp = rate > 0;
   const isBoom = rate > 0.5;
@@ -109,9 +134,9 @@ exports.getAverageInfo = function (fund) {
   const keepDay = [2,3,4,5,6,7];
   const beforeDay = [8,9];
   for (let i = 2; i < 10; i++) {
-    const halfMonthAverageTemp = analyzeUtil.getAverage(newList, 20, len - i);
-    const weekAverageTemp = analyzeUtil.getAverage(newList, 5, len - i);
-    const rateTemp = numberUtil.countDifferenceRate(weekAverageTemp, halfMonthAverageTemp);
+    const halfMonthAverageTemp = getAverage(newList, 20, len - i);
+    const weekAverageTemp = getAverage(newList, 5, len - i);
+    const rateTemp = countDifferenceRate(weekAverageTemp, halfMonthAverageTemp);
     if (isDown) {
       if (rateTemp > 0.5) {
         toDown = true
