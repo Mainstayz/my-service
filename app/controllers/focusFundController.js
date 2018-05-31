@@ -59,7 +59,7 @@ exports.getFocusFunds = async function (ctx) {
     const tokenRaw = ctx.tokenRaw;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     // 找到基金
-    const funds = await userFundService.getFocusFundsByUserIdWithFund(userRaw._id);
+    const funds = await userFundService.getFocusFundsByUserIdWithFundBase(userRaw._id);
     ctx.body = ctx.resuccess({
       list: funds
     });

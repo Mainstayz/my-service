@@ -6,7 +6,7 @@ exports.exportMyFunds = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    const userFunds = await ctx.services.fund.getUserFundsByUserIdWithFund(userRaw._id);
+    const userFunds = await ctx.services.fund.getUserFundsByUserIdWithFundBase(userRaw._id);
     let list = [];
     for (let i = 0; i < userFunds.length; i++) {
       const fund = userFunds[i].fund;

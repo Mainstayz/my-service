@@ -5,9 +5,18 @@ const Proxy = require('../proxy');
 
 const UserFundProxy = Proxy.UserFund;
 const FocusFundProxy = Proxy.FocusFund;
-const UserFundAccountProxy = Proxy.UserFundAccount;
 
+/**
+ * 持有基金部分-----------------------------------------------------------------
+ */
 
+/**
+ * 添加用户基金
+ * @param userId
+ * @param fundId
+ * @param data
+ * @returns {Promise.<void>}
+ */
 exports.addUserFund = async function (userId, fundId, data) {
   return UserFundProxy.newAndSave({
     user: userId,
@@ -16,15 +25,33 @@ exports.addUserFund = async function (userId, fundId, data) {
   });
 };
 
+/**
+ * 删除用户基金
+ * @param userId
+ * @param fundId
+ * @returns {Promise.<void>}
+ */
 exports.deleteUserFund = async function (userId, fundId) {
   return UserFundProxy.delete({user: userId, fund: fundId});
 };
 
+/**
+ * 更新用户基金
+ * @param userId
+ * @param fundId
+ * @param data
+ * @returns {Promise.<void>}
+ */
 exports.updateUserFund = async function (userId, fundId, data) {
   return UserFundProxy.update({user: userId, fund: fundId}, data);
 };
 
-exports.getUserFundsByUserIdWithFund = async function (userId) {
+/**
+ * 获取用户基金以及基金信息
+ * @param userId
+ * @returns {Promise.<void>}
+ */
+exports.getUserFundsByUserIdWithFundBase = async function (userId) {
   return UserFundProxy.findByUserIdWithFundBase(userId);
 };
 
@@ -33,10 +60,6 @@ exports.getMyAsset = async function (userId) {
   return UserFundProxy.findOne({user: userId});
 };
 
-
-
-
-
 exports.getUserFundsByUserId = async function (userId) {
   return UserFundProxy.findByUserId(userId);
 };
@@ -44,8 +67,6 @@ exports.getUserFundsByUserId = async function (userId) {
 exports.getUserFund = async function (userId, fundId) {
   return UserFundProxy.findByUserIdFundId(userId, fundId);
 };
-
-
 
 exports.getUserFundsByFundId = async function (fundId) {
   return UserFundProxy.find({fund: fundId});
@@ -56,9 +77,15 @@ exports.checkUserFundByQuery = async function (query) {
 };
 
 /**
- * 关注基金
-  */
+ * 关注基金部分-----------------------------------------------------------------
+ */
 
+/**
+ * 添加关注基金
+ * @param userId
+ * @param fundId
+ * @returns {Promise.<void>}
+ */
 exports.addFocusFund = async function (userId, fundId) {
   return FocusFundProxy.newAndSave({
     user: userId,
@@ -66,30 +93,49 @@ exports.addFocusFund = async function (userId, fundId) {
   });
 };
 
+/**
+ * 删除关注基金
+ * @param userId
+ * @param fundId
+ * @returns {Promise.<void>}
+ */
 exports.deleteFocusFund = async function (userId, fundId) {
   return FocusFundProxy.delete({user: userId, fund: fundId});
 };
 
+/**
+ * 获取单个关注基金
+ * @param userId
+ * @param fundId
+ * @returns {Promise.<void>}
+ */
 exports.getFocusFund = async function (userId, fundId) {
   return FocusFundProxy.findByUserIdFundId(userId, fundId);
 };
 
+/**
+ * 获取用户所有的关注基金
+ * @param userId
+ * @returns {Promise.<void>}
+ */
 exports.getFocusFundsByUserId = async function (userId) {
   return FocusFundProxy.findByUserId(userId);
 };
 
-exports.getFocusFundsByFundId = async function (fundId) {
-  return FocusFundProxy.find({fund: fundId});
-};
-
-exports.getFocusFundsByUserIdWithFund = async function (userId) {
+/**
+ * 获取用户所有的关注基金以及基金信息
+ * @param userId
+ * @returns {Promise.<void>}
+ */
+exports.getFocusFundsByUserIdWithFundBase = async function (userId) {
   return FocusFundProxy.findByUserIdWithFundBase(userId);
 };
 
-exports.getFocusFundByUserIdWithFund = async function (userId) {
-  return FocusFundProxy.findOneByUserIdWithFundBase(userId);
-};
-
+/**
+ * 检查关注基金是否存在
+ * @param query
+ * @returns {Promise.<void>}
+ */
 exports.checkFocusFundByQuery = async function (query) {
   return FocusFundProxy.check(query);
 };

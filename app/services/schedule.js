@@ -42,14 +42,22 @@ exports.updateSchedule = async function (key, data) {
 };
 
 /**
- * 获取定时任务
+ * 获取单个定时任务
  */
 exports.getSchedule = async function (key) {
   return DictionariesProxy.findOne({type: 'schedule', key});
 };
+
+/**
+ * 获取所有定时任务
+ */
 exports.getSchedules = async function () {
   return DictionariesProxy.find({type: 'schedule'});
 };
+
+/**
+ * 分页获取定时任务
+ */
 exports.getSchedulesByPaging = async function (query, paging) {
   const opt = {
     skip: paging.start,
@@ -57,6 +65,6 @@ exports.getSchedulesByPaging = async function (query, paging) {
     sort: '-create_at'
   };
   const queryOption = {type: 'schedule'};
-  const data = await Promise.all([DictionariesProxy.findBase(queryOption, opt), DictionariesProxy.count(queryOption)]);
+  const data = await Promise.all([DictionariesProxy.find(queryOption, opt), DictionariesProxy.count(queryOption)]);
   return {list: data[0], count: data[1]};
 };
