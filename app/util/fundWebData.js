@@ -16,7 +16,11 @@ const address = 'http://120.27.209.16:3006';
 // 备用1
 //const address = 'http://118.178.229.226:3006';
 
-// 天天得到单个基金的信息
+/**
+ * 天天得到单个基金的信息
+ * @param code
+ * @returns {Promise.<TResult>}
+ */
 exports.getFundInfo = function (code) {
   if (isOther) {
     return request({
@@ -44,7 +48,10 @@ exports.getFundInfo = function (code) {
   });
 };
 
-// 天天得到所有基金的信息
+/**
+ * 天天得到所有基金的信息
+ * @returns {Promise.<TResult>}
+ */
 exports.getFundsInfo = function () {
   if (isOther) {
     return request({
@@ -85,7 +92,10 @@ exports.getFundsInfo = function () {
   });
 };
 
-// 好买得到所有基金的估值信息
+/**
+ * 好买得到所有基金的估值信息
+ * @returns {Promise.<TResult>}
+ */
 exports.getFundsInfoHaomai = function () {
   if (isOther) {
     return request({
@@ -125,6 +135,12 @@ exports.getFundsInfoHaomai = function () {
   });
 };
 
+/**
+ * 获取基金近期的净值数据
+ * @param code
+ * @param days
+ * @returns {Promise.<TResult>}
+ */
 exports.getRecentNetValue = function (code, days) {
   if (isOther) {
     return request({
