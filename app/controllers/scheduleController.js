@@ -1,8 +1,11 @@
 /**
  * Created by xiaobxia on 2018/3/6.
  */
+
 /**
  * 添加定时任务
+ * @param ctx
+ * @returns {Promise.<void>}
  */
 exports.addSchedule = async function (ctx) {
   const query = ctx.request.body;
@@ -23,6 +26,8 @@ exports.addSchedule = async function (ctx) {
 
 /**
  * 删除定时任务
+ * @param ctx
+ * @returns {Promise.<void>}
  */
 exports.deleteSchedule = async function (ctx) {
   const query = ctx.query;
@@ -40,6 +45,8 @@ exports.deleteSchedule = async function (ctx) {
 
 /**
  * 更新定时任务
+ * @param ctx
+ * @returns {Promise.<void>}
  */
 exports.updateSchedule = async function (ctx) {
   const query = ctx.request.body;
@@ -60,6 +67,11 @@ exports.updateSchedule = async function (ctx) {
   }
 };
 
+/**
+ * 更新定时任务的状态
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.changeScheduleStatus = async function (ctx) {
   const query = ctx.request.body;
   const scheduleService = ctx.services.schedule;
@@ -77,6 +89,11 @@ exports.changeScheduleStatus = async function (ctx) {
   }
 };
 
+/**
+ * 获取定时任务
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.getSchedules = async function (ctx) {
   try {
     const schedules = await ctx.services.schedule.getSchedules();

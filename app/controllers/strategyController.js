@@ -43,6 +43,11 @@ exports.getLowRateStrategy = async function (ctx) {
   }
 };
 
+/**
+ * 更新分析的配置
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.updateAnalyzeValue = async function (ctx) {
   const query = ctx.request.body;
   const dictionariesService = ctx.services.dictionaries;
@@ -57,6 +62,11 @@ exports.updateAnalyzeValue = async function (ctx) {
   }
 };
 
+/**
+ * 获取分析的配置信息
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.getAnalyzeValue = async function (ctx) {
   const dictionariesService = ctx.services.dictionaries;
   try {
@@ -87,6 +97,11 @@ exports.getFundsMaxMinDistribution = async function (ctx) {
   }
 };
 
+/**
+ * 获取均线策略
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.getAverageStrategy = async function (ctx) {
   const tokenRaw = ctx.tokenRaw;
   try {

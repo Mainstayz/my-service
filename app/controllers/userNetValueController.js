@@ -1,12 +1,15 @@
 /**
  * Created by xiaobxia on 2018/4/5.
  */
-const moment = require('moment');
 const util = require('../util');
 
 const numberUtil = util.numberUtil;
-const fundBaseUtil = util.fundBaseUtil;
 
+/**
+ * 添加用户净值
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.addUserNetValue = async function (ctx) {
   const query = ctx.request.body;
   const userNetValueService = ctx.services.userNetValue;
@@ -29,6 +32,11 @@ exports.addUserNetValue = async function (ctx) {
   }
 };
 
+/**
+ * 删除用户净值
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.deleteUserNetValue = async function (ctx) {
   const query = ctx.query;
   const userNetValueService = ctx.services.userNetValue;
@@ -45,6 +53,11 @@ exports.deleteUserNetValue = async function (ctx) {
   }
 };
 
+/**
+ * 更新用户净值
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.updateUserNetValue = async function (ctx) {
   const query = ctx.request.body;
   const userNetValueService = ctx.services.userNetValue;
@@ -67,7 +80,11 @@ exports.updateUserNetValue = async function (ctx) {
   }
 };
 
-// 分页
+/**
+ * 分页获取用户净值
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.getUserNetValues = async function (ctx) {
   const query = ctx.query;
   try {
@@ -90,6 +107,11 @@ exports.getUserNetValues = async function (ctx) {
   }
 };
 
+/**
+ * 获取用户所有净值
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.getUserNetValuesAll = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw;
@@ -103,6 +125,11 @@ exports.getUserNetValuesAll = async function (ctx) {
   }
 };
 
+/**
+ * 获取用户近期净值变化
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.getUserNetValuesRecent = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw;

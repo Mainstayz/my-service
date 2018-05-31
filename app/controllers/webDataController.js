@@ -3,6 +3,12 @@
  */
 const axios = require('axios');
 const moment = require('moment');
+
+/**
+ * 查询股票的走势信息
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.getWebStockdaybar = async function (ctx) {
   const query = ctx.query;
   try {

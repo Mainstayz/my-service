@@ -7,6 +7,11 @@ const util = require('../util');
 const numberUtil = util.numberUtil;
 const fundBaseUtil = util.fundBaseUtil;
 
+/**
+ * 添加用户基金
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.addUserFund = async function (ctx) {
   const query = ctx.request.body;
   const fundService = ctx.services.fund;
@@ -32,6 +37,11 @@ exports.addUserFund = async function (ctx) {
   }
 };
 
+/**
+ * 删除用户基金
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.deleteUserFund = async function (ctx) {
   const query = ctx.query;
   const fundService = ctx.services.fund;
@@ -52,6 +62,11 @@ exports.deleteUserFund = async function (ctx) {
   }
 };
 
+/**
+ * 更新用户基金
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.updateUserFund = async function (ctx) {
   const query = ctx.request.body;
   const fundService = ctx.services.fund;
@@ -79,10 +94,14 @@ exports.updateUserFund = async function (ctx) {
   }
 };
 
+/**
+ * 获取用户基金
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.getUserFunds = async function (ctx) {
   const dictionariesService = ctx.services.dictionaries;
   const userFundService = ctx.services.userFund;
-  const analyzeService = ctx.services.analyze;
   try {
     const tokenRaw = ctx.tokenRaw;
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);

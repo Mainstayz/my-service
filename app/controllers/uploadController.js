@@ -3,8 +3,12 @@
  */
 const fs = require('fs-extra');
 const del = require('del');
-const moment = require('moment');
-// 导入基金，所有基金手动添加或导入
+
+/**
+ * 导入基金，所有基金手动添加或导入
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
 exports.importFunds = async function (ctx) {
   console.log(ctx.req.file);
   // 获取上传数据
