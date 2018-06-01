@@ -103,14 +103,14 @@ exports.getUserNetValueMonthRate = async function (query) {
       if (!(moment(netValueItem.net_value_date).isSame(lastItem.net_value_date, 'month'))) {
         list.push({
           yearMonth: moment(lastItem.net_value_date).format('YYYY-MM'),
-          rate: numberUtil.countDifferenceRate(lastItem.net_value, lastMonthNetValue)
+          rate: numberUtil.countRate((lastItem.net_value - lastMonthNetValue), 1)
         });
         lastMonthNetValue = lastItem.net_value;
         //如果是最后一个
       } else if ((i + 1) === netValues.length) {
         list.push({
           yearMonth: moment(netValueItem.net_value_date).format('YYYY-MM'),
-          rate: numberUtil.countDifferenceRate(netValueItem.net_value, lastMonthNetValue)
+          rate: numberUtil.countRate((netValueItem.net_value - lastMonthNetValue), 1)
         });
       }
     }
