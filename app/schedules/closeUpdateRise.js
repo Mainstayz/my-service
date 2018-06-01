@@ -20,10 +20,10 @@ let rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [new schedule.Range(1, 5)];
 rule.hour = [17];
 
-function closeUpdateRise() {
-  scheduleService.getSchedule('closeUpdateRise').then((data)=>{
+function closeUpdateRate() {
+  scheduleService.getSchedule('closeUpdateRate').then((data)=>{
     if (data && data.value === 'open') {
-      scheduleService.updateSchedule('updateRise', {
+      scheduleService.updateSchedule('updateRate', {
         value: 'close'
       }).then(()=>{
       });
@@ -31,6 +31,6 @@ function closeUpdateRise() {
   });
 }
 
-const job = schedule.scheduleJob(rule, closeUpdateRise);
+const job = schedule.scheduleJob(rule, closeUpdateRate);
 
 module.exports = job;

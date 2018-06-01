@@ -10,7 +10,7 @@ if (!isDev) {
   exports.closeUpdateValuation = require('./closeUpdateValuation');
   exports.verifyOpening = require('./verifyOpening');
   exports.deleteUnSellFund = require('./deleteUnSellFund');
-  exports.updateRise = require('./updateRise');
-  exports.closeUpdateRise = require('./closeUpdateRise');
+  exports.updateRate = require('./updateRate');
+  exports.closeUpdateRate = require('./closeUpdateRate');
 }
 

@@ -100,7 +100,7 @@ router.get('/schedule/getSchedules', controllers.scheduleController.getSchedules
 router.get('/schedule/verifyOpening', controllers.fundScheduleController.verifyOpening);
 router.get('/schedule/updateBaseInfo', controllers.fundScheduleController.updateBaseInfo);
 router.get('/schedule/updateValuation', controllers.fundScheduleController.updateValuation);
-router.get('/schedule/updateRise', controllers.fundScheduleController.updateRise);
+router.get('/schedule/updateRate', controllers.fundScheduleController.updateRate);
 router.get('/schedule/updateRecentNetValue', controllers.fundScheduleController.updateRecentNetValue);
 router.get('/schedule/betterValuation', controllers.fundScheduleController.betterValuation);
 router.get('/schedule/addRecentNetValue', controllers.fundScheduleController.addRecentNetValue);

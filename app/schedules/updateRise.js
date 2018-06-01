@@ -30,12 +30,12 @@ for (let k = 1; k < 60; k += 2) {
 }
 rule.minute = minute;
 
-function updateRise() {
-  scheduleService.getSchedule('updateRise').then((data)=>{
+function updateRate() {
+  scheduleService.getSchedule('updateRate').then((data)=>{
     if (data && data.value === 'open') {
       request({
         method: 'get',
-        url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/schedule/updateRise`
+        url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/schedule/updateRate`
       }).catch(function (err) {
         logger.error(err);
       });
@@ -43,6 +43,6 @@ function updateRise() {
   });
 }
 
-const job = schedule.scheduleJob(rule, updateRise);
+const job = schedule.scheduleJob(rule, updateRate);
 
 module.exports = job;

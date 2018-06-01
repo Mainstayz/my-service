@@ -14,7 +14,7 @@ const schema = new Schema({
   // 是否可购
   sell: Boolean,
   //涨幅
-  rise: Number,
+  rate: Number,
   // 是否低费率
   lowRate: Boolean,
   // 估值

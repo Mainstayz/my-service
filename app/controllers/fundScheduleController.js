@@ -24,9 +24,9 @@ exports.updateValuation = async function (ctx) {
 };
 
 //计算涨幅
-exports.updateRise = async function (ctx) {
+exports.updateRate = async function (ctx) {
   try {
-    await ctx.services.fund.updateRise();
+    await ctx.services.fund.updateRate();
     ctx.body = ctx.resuccess();
   } catch (err) {
     ctx.body = ctx.refail(err);

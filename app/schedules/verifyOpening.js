@@ -56,7 +56,7 @@ function verifyOpening() {
             }).then(()=>{
             });
             // 开启涨幅更新
-            scheduleService.updateSchedule('updateRise', {
+            scheduleService.updateSchedule('updateRate', {
               value: 'open'
             }).then(()=>{
             });

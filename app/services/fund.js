@@ -271,7 +271,7 @@ exports.updateValuation = async function () {
  * 更新涨幅
  * @returns {Promise.<*>}
  */
-exports.updateRise = async function () {
+exports.updateRate = async function () {
   const funds = await FundProxy.findBase({});
   let updateList = [];
   for (let k = 0; k < funds.length; k++) {
@@ -284,7 +284,7 @@ exports.updateRise = async function () {
     const valuationRate = countRate((valuation - fund['net_value']), fund['net_value']);
     // 更新数据
     updateList.push(FundProxy.update({code: fund.code}, {
-      rise: valuationRate
+      rate: valuationRate
     }));
   }
   return Promise.all(updateList);
@@ -525,11 +525,11 @@ exports.getMarket = async function (sort, paging) {
 
 /**
  * 获取市场涨跌统计信息
- * @returns {Promise.<{rise, upCount: number, downCount: number, upAverage, downAverage, distribution: {>3: number, 2~3: number, 1~2: number, 0~1: number, -1~0: number, -2~-1: number, -3~-2: number, <-3: number}}>}
+ * @returns {Promise.<{rate, upCount: number, downCount: number, upAverage, downAverage, distribution: {>3: number, 2~3: number, 1~2: number, 0~1: number, -1~0: number, -2~-1: number, -3~-2: number, <-3: number}}>}
  */
 exports.getMarketInfo = async function () {
   const funds = await FundProxy.findBase({});
-  let allRise = 0;
+  let allRate = 0;
   let upCount = 0;
   let downCount = 0;
   let upAll = 0;
@@ -545,42 +545,42 @@ exports.getMarketInfo = async function () {
     '<-3': 0
   };
   for (let i = 0; i < funds.length; i++) {
-    const rise = funds[i].rise || 0;
-    if (rise >= 0) {
-      if (rise<1) {
+    const rate = funds[i].rate || 0;
+    if (rate >= 0) {
+      if (rate<1) {
         distribution['0~1']++;
       }
-      if (rise>=1 && rise<2) {
+      if (rate>=1 && rate<2) {
         distribution['1~2']++;
       }
-      if (rise>=2 && rise<3) {
+      if (rate>=2 && rate<3) {
         distribution['2~3']++;
       }
-      if (rise>=3) {
+      if (rate>=3) {
         distribution['>3']++;
       }
       upCount++;
-      upAll += rise;
+      upAll += rate;
     } else {
-      if (rise>-1) {
+      if (rate>-1) {
         distribution['-1~0']++;
       }
-      if (rise<=-1 && rise>-2) {
+      if (rate<=-1 && rate>-2) {
         distribution['-2~-1']++;
       }
-      if (rise<=-2 && rise>-3) {
+      if (rate<=-2 && rate>-3) {
         distribution['-3~-2']++;
       }
-      if (rise<=-3) {
+      if (rate<=-3) {
         distribution['<-3']++;
       }
       downCount++;
-      downAll += rise;
+      downAll += rate;
     }
-    allRise += rise;
+    allRate += rate;
   }
   return {
-    rise: keepTwoDecimals(allRise / funds.length),
+    rate: keepTwoDecimals(allRate/ funds.length),
     upCount,
     downCount,
     upAverage: keepTwoDecimals(upAll / (upCount || 1)),
@@ -610,7 +610,7 @@ exports.getRank = async function (day) {
       net_value: fund.net_value,
       net_value_date: fund.net_value_date,
       sell: fund.sell,
-      rise: fund.rise,
+      rate: fund.rate,
       lowRate: fund.lowRate,
       valuation_tiantian: fund.valuation_tiantian,
       valuation_haomai: fund.valuation_haomai,
