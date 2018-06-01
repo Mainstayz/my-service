@@ -513,7 +513,7 @@ exports.getMarket = async function (sort, paging) {
   const opt = {
     skip: paging.start,
     limit: paging.offset,
-    sort: sort === 'up' ? '-rise' : 'rise'
+    sort: sort === 'up' ? '-rate' : 'rate'
   };
   let queryOption = {};
   const data = await Promise.all([
