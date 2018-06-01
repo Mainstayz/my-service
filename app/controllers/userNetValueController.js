@@ -152,3 +152,21 @@ exports.getUserNetValuesRecent = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+/**
+ * 获取用户每月收益率
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
+exports.getUserNetValueMonthRate = async function (ctx) {
+  try {
+    const tokenRaw = ctx.tokenRaw;
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    const userNetValues = await ctx.services.userNetValue.getUserNetValueMonthRate({user: userRaw._id});
+    ctx.body = ctx.resuccess({
+      list: userNetValues
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};

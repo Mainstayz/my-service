@@ -61,6 +61,7 @@ router.post('/fund/updateUserNetValue', controllers.userNetValueController.updat
 router.get('/fund/getUserNetValues', controllers.userNetValueController.getUserNetValues);
 router.get('/fund/getUserNetValuesAll', controllers.userNetValueController.getUserNetValuesAll);
 router.get('/fund/getUserNetValuesRecent', controllers.userNetValueController.getUserNetValuesRecent);
+router.get('/fund/getUserNetValueMonthRate', controllers.userNetValueController.getUserNetValueMonthRate);
 /**
  * 关注基金模块
  */

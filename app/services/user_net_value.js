@@ -1,8 +1,11 @@
 /**
  * Created by xiaobxia on 2018/4/5.
  */
+const moment = require('moment');
 const Proxy = require('../proxy');
+const util = require('../util');
 
+const numberUtil = util.numberUtil;
 const UserNetValue = Proxy.UserNetValue;
 
 /**
@@ -80,3 +83,33 @@ exports.getUserNetValueNewSort = async function (query) {
   };
   return UserNetValue.find(query, opt);
 };
+
+/**
+ * 获取用户每月收益率
+ * @param query
+ * @returns {Promise.<void>}
+ */
+exports.getUserNetValueMonthRate = async function (query) {
+  //默认新创建的在后面
+  const netValues = UserNetValue.find(query);
+  let lastMonthNetValue = 1;
+  let lastItem = {};
+  let list = [];
+  for (let i = 0; i < netValues.length; i++) {
+    const netValueItem = netValues[i];
+    //判断是不是第一个数据
+    if (lastItem.net_value_date) {
+      //判断和上个数据是不是同一个月
+      if (!(moment(netValueItem.net_value_date).isSame(lastItem.net_value_date, 'month'))) {
+        list.push({
+          yearMonth: moment(lastItem.net_value_date).format('YYYY-MM'),
+          rate: numberUtil.countDifferenceRate(lastItem.net_value, lastMonthNetValue)
+        });
+        lastMonthNetValue = lastItem.net_value;
+      }
+    }
+    lastItem = netValueItem;
+  }
+  return list;
+};
+
