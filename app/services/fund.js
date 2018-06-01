@@ -2,7 +2,7 @@
  * Created by xiaobxia on 2018/1/26.
  */
 const Proxy = require('../proxy');
-const fundWebDataUtil = require('../util/fundInfo');
+const fundWebDataUtil = require('../util/fundWebData');
 const localConst = require('../const');
 const moment = require('moment');
 const util = require('../util');
