@@ -22,6 +22,7 @@ exports.addUserFund = async function (ctx) {
       code: {type: 'string', required: true},
       shares: {required: true},
       strategy: {required: true},
+      standard: {required: false},
       cost: {required: true},
       buy_date: {required: true},
       target_net_value: {required: true},
@@ -78,6 +79,7 @@ exports.updateUserFund = async function (ctx) {
       shares: {required: false},
       strategy: {required: false},
       cost: {required: false},
+      standard: {required: false},
       buy_date: {required: false},
       target_net_value: {required: false},
       stop_net_value: {required: false}
@@ -139,6 +141,7 @@ exports.getUserFunds = async function (ctx) {
         shares: userFund.shares,
         strategy: userFund.strategy,
         cost: userFund.cost,
+        standard: userFund.standard,
         buy_date: buyDate,
         has_days: records.indexOf(buyDate),
         target_net_value: userFund.target_net_value,

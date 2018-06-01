@@ -14,6 +14,8 @@ const schema = new Schema({
   strategy: String,
   //持仓成本
   cost: Number,
+  //几倍仓
+  standard: Number,
   //买入日期
   buy_date: {
     type: Date,
