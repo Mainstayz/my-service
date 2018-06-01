@@ -87,11 +87,11 @@ exports.getUserNetValueNewSort = async function (query) {
 /**
  * 获取用户每月收益率
  * @param query
- * @returns {Promise.<void>}
+ * @returns {Promise.<Array>}
  */
 exports.getUserNetValueMonthRate = async function (query) {
   //默认新创建的在后面
-  const netValues = UserNetValue.find(query);
+  const netValues = await UserNetValue.find(query);
   let lastMonthNetValue = 1;
   let lastItem = {};
   let list = [];
