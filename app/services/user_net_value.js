@@ -106,6 +106,12 @@ exports.getUserNetValueMonthRate = async function (query) {
           rate: numberUtil.countDifferenceRate(lastItem.net_value, lastMonthNetValue)
         });
         lastMonthNetValue = lastItem.net_value;
+        //如果是最后一个
+      } else if ((i + 1) === netValues.length) {
+        list.push({
+          yearMonth: moment(netValueItem.net_value_date).format('YYYY-MM'),
+          rate: numberUtil.countDifferenceRate(netValueItem.net_value, lastMonthNetValue)
+        });
       }
     }
     lastItem = netValueItem;
