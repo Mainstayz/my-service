@@ -51,6 +51,7 @@ exports.updateUserNetValue = async function (userId, dateString, data) {
  * @returns {Promise.<{list: *, count: *}>}
  */
 exports.getUserNetValueByPaging = async function (query, paging) {
+  //新创建的在前面
   const opt = {
     skip: paging.start,
     limit: paging.offset,
@@ -66,6 +67,7 @@ exports.getUserNetValueByPaging = async function (query, paging) {
  * @returns {Promise.<void>}
  */
 exports.getUserNetValue = async function (query) {
+  //新创建的在后面
   const opt = {
     sort: 'net_value_date'
   };
@@ -78,6 +80,7 @@ exports.getUserNetValue = async function (query) {
  * @returns {Promise.<void>}
  */
 exports.getUserNetValueNewSort = async function (query) {
+  //新创建的在前面
   const opt = {
     sort: '-net_value_date'
   };
