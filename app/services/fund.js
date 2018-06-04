@@ -430,15 +430,15 @@ exports.deleteUnSellFund = async function () {
   const funds = await FundProxy.findBase({sell: false});
   let optionList = [];
   for (let i = 0; i < funds.length; i++) {
-    const code = funds[i].code;
+    const id = funds[i]._id;
     const queryList = await Promise.all([
-      OptionalFundProxy.find({code}),
-      FocusFundProxy.find({code}),
-      UserFundProxy.find({code})
+      OptionalFundProxy.findOne({fund: id}),
+      FocusFundProxy.findOne({fund: id}),
+      UserFundProxy.findOne({fund: id})
     ]);
     let use = false;
     for (let i = 0; i < queryList.length; i++) {
-      if (queryList[i].length !== 0) {
+      if (queryList[i]) {
         use = true;
       }
     }
