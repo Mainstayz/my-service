@@ -90,8 +90,11 @@ exports.getUserNetValueNewSort = async function (query) {
  * @returns {Promise.<Array>}
  */
 exports.getUserNetValueMonthRate = async function (query) {
-  //默认新创建的在后面
-  const netValues = await UserNetValue.find(query);
+  //新创建的在后面
+  const opt = {
+    sort: 'net_value_date'
+  };
+  const netValues = await UserNetValue.find(query, opt);
   let lastMonthNetValue = 1;
   let lastItem = {};
   let list = [];
@@ -107,7 +110,9 @@ exports.getUserNetValueMonthRate = async function (query) {
         });
         lastMonthNetValue = lastItem.net_value;
         //如果是最后一个
-      } else if ((i + 1) === netValues.length) {
+      }
+      //如果是最后一个
+      if ((i + 1) === netValues.length) {
         list.push({
           yearMonth: moment(netValueItem.net_value_date).format('YYYY-MM'),
           rate: numberUtil.countRate((netValueItem.net_value - lastMonthNetValue), 1)
