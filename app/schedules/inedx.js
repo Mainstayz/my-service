@@ -9,7 +9,8 @@ if (!isDev) {
   exports.updateValuation = require('./updateValuation');
   exports.closeUpdateValuation = require('./closeUpdateValuation');
   exports.verifyOpening = require('./verifyOpening');
-  exports.deleteUnSellFund = require('./deleteUnSellFund');
+  // 有些只是暂时不卖
+  // exports.deleteUnSellFund = require('./deleteUnSellFund');
   exports.updateRate = require('./updateRate');
   exports.closeUpdateRate = require('./closeUpdateRate');
 }
