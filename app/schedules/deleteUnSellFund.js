@@ -22,7 +22,7 @@ const scheduleService = require('../services/schedule');
 let rule = new schedule.RecurrenceRule();
 
 //工作日，1点删除不出售的基金
-rule.dayOfWeek = [new schedule.Range(1, 5)];
+rule.dayOfWeek = [new schedule.Range(2, 4)];
 rule.hour = [1];
 
 function deleteUnSellFund() {
