@@ -90,7 +90,7 @@ exports.getFunds = async function (ctx) {
       ctx.services.userFund.getUserFundsByUserId(userRaw._id),
       ctx.services.fund.getFundsBaseByPaging(data, paging)
     ]);
-    const userFund = result[0];
+    const userFunds = result[0];
     const funds = result[1];
     paging.total = funds.count;
     //估值获取
@@ -99,8 +99,8 @@ exports.getFunds = async function (ctx) {
       fund.valuation = valuationInfo.valuation;
       fund.valuationSource = valuationInfo.sourceName;
       fund.better_count = '';
-      for (let j = 0; j < userFund.length; j++) {
-        if (userFund[j].fund.toString() === fund._id.toString()) {
+      for (let j = 0; j < userFunds.length; j++) {
+        if (userFunds[j].fund.toString() === fund._id.toString()) {
           fund.has = true;
           break;
         }
