@@ -143,6 +143,7 @@ exports.getFundAnalyzeRecent = async function (ctx) {
 //得到行情
 exports.getMarket = async function (ctx) {
   const query = ctx.query;
+  const tokenRaw = ctx.tokenRaw;
   try {
     const data = ctx.validateData({
       sort: {required: false},
@@ -150,9 +151,23 @@ exports.getMarket = async function (ctx) {
       pageSize: {type: 'int', required: true}
     }, query);
     let paging = ctx.paging(data.current, data.pageSize);
-    //分页获取
-    const funds = await ctx.services.fund.getMarket(data.sort, paging);
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    const result = await Promise.all([
+      ctx.services.userFund.getUserFundsByUserId(userRaw._id),
+      ctx.services.fund.getMarket(data.sort, paging)
+    ]);
+    const userFunds = result[0];
+    const funds = result[1];
     paging.total = funds.count;
+    //估值获取
+    funds.list.forEach((fund) => {
+      for (let j = 0; j < userFunds.length; j++) {
+        if (userFunds[j].fund.toString() === fund._id.toString()) {
+          fund.has = true;
+          break;
+        }
+      }
+    });
     ctx.body = ctx.resuccess({
       list: funds.list,
       page: paging
