@@ -7,7 +7,7 @@ bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
 
 const client = redis.createClient({
-  host: '39.108.114.91',
+  host: '127.0.0.1',
   port: 6379
 });
 
