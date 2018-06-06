@@ -76,6 +76,7 @@ exports.getFundBase = async function (ctx) {
 // 得到基金分页
 exports.getFunds = async function (ctx) {
   const query = ctx.query;
+  const tokenRaw = ctx.tokenRaw;
   try {
     const data = ctx.validateData({
       keyword: {required: false},
@@ -84,7 +85,13 @@ exports.getFunds = async function (ctx) {
     }, query);
     let paging = ctx.paging(data.current, data.pageSize);
     //分页获取
-    const funds = await ctx.services.fund.getFundsBaseByPaging(data, paging);
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    const result = await Promise.all([
+      ctx.services.userFund.getUserFundsByUserIdWithFundBase(userRaw._id),
+      ctx.services.fund.getFundsBaseByPaging(data, paging)
+    ]);
+    const userFund = result[0];
+    const funds = result[1];
     paging.total = funds.count;
     //估值获取
     funds.list.forEach((fund) => {
@@ -92,6 +99,12 @@ exports.getFunds = async function (ctx) {
       fund.valuation = valuationInfo.valuation;
       fund.valuationSource = valuationInfo.sourceName;
       fund.better_count = '';
+      for (let j = 0; j < userFund.length; j++) {
+        if (userFund[j].fund.toString() === fund._id.toString()) {
+          fund.has = true;
+          break;
+        }
+      }
     });
     ctx.body = ctx.resuccess({
       list: funds.list,
