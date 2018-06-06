@@ -87,7 +87,7 @@ exports.getFunds = async function (ctx) {
     //分页获取
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     const result = await Promise.all([
-      ctx.services.userFund.getUserFundsByUserIdWithFundBase(userRaw._id),
+      ctx.services.userFund.getUserFundsByUserId(userRaw._id),
       ctx.services.fund.getFundsBaseByPaging(data, paging)
     ]);
     const userFund = result[0];
