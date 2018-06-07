@@ -37,6 +37,9 @@ exports.getStrategy = async function (userId, two) {
           _id: fund._id,
           code: fund.code,
           name: fund.name,
+          lowRate: fund.lowRate,
+          rate: fund.rate,
+          sell: fund.sell,
           ...analyzeInfo
         })
       }
@@ -46,6 +49,9 @@ exports.getStrategy = async function (userId, two) {
         _id: fund._id,
         code: fund.code,
         name: fund.name,
+        lowRate: fund.lowRate,
+        rate: fund.rate,
+        sell: fund.sell,
         ...analyzeInfo
       })
     }
@@ -98,6 +104,9 @@ exports.getMyStrategy = async function (userId) {
       _id: fund._id,
       code: fund.code,
       name: fund.name,
+      lowRate: fund.lowRate,
+      rate: fund.rate,
+      sell: fund.sell,
       ...analyzeInfo,
       ...analyzeInfoAverage
     })
@@ -130,6 +139,9 @@ exports.getLowRateStrategy = async function (userId) {
       _id: fund._id,
       code: fund.code,
       name: fund.name,
+      lowRate: fund.lowRate,
+      rate: fund.rate,
+      sell: fund.sell,
       ...analyzeInfo
     })
   }
@@ -249,6 +261,9 @@ exports.getAverageStrategy = async function (userId) {
         _id: fund._id,
         code: fund.code,
         name: fund.name,
+        lowRate: fund.lowRate,
+        rate: fund.rate,
+        sell: fund.sell,
         ...analyzeInfo
       })
     }
