@@ -159,17 +159,29 @@ exports.getMarket = async function (ctx) {
     const userFunds = result[0];
     const funds = result[1];
     paging.total = funds.count;
+    console.log(userFunds[0].fund)
     //估值获取
+    let list = [];
     funds.list.forEach((fund) => {
+      fund = {
+        code: fund.code,
+        lowRate: fund.lowRate,
+        name: fund.name,
+        net_value: fund.net_value,
+        rate: fund.rate,
+        sell: fund.sell,
+        _id: fund._id
+      };
       for (let j = 0; j < userFunds.length; j++) {
         if (userFunds[j].fund.toString() === fund._id.toString()) {
           fund.has = true;
           break;
         }
       }
+      list.push(fund)
     });
     ctx.body = ctx.resuccess({
-      list: funds.list,
+      list: list,
       page: paging
     });
   } catch (err) {
