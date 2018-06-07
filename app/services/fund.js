@@ -603,7 +603,8 @@ exports.getRank = async function (day) {
     // 获取估值
     const valuationInfo = fundBaseUtil.getBetterValuation(fund);
     const valuation = valuationInfo.valuation;
-    const lastNetValue = list[day - 1]['net_value'];
+    let lastDayIndex = list.length >= day? day : list.length;
+    const lastNetValue = list[lastDayIndex - 1]['net_value'];
     fundList.push({
       name: fund.name,
       code: fund.code,
