@@ -34,3 +34,22 @@ exports.getWebStockdaybar = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.getWebStockdaybarAll = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      code: {type: 'string', required: true}
+    }, query);
+    let resData = await axios.get(`https://gupiao.baidu.com/api/stocks/stockdaybar?from=pc&os_ver=1&cuid=xxx&vv=100&format=json&stock_code=200&step=3&start=&count=${count}&fq_type=no&timestamp=${Date.now()}`, {
+      headers: {
+        Referer: `https://gupiao.baidu.com/stock/${data.code}.html?from=aladingpc`
+      }
+    });
+    ctx.body = ctx.resuccess({
+      list: resData.data.mashData
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};

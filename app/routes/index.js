@@ -113,5 +113,5 @@ router.post('/schedule/deleteHighRateFund', controllers.fundScheduleController.d
  * 网络数据
  */
 router.get('/webData/getWebStockdaybar', controllers.webDataController.getWebStockdaybar);
-
+router.get('/webData/getWebStockdaybarAll', controllers.webDataController.getWebStockdaybarAll);
 module.exports = router;

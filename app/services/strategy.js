@@ -273,4 +273,3 @@ exports.getAverageStrategy = async function (userId) {
   });
   return list;
 };
-
