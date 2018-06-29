@@ -509,13 +509,13 @@ exports.deleteHighRateFund = async function (codes) {
  * @param paging
  * @returns {Promise.<{list: *, count: *}>}
  */
-exports.getMarket = async function (sort, paging) {
+exports.getMarket = async function (sort, paging, lowRate) {
   const opt = {
     skip: paging.start,
     limit: paging.offset,
     sort: sort === 'up' ? '-rate' : 'rate'
   };
-  let queryOption = {};
+  let queryOption = lowRate ? {lowRate: true} : {};
   const data = await Promise.all([
     FundProxy.findBase(queryOption, opt),
     FundProxy.count(queryOption)

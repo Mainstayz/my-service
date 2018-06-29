@@ -148,13 +148,14 @@ exports.getMarket = async function (ctx) {
     const data = ctx.validateData({
       sort: {required: false},
       current: {type: 'int', required: true},
-      pageSize: {type: 'int', required: true}
+      pageSize: {type: 'int', required: true},
+      lowRate: {type: 'int', required: false}
     }, query);
     let paging = ctx.paging(data.current, data.pageSize);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     const result = await Promise.all([
       ctx.services.userFund.getUserFundsByUserId(userRaw._id),
-      ctx.services.fund.getMarket(data.sort, paging)
+      ctx.services.fund.getMarket(data.sort, paging, data.lowRate)
     ]);
     const userFunds = result[0];
     const funds = result[1];
