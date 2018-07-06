@@ -56,6 +56,7 @@ exports.getFundBase = async function (ctx) {
         net_value: fund.net_value,
         net_value_date: fund.net_value_date,
         sell: fund.sell,
+        theme: fund.theme,
         valuation_date: fund.valuation_date,
         valuation_haomai: fund.valuation_haomai,
         valuation_tiantian: fund.valuation_tiantian,

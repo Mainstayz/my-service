@@ -616,6 +616,7 @@ exports.getRank = async function (day) {
       valuation_tiantian: fund.valuation_tiantian,
       valuation_haomai: fund.valuation_haomai,
       valuation_date: fund.valuation_date,
+      theme: fund.theme,
       valuation,
       recentRate: countDifferenceRate(valuation, lastNetValue)
     });
