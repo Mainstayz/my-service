@@ -643,4 +643,18 @@ exports.getFundsByTheme = async function (theme) {
   return FundProxy.findBase({theme});
 };
 
+exports.updateFundThemeByKeyword = async function (keyword, theme) {
+  const keyExp = new RegExp(keyword, 'i');
+  const funds = await FundProxy.findBase({name: keyExp});
+  let optionList = [];
+  for (let i = 0; i < funds.length; i++) {
+    const code = funds[i].code;
+    optionList.push(FundProxy.update({code: code}, {
+      theme: theme
+    }));
+  }
+  return Promise.all(optionList);
+};
+
+
 

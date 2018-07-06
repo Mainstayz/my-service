@@ -237,6 +237,25 @@ exports.updateFundTheme = async function (ctx) {
 };
 
 /**
+ * 批量更新
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
+exports.updateFundThemeByKeyword = async function (ctx) {
+  const query = ctx.request.body;
+  try {
+    const data = ctx.validateData({
+      keyword: {type: 'string', required: true},
+      theme: {type: 'string', required: true}
+    }, query);
+    await ctx.services.fund.updateFundThemeByKeyword(data.keyword, data.theme);
+    ctx.body = ctx.resuccess({});
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
+/**
  * 通过主题概念筛选基金
  * @param ctx
  * @returns {Promise.<void>}
