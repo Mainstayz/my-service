@@ -626,3 +626,15 @@ exports.getRank = async function (day) {
   return fundList;
 };
 
+/**
+ * 更新基金的概念主题
+ * @param code
+ * @param theme
+ * @returns {Promise.<void>}
+ */
+exports.updateFundTheme = async function (code, theme) {
+  return FundProxy.update({code: code}, {
+    theme: theme
+  });
+};
+

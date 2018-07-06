@@ -17,6 +17,8 @@ const schema = new Schema({
   rate: Number,
   // 是否低费率
   lowRate: Boolean,
+  //基金的主题概念
+  theme: String,
   // 估值
   valuation_tiantian: Number,
   valuation_haomai: Number,

@@ -44,6 +44,8 @@ router.get('/fund/getFundAnalyzeRecent', controllers.fundController.getFundAnaly
 router.get('/fund/getMarket', controllers.fundController.getMarket);
 router.get('/fund/getMarketInfo', controllers.fundController.getMarketInfo);
 router.get('/fund/getRank', controllers.fundController.getRank);
+router.post('/fund/updateFundTheme', controllers.fundController.updateFundTheme);
+
 /**
  * 用户基金模块
  */

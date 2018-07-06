@@ -215,3 +215,22 @@ exports.getRank = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+/**
+ * 更新基金的概念主题
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
+exports.updateFundTheme = async function (ctx) {
+  const query = ctx.request.body;
+  try {
+    const data = ctx.validateData({
+      code: {type: 'string', required: true},
+      theme: {type: 'string', required: true}
+    }, query);
+    await ctx.services.fund.updateFundTheme(data.code, data.theme);
+    ctx.body = ctx.resuccess({});
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
