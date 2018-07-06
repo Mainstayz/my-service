@@ -638,3 +638,8 @@ exports.updateFundTheme = async function (code, theme) {
   });
 };
 
+exports.getFundsByTheme = async function (theme) {
+  return FundProxy.findBase({theme});
+};
+
+

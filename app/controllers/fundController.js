@@ -234,3 +234,23 @@ exports.updateFundTheme = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+/**
+ * 通过主题概念筛选基金
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
+exports.getFundsByTheme = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      theme: {type: 'string', required: true}
+    }, query);
+    const funds = await ctx.services.fund.getFundsByTheme(data.theme);
+    ctx.body = ctx.resuccess({
+      funds
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
