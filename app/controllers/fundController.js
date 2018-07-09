@@ -270,17 +270,28 @@ exports.getFundsByTheme = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     const userFunds = await ctx.services.userFund.getUserFundsByUserId(userRaw._id);
     const funds = await ctx.services.fund.getFundsByTheme(data.theme);
-    for (let i = 0; i < funds.length; i++) {
-      const fund = funds[i];
+    let list = [];
+    funds.list.forEach((fund) => {
+      fund = {
+        code: fund.code,
+        lowRate: fund.lowRate,
+        name: fund.name,
+        net_value: fund.net_value,
+        rate: fund.rate,
+        sell: fund.sell,
+        theme: fund.theme,
+        _id: fund._id
+      };
       for (let j = 0; j < userFunds.length; j++) {
         if (userFunds[j].fund.toString() === fund._id.toString()) {
           fund.has = true;
           break;
         }
       }
-    }
+      list.push(fund)
+    });
     ctx.body = ctx.resuccess({
-      funds
+      funds: list
     });
   } catch (err) {
     ctx.body = ctx.refail(err);
