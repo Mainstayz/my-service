@@ -262,11 +262,23 @@ exports.updateFundThemeByKeyword = async function (ctx) {
  */
 exports.getFundsByTheme = async function (ctx) {
   const query = ctx.query;
+  const tokenRaw = ctx.tokenRaw;
   try {
     const data = ctx.validateData({
       theme: {type: 'string', required: true}
     }, query);
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    const userFunds = await ctx.services.userFund.getUserFundsByUserId(userRaw._id);
     const funds = await ctx.services.fund.getFundsByTheme(data.theme);
+    for (let i = 0; i < funds.length; i++) {
+      const fund = funds[i];
+      for (let j = 0; j < userFunds.length; j++) {
+        if (userFunds[j].fund.toString() === fund._id.toString()) {
+          fund.has = true;
+          break;
+        }
+      }
+    }
     ctx.body = ctx.resuccess({
       funds
     });
