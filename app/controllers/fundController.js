@@ -271,7 +271,7 @@ exports.getFundsByTheme = async function (ctx) {
     const userFunds = await ctx.services.userFund.getUserFundsByUserId(userRaw._id);
     const funds = await ctx.services.fund.getFundsByTheme(data.theme);
     let list = [];
-    funds.list.forEach((fund) => {
+    funds.forEach((fund) => {
       fund = {
         code: fund.code,
         lowRate: fund.lowRate,
