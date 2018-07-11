@@ -172,6 +172,7 @@ exports.getMarket = async function (ctx) {
         net_value: fund.net_value,
         rate: fund.rate,
         sell: fund.sell,
+        theme: fund.theme,
         _id: fund._id
       };
       for (let j = 0; j < userFunds.length; j++) {
