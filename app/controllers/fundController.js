@@ -2,6 +2,7 @@
  * Created by xiaobxia on 2018/1/26.
  */
 const util = require('../util');
+const moment = require('moment');
 
 const fundBaseUtil = util.fundBaseUtil;
 
@@ -264,6 +265,7 @@ exports.updateFundThemeByKeyword = async function (ctx) {
 exports.getFundsByTheme = async function (ctx) {
   const query = ctx.query;
   const tokenRaw = ctx.tokenRaw;
+  const dictionariesService = ctx.services.dictionaries;
   try {
     const data = ctx.validateData({
       theme: {type: 'string', required: true}
@@ -271,6 +273,9 @@ exports.getFundsByTheme = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     const userFunds = await ctx.services.userFund.getUserFundsByUserId(userRaw._id);
     const funds = await ctx.services.fund.getFundsByTheme(data.theme);
+    let records = await dictionariesService.getByKey(ctx.localConst.OPENING_RECORDS_REDIS_KEY);
+    //如果有记录
+    records = JSON.parse(records.value);
     let list = [];
     funds.forEach((fund) => {
       fund = {
@@ -285,6 +290,9 @@ exports.getFundsByTheme = async function (ctx) {
       };
       for (let j = 0; j < userFunds.length; j++) {
         if (userFunds[j].fund.toString() === fund._id.toString()) {
+          const buyDate = moment(userFunds[j].buy_date).format('YYYY-MM-DD');
+          fund.buy_date = buyDate;
+          fund.has_days = records.indexOf(buyDate);
           fund.has = true;
           break;
         }
