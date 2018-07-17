@@ -175,3 +175,59 @@ exports.getUserFunds = async function (ctx) {
   }
 };
 
+/**
+ * 获取普通的用户基金信息
+ * @param ctx
+ * @returns {Promise.<void>}
+ */
+exports.getUserFundsNormal = async function (ctx) {
+  const dictionariesService = ctx.services.dictionaries;
+  const userFundService = ctx.services.userFund;
+  try {
+    const tokenRaw = ctx.tokenRaw;
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    // 找到用户下的基金
+    const userFunds = await userFundService.getUserFundsByUserIdWithFundBase(userRaw._id);
+    let records = await dictionariesService.getByKey(ctx.localConst.OPENING_RECORDS_REDIS_KEY);
+    //如果有记录
+    records = JSON.parse(records.value);
+    let list = [];
+    for (let i = 0; i < userFunds.length; i++) {
+      const userFund = userFunds[i];
+      const fund = userFund.fund;
+      // 持仓金额
+      const sum = fund.net_value * userFund.shares;
+      const costSum = userFund.cost * userFund.shares;
+      const valuationInfo = fundBaseUtil.getBetterValuation(fund);
+      const buyDate = moment(userFund.buy_date).format('YYYY-MM-DD');
+      let result = {
+        name: fund.name,
+        code: fund.code,
+        shares: userFund.shares,
+        cost: userFund.cost,
+        standard: userFund.standard,
+        buy_date: buyDate,
+        has_days: records.indexOf(buyDate),
+        target_net_value: userFund.target_net_value,
+        stop_net_value: userFund.stop_net_value,
+        // 净值
+        netValue: fund.net_value,
+        // 持仓净值
+        sum: numberUtil.keepTwoDecimals(sum),
+        costSum: numberUtil.keepTwoDecimals(costSum),
+        valuation: valuationInfo.valuation,
+        valuationSource: valuationInfo.sourceName
+      };
+      result.valuationSum = numberUtil.keepTwoDecimals(result.valuation * userFund.shares);
+      list.push(result);
+    }
+    list.sort(function (a, b) {
+      return b.sum - a.sum;
+    });
+    ctx.body = ctx.resuccess({
+      list
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
