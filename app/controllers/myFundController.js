@@ -204,6 +204,7 @@ exports.getUserFundsNormal = async function (ctx) {
       let result = {
         name: fund.name,
         code: fund.code,
+        theme: fund.theme,
         shares: userFund.shares,
         cost: userFund.cost,
         standard: userFund.standard,
