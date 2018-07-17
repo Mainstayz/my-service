@@ -229,9 +229,9 @@ exports.updateFundTheme = async function (ctx) {
   try {
     const data = ctx.validateData({
       code: {type: 'string', required: true},
-      theme: {type: 'string', required: true}
+      theme: {type: 'string', required: false}
     }, query);
-    await ctx.services.fund.updateFundTheme(data.code, data.theme);
+    await ctx.services.fund.updateFundTheme(data.code, data.theme || '');
     ctx.body = ctx.resuccess({});
   } catch (err) {
     ctx.body = ctx.refail(err);
