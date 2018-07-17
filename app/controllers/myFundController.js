@@ -138,6 +138,7 @@ exports.getUserFunds = async function (ctx) {
         ...strategyInfo,
         name: fund.name,
         code: fund.code,
+        theme: fund.theme,
         shares: userFund.shares,
         strategy: userFund.strategy,
         cost: userFund.cost,
