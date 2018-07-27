@@ -27,8 +27,16 @@ exports.getWebStockdaybar = async function (ctx) {
         Referer: `https://gupiao.baidu.com/stock/${data.code}.html?from=aladingpc`
       }
     });
+    let list = resData.data.mashData;
+    let listTemp = [];
+    for (let i = 0; i < list.length; i++) {
+      listTemp.push({
+        date: list[i].date,
+        kline: list[i].kline
+      })
+    }
     ctx.body = ctx.resuccess({
-      list: resData.data.mashData
+      list: listTemp
     });
   } catch (err) {
     ctx.body = ctx.refail(err);
@@ -47,8 +55,16 @@ exports.getWebStockdaybarAll = async function (ctx) {
         Referer: `https://gupiao.baidu.com/stock/${data.code}.html?from=aladingpc`
       }
     });
+    let list = resData.data.mashData;
+    let listTemp = [];
+    for (let i = 0; i < list.length; i++) {
+      listTemp.push({
+        date: list[i].date,
+        kline: list[i].kline
+      })
+    }
     ctx.body = ctx.resuccess({
-      list: resData.data.mashData
+      list: listTemp
     });
   } catch (err) {
     ctx.body = ctx.refail(err);
