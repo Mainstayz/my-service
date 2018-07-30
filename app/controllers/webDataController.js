@@ -92,7 +92,7 @@ exports.getWebStockdaybarAll = async function (ctx) {
     }
     let resData = await axios({
       method: 'get',
-      url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${data.days}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
+      url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${data.days || 200}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
     }).then((data) => {
       let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
       let list = JSON.parse(str).List;
