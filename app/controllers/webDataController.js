@@ -172,3 +172,29 @@ exports.getWebStockdaybarAllOld = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 }
+
+exports.getWebStockdaybarToday = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      code: {type: 'string', required: true}
+    }, query);
+    let nowItem = await axios({
+      method: 'get',
+      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${data.code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`,
+    }).then((data) => {
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
+      return JSON.parse(str).List[0];
+    });
+    ctx.body = ctx.resuccess({
+      close: nowItem.ClosePrice,
+      high: nowItem.HighPrice,
+      low: nowItem.LowPrice,
+      netChangeRatio: nowItem.DiffPriceRate,
+      open: nowItem.OpenPrice,
+      preClose: nowItem.RefPrice
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+}

@@ -118,5 +118,6 @@ router.post('/schedule/deleteHighRateFund', controllers.fundScheduleController.d
 router.get('/webData/getWebStockdaybar', controllers.webDataController.getWebStockdaybar);
 router.get('/webData/getWebStockdaybarAll', controllers.webDataController.getWebStockdaybarAll);
 router.get('/webData/getWebStockdaybarAllOld', controllers.webDataController.getWebStockdaybarAllOld);
+router.get('/webData/getWebStockdaybarToday', controllers.webDataController.getWebStockdaybarToday);
 
 module.exports = router;
