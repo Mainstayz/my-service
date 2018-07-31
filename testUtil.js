@@ -51,5 +51,20 @@ axios({
       preClose: i === 0 ? item[1] : list[i - 1][4]
     });
   }
+  axios({
+    method: 'get',
+    url: 'http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=000001K&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010',
+  }).then((data) => {
+    let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
+    let item = JSON.parse(str).List[0];
+    console.log(item)
+    listTemp.splice(0,1 ,{
+      close: item.ClosePrice,
+      high: item.HighPrice,
+      low: item.LowPrice,
+      netChangeRatio: item.DiffPriceRate,
+      open: item.OpenPrice,
+      preClose: RefPrice
+    })
+  });
 });
-
