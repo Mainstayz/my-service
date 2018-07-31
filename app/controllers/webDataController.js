@@ -135,7 +135,7 @@ exports.getWebStockdaybarAll = async function (ctx) {
     });
     let date = listTemp[0].date;
     listTemp.splice(0, 1, {
-      date: data,
+      date: date,
       kline: {
         close: nowItem.ClosePrice,
         high: nowItem.HighPrice,
