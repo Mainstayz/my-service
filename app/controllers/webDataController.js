@@ -111,11 +111,6 @@ exports.getWebStockdaybarAll = async function (ctx) {
       }
       return listTemp;
     });
-    // let resData = await axios.get(`https://gupiao.baidu.com/api/stocks/stockdaybar?from=pc&os_ver=1&cuid=xxx&vv=100&format=json&stock_code=${data.code}&step=3&start=&count=${count}&fq_type=no&timestamp=${Date.now()}`, {
-    //   headers: {
-    //     Referer: `https://gupiao.baidu.com/stock/${data.code}.html?from=aladingpc`
-    //   }
-    // });
     let list = resData;
     let listTemp = [];
     for (let i = 0; i < list.length; i++) {
@@ -131,6 +126,25 @@ exports.getWebStockdaybarAll = async function (ctx) {
         }
       })
     }
+    let nowItem = await axios({
+      method: 'get',
+      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`,
+    }).then((data) => {
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
+      return JSON.parse(str).List[0];
+    });
+    let date = listTemp[0].date;
+    listTemp.splice(0, 1, {
+      date: date,
+      kline: {
+        close: nowItem.ClosePrice,
+        high: nowItem.HighPrice,
+        low: nowItem.LowPrice,
+        netChangeRatio: nowItem.DiffPriceRate,
+        open: nowItem.OpenPrice,
+        preClose: nowItem.RefPrice
+      }
+    });
     ctx.body = ctx.resuccess({
       list: listTemp
     });
@@ -138,3 +152,49 @@ exports.getWebStockdaybarAll = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.getWebStockdaybarAllOld = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      code: {type: 'string', required: true},
+      days: {type: 'int', required: false}
+    }, query);
+    let resData = await axios.get(`https://gupiao.baidu.com/api/stocks/stockdaybar?from=pc&os_ver=1&cuid=xxx&vv=100&format=json&stock_code=${data.code}&step=3&start=&count=${data.days || 200}&fq_type=no&timestamp=${Date.now()}`, {
+      headers: {
+        Referer: `https://gupiao.baidu.com/stock/${data.code}.html?from=aladingpc`
+      }
+    });
+    ctx.body = ctx.resuccess({
+      list: resData.data.mashData
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+}
+
+exports.getWebStockdaybarToday = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      code: {type: 'string', required: true}
+    }, query);
+    let nowItem = await axios({
+      method: 'get',
+      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${data.code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`,
+    }).then((data) => {
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
+      return JSON.parse(str).List[0];
+    });
+    ctx.body = ctx.resuccess({
+      close: nowItem.ClosePrice,
+      high: nowItem.HighPrice,
+      low: nowItem.LowPrice,
+      netChangeRatio: nowItem.DiffPriceRate,
+      open: nowItem.OpenPrice,
+      preClose: nowItem.RefPrice
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+}
