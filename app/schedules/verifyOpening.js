@@ -24,7 +24,7 @@ let rule = new schedule.RecurrenceRule();
 
 //工作日，检验是否开盘
 rule.dayOfWeek = [new schedule.Range(1, 5)];
-rule.hour = [10, 13];
+rule.hour = [10, 11, 13];
 
 function verifyOpening() {
   scheduleService.getSchedule('verifyOpening').then((data) => {

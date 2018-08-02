@@ -35,7 +35,7 @@ const moment = require('moment');
 // });
 axios({
   method: 'get',
-  url: 'http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=000001K&type=1&limit=100&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009',
+  url: 'http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=399300J&type=1&limit=100&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009',
 }).then((data) => {
   let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
   let list = JSON.parse(str).List;
@@ -51,5 +51,6 @@ axios({
       preClose: i === 0 ? item[1] : list[i - 1][4]
     });
   }
+  console.log(listTemp)
 });
 
