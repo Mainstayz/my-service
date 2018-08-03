@@ -134,17 +134,32 @@ exports.getWebStockdaybarAll = async function (ctx) {
       return JSON.parse(str).List[0];
     });
     let date = listTemp[0].date;
-    listTemp.splice(0, 1, {
-      date: date,
-      kline: {
-        close: nowItem.ClosePrice,
-        high: nowItem.HighPrice,
-        low: nowItem.LowPrice,
-        netChangeRatio: nowItem.DiffPriceRate,
-        open: nowItem.OpenPrice,
-        preClose: nowItem.RefPrice
-      }
-    });
+    let dataNow = moment(nowItem.TradeTime).format('YYYYMMDD');
+    if (date === dataNow) {
+      listTemp.splice(0, 1, {
+        date: date,
+        kline: {
+          close: nowItem.ClosePrice,
+          high: nowItem.HighPrice,
+          low: nowItem.LowPrice,
+          netChangeRatio: nowItem.DiffPriceRate,
+          open: nowItem.OpenPrice,
+          preClose: nowItem.RefPrice
+        }
+      });
+    } else {
+      listTemp.splice(0, 0, {
+        date: date,
+        kline: {
+          close: nowItem.ClosePrice,
+          high: nowItem.HighPrice,
+          low: nowItem.LowPrice,
+          netChangeRatio: nowItem.DiffPriceRate,
+          open: nowItem.OpenPrice,
+          preClose: nowItem.RefPrice
+        }
+      });
+    }
     ctx.body = ctx.resuccess({
       list: listTemp
     });
