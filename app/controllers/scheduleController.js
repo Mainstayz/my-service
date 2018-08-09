@@ -104,3 +104,19 @@ exports.getSchedules = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.getScheduleValue = async function (ctx) {
+  const query = ctx.query;
+  const dictionariesService = ctx.services.dictionaries;
+  try {
+    const data = ctx.validateData({
+      key: {type: 'string', required: true}
+    }, query);
+    const value = await dictionariesService.getByKey(data.key);
+    ctx.body = ctx.resuccess({
+      value
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};

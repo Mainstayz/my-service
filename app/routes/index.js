@@ -100,6 +100,7 @@ router.get('/schedule/deleteSchedule', controllers.scheduleController.deleteSche
 router.post('/schedule/updateSchedule', controllers.scheduleController.updateSchedule);
 router.post('/schedule/changeScheduleStatus', controllers.scheduleController.changeScheduleStatus);
 router.get('/schedule/getSchedules', controllers.scheduleController.getSchedules);
+router.get('/schedule/getScheduleValue', controllers.scheduleController.getScheduleValue);
 
 router.get('/schedule/verifyOpening', controllers.fundScheduleController.verifyOpening);
 router.get('/schedule/updateBaseInfo', controllers.fundScheduleController.updateBaseInfo);

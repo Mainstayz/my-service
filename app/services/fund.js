@@ -264,6 +264,9 @@ exports.updateValuation = async function () {
       }
     }
   }
+  await DictionariesProxy.update({key: 'lastUpdateValuationTime'}, {
+    value: moment().format('YYYY-MM-DD HH:mm:ss')
+  });
   return Promise.all(updateList);
 };
 
