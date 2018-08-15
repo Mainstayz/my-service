@@ -197,9 +197,15 @@ exports.getWebStockdaybarToday = async function (ctx) {
     const data = ctx.validateData({
       code: {type: 'string', required: true}
     }, query);
+    let code = '';
+    if (data.code.indexOf('sh') !== -1) {
+      code = data.code.substring(2) + 'K'
+    } else if (data.code.indexOf('sz') !== -1) {
+      code = data.code.substring(2) + 'J'
+    }
     let nowItem = await axios({
       method: 'get',
-      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${data.code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`,
+      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`,
     }).then((data) => {
       let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
       return JSON.parse(str).List[0];
