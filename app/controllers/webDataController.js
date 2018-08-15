@@ -310,3 +310,35 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
     ctx.body = ctx.refail(err);
   }
 };
+
+exports.getWebStockdaybarTodayDongfang = async function (ctx) {
+  const query = ctx.query;
+  try {
+    const data = ctx.validateData({
+      code: {type: 'string', required: true}
+    }, query);
+    let codeId = '';
+    if (data.code.indexOf('sh') !== -1) {
+      codeId = data.code.substring(2) + '1'
+    } else if (data.code.indexOf('sz') !== -1) {
+      codeId = data.code.substring(2) + '2'
+    }
+    let nowItem = await axios({
+      method: 'get',
+      url: `http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&cb=jQuery183018258284170372074_1534312345300&id=${codeId}&type=r&iscr=false&_=1534312487848`,
+    }).then((data) => {
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
+      return JSON.parse(str).info;
+    });
+    ctx.body = ctx.resuccess({
+      close: nowItem.c,
+      high: nowItem.h,
+      low: nowItem.l,
+      netChangeRatio: numberUtil.countDifferenceRate(nowItem.c, nowItem.yc),
+      open: nowItem.o,
+      preClose: nowItem.yc
+    });
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+}
