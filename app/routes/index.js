@@ -120,5 +120,5 @@ router.get('/webData/getWebStockdaybar', controllers.webDataController.getWebSto
 router.get('/webData/getWebStockdaybarAll', controllers.webDataController.getWebStockdaybarAll);
 router.get('/webData/getWebStockdaybarAllOld', controllers.webDataController.getWebStockdaybarAllOld);
 router.get('/webData/getWebStockdaybarToday', controllers.webDataController.getWebStockdaybarToday);
-
+router.get('/webData/getWebStockdaybarDongfang', controllers.webDataController.getWebStockdaybarDongfang);
 module.exports = router;

@@ -72,11 +72,8 @@ axios({
 });
 axios({
   method: 'get',
-  url: 'http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=000001K&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010',
+  url: 'http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&cb=jQuery183018258284170372074_1534312345300&id=0000011&type=r&iscr=false&_=1534312487848',
 }).then((data) => {
   let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
-  let item = JSON.parse(str).List[0];
-  console.log(moment(item.TradeTime).format('YYYYMMDD'))
-  moment(item.TradeTime).format('YYYYMMDD')
-
+  console.log(JSON.parse(str).info);
 });
