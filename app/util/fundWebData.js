@@ -9,7 +9,7 @@ const logger = require('../common/logger');
 
 const env = process.env.NODE_ENV;
 const isDev = env === 'dev';
-const isOther = isDev;
+const isOther = true;
 
 // 再启
 //const address = 'http://120.27.209.16:3006';
