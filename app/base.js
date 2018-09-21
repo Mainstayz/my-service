@@ -3,7 +3,7 @@ const localConfig = reqlib('/config');
 const localConst = require('./const');
 const logger = require('./common/logger');
 const services = require('./services');
-const mailer = require('nodemailer');
+const sendMail = require('./common/email');
 const jwt = require('jsonwebtoken');
 const fs = require('fs-extra');
 const Parameter = require('./common/validate');
@@ -24,19 +24,7 @@ module.exports = function (app) {
   app.context.localConst = localConst;
   app.context.logger = logger;
   // 发邮件
-  app.context.sendMail = function (option) {
-    // 防止timeout
-    let transporter = mailer.createTransport(emailConfig.senderAccount);
-    return new Promise((resolve, reject) => {
-      transporter.sendMail(option, (err, info) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(info);
-        }
-      });
-    });
-  };
+  app.context.sendMail = sendMail;
   // 成功
   app.context.resuccess = function (data) {
     return {
