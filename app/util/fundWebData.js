@@ -11,9 +11,7 @@ const env = process.env.NODE_ENV;
 const isDev = env === 'dev';
 const isOther = isDev;
 
-// 再启
-//const address = 'http://120.27.209.16:3006';
-// 备用1
+// 阿里云-2
 const address = 'http://47.92.210.171:3006';
 
 /**
