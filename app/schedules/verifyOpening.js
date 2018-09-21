@@ -5,9 +5,11 @@ const schedule = require('node-schedule');
 const request = require('request-promise');
 const reqlib = require('app-root-path').require;
 const logger = require('../common/logger');
+const sendMail = require('../common/email');
 const config = reqlib('/config/index');
 const scheduleService = require('../services/schedule');
 const fundService = require('../services/fund');
+const emailTemplate = require('../const/emailTemplate');
 /**
  * cron风格的
  *    *    *    *    *    *
@@ -51,17 +53,25 @@ function verifyOpening() {
             });
           }).then(() => {
             // 开启估值更新
-            scheduleService.updateSchedule('updateValuation', {
+            return scheduleService.updateSchedule('updateValuation', {
               value: 'open'
-            }).then(()=>{
             });
+          }).then(()=>{
             // 开启涨幅更新
-            scheduleService.updateSchedule('updateRate', {
+            return scheduleService.updateSchedule('updateRate', {
               value: 'open'
-            }).then(()=>{
             });
+          }).then(()=>{
+            return sendMail(emailTemplate.verifyOpeningSuccessTemplate({
+              sender: config.email.senderAccount.auth.user,
+              userEmail: config.email.adminAccount.user
+            }));
           }).catch(function (err) {
             logger.error(err);
+            sendMail(emailTemplate.verifyOpeningErrorTemplate({
+              sender: config.email.senderAccount.auth.user,
+              userEmail: config.email.adminAccount.user
+            }));
           });
         }
       });

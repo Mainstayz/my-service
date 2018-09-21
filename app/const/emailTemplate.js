@@ -1,6 +1,8 @@
 /**
  * Created by xiaobxia on 2017/11/15.
  */
+const moment = require('moment');
+
 const registerVerifyTemplate = (option) => {
   return {
     //格式 name<mail>,发件人的名字<邮箱>
@@ -14,6 +16,36 @@ const registerVerifyTemplate = (option) => {
   };
 };
 
+const verifyOpeningSuccessTemplate = (option) => {
+  const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
+  return {
+    //格式 name<mail>,发件人的名字<邮箱>
+    from: `"Xiaobxia" <${option.sender}>`,
+    //发送的
+    to: option.userEmail,
+    //标题
+    subject: '开盘验证成功',
+    //html
+    html: `开盘验证成功，完成于${nowTime}`
+  };
+};
+
+const verifyOpeningErrorTemplate = (option) => {
+  const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
+  return {
+    //格式 name<mail>,发件人的名字<邮箱>
+    from: `"Xiaobxia" <${option.sender}>`,
+    //发送的
+    to: option.userEmail,
+    //标题
+    subject: '开盘验证失败',
+    //html
+    html: `开盘验证失败，完成于${nowTime}`
+  };
+};
+
 module.exports = {
-  registerVerifyTemplate
+  registerVerifyTemplate,
+  verifyOpeningSuccessTemplate,
+  verifyOpeningErrorTemplate
 };
