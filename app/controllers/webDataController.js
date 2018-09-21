@@ -7,6 +7,59 @@ const util = require('../util');
 
 const numberUtil = util.numberUtil;
 
+function formatDongfangData(rawData) {
+  return {
+    close: rawData.c,
+    high: rawData.h,
+    low: rawData.l,
+    netChangeRatio: numberUtil.countDifferenceRate(rawData.c, rawData.yc),
+    open: rawData.o,
+    preClose: rawData.yc
+  }
+}
+
+function formatDongfangCode(code) {
+  let codeId = '';
+  if (code.indexOf('sh') !== -1) {
+    codeId = code.substring(2) + '1'
+  } else if (code.indexOf('sz') !== -1) {
+    codeId = code.substring(2) + '2'
+  }
+  return codeId;
+}
+
+function formatZhongjinData(rawData) {
+  return {
+    close: rawData.ClosePrice,
+    high: rawData.HighPrice,
+    low: rawData.LowPrice,
+    netChangeRatio: rawData.DiffPriceRate,
+    open: rawData.OpenPrice,
+    preClose: rawData.RefPrice
+  }
+}
+
+function formatZhongjinCode(code) {
+  let codeId = '';
+  if (code.indexOf('sh') !== -1) {
+    codeId = code.substring(2) + 'K'
+  } else if (code.indexOf('sz') !== -1) {
+    codeId = code.substring(2) + 'J'
+  }
+  return codeId;
+}
+
+function formatKline(rawData) {
+  return {
+    close: rawData.close,
+    high: rawData.high,
+    low: rawData.low,
+    netChangeRatio: rawData.netChangeRatio,
+    open: rawData.open,
+    preClose: rawData.preClose
+  }
+}
+
 /**
  * 查询股票的走势信息
  * @param ctx
@@ -25,12 +78,7 @@ exports.getWebStockdaybar = async function (ctx) {
         break;
       }
     }
-    let code = '';
-    if (data.code.indexOf('sh') !== -1) {
-      code = data.code.substring(2) + 'K'
-    } else if (data.code.indexOf('sz') !== -1) {
-      code = data.code.substring(2) + 'J'
-    }
+    let code = formatZhongjinCode(data.code);
     let resData = await axios({
       method: 'get',
       url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${count}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
@@ -62,14 +110,7 @@ exports.getWebStockdaybar = async function (ctx) {
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
         date: list[i].date,
-        kline: {
-          close: list[i].close,
-          high: list[i].high,
-          low: list[i].low,
-          netChangeRatio: list[i].netChangeRatio,
-          open: list[i].open,
-          preClose: list[i].preClose
-        }
+        kline: formatKline(list[i])
       })
     }
     ctx.body = ctx.resuccess({
@@ -87,12 +128,7 @@ exports.getWebStockdaybarAll = async function (ctx) {
       code: {type: 'string', required: true},
       days: {type: 'int', required: false}
     }, query);
-    let code = '';
-    if (data.code.indexOf('sh') !== -1) {
-      code = data.code.substring(2) + 'K'
-    } else if (data.code.indexOf('sz') !== -1) {
-      code = data.code.substring(2) + 'J'
-    }
+    let code = formatZhongjinCode(data.code);
     let resData = await axios({
       method: 'get',
       url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${data.days || 200}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
@@ -119,14 +155,7 @@ exports.getWebStockdaybarAll = async function (ctx) {
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
         date: list[i].date,
-        kline: {
-          close: list[i].close,
-          high: list[i].high,
-          low: list[i].low,
-          netChangeRatio: list[i].netChangeRatio,
-          open: list[i].open,
-          preClose: list[i].preClose
-        }
+        kline: formatKline(list[i])
       })
     }
     let nowItem = await axios({
@@ -141,26 +170,12 @@ exports.getWebStockdaybarAll = async function (ctx) {
     if (date === dataNow) {
       listTemp.splice(0, 1, {
         date: date,
-        kline: {
-          close: nowItem.ClosePrice,
-          high: nowItem.HighPrice,
-          low: nowItem.LowPrice,
-          netChangeRatio: nowItem.DiffPriceRate,
-          open: nowItem.OpenPrice,
-          preClose: nowItem.RefPrice
-        }
+        kline: formatZhongjinData(nowItem)
       });
     } else {
       listTemp.splice(0, 0, {
         date: date,
-        kline: {
-          close: nowItem.ClosePrice,
-          high: nowItem.HighPrice,
-          low: nowItem.LowPrice,
-          netChangeRatio: nowItem.DiffPriceRate,
-          open: nowItem.OpenPrice,
-          preClose: nowItem.RefPrice
-        }
+        kline: formatZhongjinData(nowItem)
       });
     }
     ctx.body = ctx.resuccess({
@@ -171,6 +186,11 @@ exports.getWebStockdaybarAll = async function (ctx) {
   }
 };
 
+/**
+ * 全部情况--股市通
+ * @param ctx
+ * @returns {Promise<void>}
+ */
 exports.getWebStockdaybarAllOld = async function (ctx) {
   const query = ctx.query;
   try {
@@ -189,20 +209,20 @@ exports.getWebStockdaybarAllOld = async function (ctx) {
   } catch (err) {
     ctx.body = ctx.refail(err);
   }
-}
+};
 
+/**
+ * 中金网当天的涨跌情况
+ * @param ctx
+ * @returns {Promise<void>}
+ */
 exports.getWebStockdaybarToday = async function (ctx) {
   const query = ctx.query;
   try {
     const data = ctx.validateData({
       code: {type: 'string', required: true}
     }, query);
-    let code = '';
-    if (data.code.indexOf('sh') !== -1) {
-      code = data.code.substring(2) + 'K'
-    } else if (data.code.indexOf('sz') !== -1) {
-      code = data.code.substring(2) + 'J'
-    }
+    let code = formatZhongjinCode(data.code);
     let nowItem = await axios({
       method: 'get',
       url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`,
@@ -210,18 +230,11 @@ exports.getWebStockdaybarToday = async function (ctx) {
       let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
       return JSON.parse(str).List[0];
     });
-    ctx.body = ctx.resuccess({
-      close: nowItem.ClosePrice,
-      high: nowItem.HighPrice,
-      low: nowItem.LowPrice,
-      netChangeRatio: nowItem.DiffPriceRate,
-      open: nowItem.OpenPrice,
-      preClose: nowItem.RefPrice
-    });
+    ctx.body = ctx.resuccess(formatZhongjinData(nowItem));
   } catch (err) {
     ctx.body = ctx.refail(err);
   }
-}
+};
 
 exports.getWebStockdaybarDongfang = async function (ctx) {
   const query = ctx.query;
@@ -230,15 +243,8 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
       code: {type: 'string', required: true},
       days: {type: 'int', required: false}
     }, query);
-    let code = '';
-    let codeId = '';
-    if (data.code.indexOf('sh') !== -1) {
-      code = data.code.substring(2) + 'K'
-      codeId = data.code.substring(2) + '1'
-    } else if (data.code.indexOf('sz') !== -1) {
-      code = data.code.substring(2) + 'J'
-      codeId = data.code.substring(2) + '2'
-    }
+    let code = formatZhongjinCode(data.code);
+    let codeId = formatDongfangCode(data.code);
     let resData = await axios({
       method: 'get',
       url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${data.days || 200}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
@@ -265,14 +271,7 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
         date: list[i].date,
-        kline: {
-          close: list[i].close,
-          high: list[i].high,
-          low: list[i].low,
-          netChangeRatio: list[i].netChangeRatio,
-          open: list[i].open,
-          preClose: list[i].preClose
-        }
+        kline: formatKline(list[i])
       })
     }
     let nowItem = await axios({
@@ -284,29 +283,16 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
     });
     let date = listTemp[0].date;
     let dataNow = moment(nowItem.time).format('YYYYMMDD');
+    //如果当天没有重合那就直接加，如果当天有重合就删除再加
     if (date === dataNow) {
       listTemp.splice(0, 1, {
         date: date,
-        kline: {
-          close: nowItem.c,
-          high: nowItem.h,
-          low: nowItem.l,
-          netChangeRatio: numberUtil.countDifferenceRate(nowItem.c, nowItem.yc),
-          open: nowItem.o,
-          preClose: nowItem.yc
-        }
+        kline: formatDongfangData(nowItem)
       });
     } else {
       listTemp.splice(0, 0, {
         date: date,
-        kline: {
-          close: nowItem.c,
-          high: nowItem.h,
-          low: nowItem.l,
-          netChangeRatio: numberUtil.countDifferenceRate(nowItem.c, nowItem.yc),
-          open: nowItem.o,
-          preClose: nowItem.yc
-        }
+        kline: formatDongfangData(nowItem)
       });
     }
     ctx.body = ctx.resuccess({
@@ -317,18 +303,18 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
   }
 };
 
+/**
+ * 当天的涨跌情况--东方财富渠道
+ * @param ctx
+ * @returns {Promise<void>}
+ */
 exports.getWebStockdaybarTodayDongfang = async function (ctx) {
   const query = ctx.query;
   try {
     const data = ctx.validateData({
       code: {type: 'string', required: true}
     }, query);
-    let codeId = '';
-    if (data.code.indexOf('sh') !== -1) {
-      codeId = data.code.substring(2) + '1'
-    } else if (data.code.indexOf('sz') !== -1) {
-      codeId = data.code.substring(2) + '2'
-    }
+    let codeId = formatDongfangCode(data.code);
     let nowItem = await axios({
       method: 'get',
       url: `http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&cb=jQuery183018258284170372074_1534312345300&id=${codeId}&type=r&iscr=false&_=1534312487848`,
@@ -336,15 +322,8 @@ exports.getWebStockdaybarTodayDongfang = async function (ctx) {
       let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
       return JSON.parse(str).info;
     });
-    ctx.body = ctx.resuccess({
-      close: nowItem.c,
-      high: nowItem.h,
-      low: nowItem.l,
-      netChangeRatio: numberUtil.countDifferenceRate(nowItem.c, nowItem.yc),
-      open: nowItem.o,
-      preClose: nowItem.yc
-    });
+    ctx.body = ctx.resuccess(formatDongfangData(nowItem));
   } catch (err) {
     ctx.body = ctx.refail(err);
   }
-}
+};
