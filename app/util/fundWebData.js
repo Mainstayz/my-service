@@ -172,3 +172,13 @@ exports.getRecentNetValue = function (code, days) {
   });
 };
 
+/**
+ * 检查数据服务正不正常
+ * @returns {Promise<T | never>}
+ */
+exports.pinAddress = function () {
+  return axios.get(`${address}/fundData`).then((res) => {
+    return res.data;
+  });
+};
+
