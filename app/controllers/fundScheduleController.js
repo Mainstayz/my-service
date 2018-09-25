@@ -101,7 +101,7 @@ exports.deleteUnSellFund = async function (ctx) {
   }
 };
 
-// 删除高费率基金
+// 删除高费率基金，把不在code里面的删除
 exports.deleteHighRateFund = async function (ctx) {
   const query = ctx.request.body;
   const fundService = ctx.services.fund;

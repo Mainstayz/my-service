@@ -487,10 +487,11 @@ exports.deleteHighRateFund = async function (codes) {
     const code = funds[i].code;
     //不是低和中等费率的
     if (codes.indexOf(code) === -1) {
+      const id = funds[i]._id;
       const queryList = await Promise.all([
-        OptionalFundProxy.find({code}),
-        FocusFundProxy.find({code}),
-        UserFundProxy.find({code})
+        OptionalFundProxy.findOne({fund: id}),
+        FocusFundProxy.findOne({fund: id}),
+        UserFundProxy.findOne({fund: id})
       ]);
       let use = false;
       for (let i = 0; i < queryList.length; i++) {
