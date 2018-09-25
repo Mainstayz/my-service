@@ -26,7 +26,7 @@ const verifyOpeningSuccessTemplate = (option) => {
     //标题
     subject: '开盘验证成功',
     //html
-    html: `开盘验证成功，完成于${nowTime}`
+    html: `开盘验证成功，完成于${nowTime}，确认${option.openMsg}`
   };
 };
 

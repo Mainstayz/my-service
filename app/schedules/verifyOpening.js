@@ -64,7 +64,8 @@ function verifyOpening() {
           }).then(()=>{
             return sendMail(emailTemplate.verifyOpeningSuccessTemplate({
               sender: config.email.senderAccount.auth.user,
-              userEmail: config.email.adminAccount.user
+              userEmail: config.email.adminAccount.user,
+              openMsg: '开盘'
             }));
           }).catch(function (err) {
             logger.error(err);
@@ -73,6 +74,12 @@ function verifyOpening() {
               userEmail: config.email.adminAccount.user
             }));
           });
+        } else {
+          return sendMail(emailTemplate.verifyOpeningSuccessTemplate({
+            sender: config.email.senderAccount.auth.user,
+            userEmail: config.email.adminAccount.user,
+            openMsg: '不开盘'
+          }));
         }
       });
     }
