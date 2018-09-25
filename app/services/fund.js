@@ -495,7 +495,7 @@ exports.deleteHighRateFund = async function (codes) {
       ]);
       let use = false;
       for (let i = 0; i < queryList.length; i++) {
-        if (queryList[i].length !== 0) {
+        if (queryList[i]) {
           use = true;
         }
       }
