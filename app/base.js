@@ -10,7 +10,7 @@ const Parameter = require('./common/validate');
 const schedules = require('./schedules/inedx');
 
 const p = new Parameter();
-const emailConfig = localConfig.email;
+
 const codeMap = {
   '-1': 'fail',
   '200': 'success',
