@@ -121,6 +121,11 @@ exports.getWebStockdaybar = async function (ctx) {
   }
 };
 
+/**
+ * 全部情况--中金在线
+ * @param ctx
+ * @returns {Promise<void>}
+ */
 exports.getWebStockdaybarAll = async function (ctx) {
   const query = ctx.query;
   try {
@@ -236,6 +241,11 @@ exports.getWebStockdaybarToday = async function (ctx) {
   }
 };
 
+/**
+ * 全部情况--东方财富
+ * @param ctx
+ * @returns {Promise<void>}
+ */
 exports.getWebStockdaybarDongfang = async function (ctx) {
   const query = ctx.query;
   try {
