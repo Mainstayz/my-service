@@ -60,6 +60,30 @@ function formatKline(rawData) {
   }
 }
 
+function getAllDataByZhongjin (code, count) {
+  return axios({
+    method: 'get',
+    url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${count}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
+  }).then((data) => {
+    let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
+    let list = JSON.parse(str).List;
+    let listTemp = [];
+    for (let i = list.length - 1; i >= 0; i--) {
+      let item = list[i];
+      listTemp.push({
+        date: moment(new Date(item[0])).format('YYYYMMDD'),
+        close: item[4],
+        high: item[2],
+        low: item[3],
+        netChangeRatio: item[7],
+        open: item[1],
+        preClose: i === 0 ? item[1] : list[i - 1][4]
+      });
+    }
+    return listTemp;
+  });
+}
+
 /**
  * 查询股票的走势信息
  * @param ctx
@@ -79,33 +103,12 @@ exports.getWebStockdaybar = async function (ctx) {
       }
     }
     let code = formatZhongjinCode(data.code);
-    let resData = await axios({
-      method: 'get',
-      url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${count}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
-    }).then((data) => {
-      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
-      let list = JSON.parse(str).List;
-      let listTemp = [];
-      for (let i = list.length - 1; i >= 0; i--) {
-        let item = list[i];
-        listTemp.push({
-          date: moment(new Date(item[0])).format('YYYYMMDD'),
-          close: item[4],
-          high: item[2],
-          low: item[3],
-          netChangeRatio: item[7],
-          open: item[1],
-          preClose: i === 0 ? item[1] : list[i - 1][4]
-        });
-      }
-      return listTemp;
-    });
     // let resData = await axios.get(`https://gupiao.baidu.com/api/stocks/stockdaybar?from=pc&os_ver=1&cuid=xxx&vv=100&format=json&stock_code=${data.code}&step=3&start=&count=${count}&fq_type=no&timestamp=${Date.now()}`, {
     //   headers: {
     //     Referer: `https://gupiao.baidu.com/stock/${data.code}.html?from=aladingpc`
     //   }
     // });
-    let list = resData;
+    let list = await getAllDataByZhongjin(code, data.days || 200);
     let listTemp = [];
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
@@ -134,28 +137,7 @@ exports.getWebStockdaybarAllZhongjin = async function (ctx) {
       days: {type: 'int', required: false}
     }, query);
     let code = formatZhongjinCode(data.code);
-    let resData = await axios({
-      method: 'get',
-      url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${data.days || 200}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
-    }).then((data) => {
-      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
-      let list = JSON.parse(str).List;
-      let listTemp = [];
-      for (let i = list.length - 1; i >= 0; i--) {
-        let item = list[i];
-        listTemp.push({
-          date: moment(new Date(item[0])).format('YYYYMMDD'),
-          close: item[4],
-          high: item[2],
-          low: item[3],
-          netChangeRatio: item[7],
-          open: item[1],
-          preClose: i === 0 ? item[1] : list[i - 1][4]
-        });
-      }
-      return listTemp;
-    });
-    let list = resData;
+    let list = await getAllDataByZhongjin(code, data.days || 200);
     let listTemp = [];
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
@@ -255,28 +237,7 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
     }, query);
     let code = formatZhongjinCode(data.code);
     let codeId = formatDongfangCode(data.code);
-    let resData = await axios({
-      method: 'get',
-      url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${data.days || 200}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
-    }).then((data) => {
-      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
-      let list = JSON.parse(str).List;
-      let listTemp = [];
-      for (let i = list.length - 1; i >= 0; i--) {
-        let item = list[i];
-        listTemp.push({
-          date: moment(new Date(item[0])).format('YYYYMMDD'),
-          close: item[4],
-          high: item[2],
-          low: item[3],
-          netChangeRatio: item[7],
-          open: item[1],
-          preClose: i === 0 ? item[1] : list[i - 1][4]
-        });
-      }
-      return listTemp;
-    });
-    let list = resData;
+    let list = await getAllDataByZhongjin(code, data.days || 200);
     let listTemp = [];
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
