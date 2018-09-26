@@ -117,9 +117,9 @@ router.post('/schedule/deleteHighRateFund', controllers.fundScheduleController.d
  * 网络数据
  */
 router.get('/webData/getWebStockdaybar', controllers.webDataController.getWebStockdaybar);
-router.get('/webData/getWebStockdaybarAll', controllers.webDataController.getWebStockdaybarAll);
-router.get('/webData/getWebStockdaybarAllOld', controllers.webDataController.getWebStockdaybarAllOld);
-router.get('/webData/getWebStockdaybarToday', controllers.webDataController.getWebStockdaybarToday);
+router.get('/webData/getWebStockdaybarAllZhongjin', controllers.webDataController.getWebStockdaybarAllZhongjin);
+router.get('/webData/getWebStockdaybarAllGushitong', controllers.webDataController.getWebStockdaybarAllGushitong);
+router.get('/webData/getWebStockdaybarTodayZhongjin', controllers.webDataController.getWebStockdaybarTodayZhongjin);
 router.get('/webData/getWebStockdaybarDongfang', controllers.webDataController.getWebStockdaybarDongfang);
 router.get('/webData/getWebStockdaybarTodayDongfang', controllers.webDataController.getWebStockdaybarTodayDongfang);
 

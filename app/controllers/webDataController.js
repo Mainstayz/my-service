@@ -126,7 +126,7 @@ exports.getWebStockdaybar = async function (ctx) {
  * @param ctx
  * @returns {Promise<void>}
  */
-exports.getWebStockdaybarAll = async function (ctx) {
+exports.getWebStockdaybarAllZhongjin = async function (ctx) {
   const query = ctx.query;
   try {
     const data = ctx.validateData({
@@ -196,7 +196,7 @@ exports.getWebStockdaybarAll = async function (ctx) {
  * @param ctx
  * @returns {Promise<void>}
  */
-exports.getWebStockdaybarAllOld = async function (ctx) {
+exports.getWebStockdaybarAllGushitong = async function (ctx) {
   const query = ctx.query;
   try {
     const data = ctx.validateData({
@@ -221,7 +221,7 @@ exports.getWebStockdaybarAllOld = async function (ctx) {
  * @param ctx
  * @returns {Promise<void>}
  */
-exports.getWebStockdaybarToday = async function (ctx) {
+exports.getWebStockdaybarTodayZhongjin = async function (ctx) {
   const query = ctx.query;
   try {
     const data = ctx.validateData({
