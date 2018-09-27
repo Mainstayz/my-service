@@ -28,7 +28,8 @@ const verifyOpeningSuccessTemplate = (option) => {
     //html
     html: `<div>
             <h3 style="color: rgb(62, 179, 121)">开盘验证成功!</h3>
-            <p>完成于${nowTime}，确认${option.openMsg}。</p>
+            <p>确认${option.openMsg}</p>
+            <p>完成于${nowTime}</p>
            </div>`
   };
 };
@@ -45,7 +46,8 @@ const verifyOpeningErrorTemplate = (option) => {
     //html
     html: `<div>
             <h3 style="color: rgb(244, 51, 60)">开盘验证失败!</h3>
-            <p>完成于${nowTime}，发生错误。</p>
+            <p>发生错误</p>
+            <p>完成于${nowTime}</p>
            </div>`
   };
 };
