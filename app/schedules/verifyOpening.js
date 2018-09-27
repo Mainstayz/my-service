@@ -71,7 +71,8 @@ function verifyOpening() {
             logger.error(err);
             sendMail(emailTemplate.verifyOpeningErrorTemplate({
               sender: config.email.senderAccount.auth.user,
-              userEmail: config.email.adminAccount.user
+              userEmail: config.email.adminAccount.user,
+              errorMsg: err
             }));
           });
         } else {

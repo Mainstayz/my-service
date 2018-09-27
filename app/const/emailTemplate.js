@@ -24,7 +24,7 @@ const verifyOpeningSuccessTemplate = (option) => {
     //发送的
     to: option.userEmail,
     //标题
-    subject: '开盘验证成功 ✌',
+    subject: '开盘验证成功',
     //html
     html: `<div>
             <h3 style="color: rgb(62, 179, 121)">开盘验证成功! ✌</h3>
@@ -42,11 +42,12 @@ const verifyOpeningErrorTemplate = (option) => {
     //发送的
     to: option.userEmail,
     //标题
-    subject: '开盘验证失败 💔',
+    subject: '开盘验证失败',
     //html
     html: `<div>
             <h3 style="color: rgb(244, 51, 60)">开盘验证失败! 💔</h3>
-            <p>发生错误</p>
+            <p>发生错误，错误信息：</p>
+            <p>${option.errorMsg}</p>
             <p>完成于${nowTime}</p>
            </div>`
   };
