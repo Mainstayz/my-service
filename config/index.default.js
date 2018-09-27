@@ -2,11 +2,15 @@
  * Created by xiaobxia on 2017/7/26.
  */
 const path = require('path');
+const env = process.env.NODE_ENV;
+const isDev = env === 'dev';
 
 const root = path.resolve(__dirname, '../');
+
 function resolveRoot(dir) {
   return path.resolve(root, dir);
 }
+
 module.exports = {
   root: path.resolve(__dirname, '../'),
   project: {
@@ -34,7 +38,9 @@ module.exports = {
   email: {
     senderAccount: {
       host: 'smtp.mxhichina.com',
-      port: 25,
+      secureConnection: !isDev, // use SSL
+      //port: 465, // port for secure SMTP
+      port: isDev ? 25 : 465,
       //secure: true, // use TLS
       auth: {
         user: 'chenlingjie@cd121.com',
