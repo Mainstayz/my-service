@@ -12,3 +12,4 @@ exports.uploadController = require('./uploadController');
 exports.exportController = require('./exportController');
 exports.userNetValueController = require('./userNetValueController');
 exports.webDataController = require('./webDataController');
+exports.testController = require('./testController');

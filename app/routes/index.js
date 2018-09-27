@@ -123,4 +123,9 @@ router.get('/webData/getWebStockdaybarTodayZhongjin', controllers.webDataControl
 router.get('/webData/getWebStockdaybarDongfang', controllers.webDataController.getWebStockdaybarDongfang);
 router.get('/webData/getWebStockdaybarTodayDongfang', controllers.webDataController.getWebStockdaybarTodayDongfang);
 
+/**
+ * 测试
+ */
+router.get('/test/testEmail', controllers.testController.testEmail);
+
 module.exports = router;

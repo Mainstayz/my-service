@@ -5,7 +5,7 @@
 module.exports = async function (ctx, next) {
   const originalUrl = ctx.originalUrl;
   const projectName = ctx.localConfig.project.projectName;
-  const filterPath = ['/auth', '/analyze', '/schedule'];
+  const filterPath = ['/auth', '/analyze', '/schedule', '/test'];
   let ifFilter = false;
   for (let k = 0; k < filterPath.length; k++) {
     if (originalUrl.startsWith(`/${projectName}${filterPath[k]}`)) {
