@@ -83,3 +83,9 @@ proxys.Dictionaries.newAndSave({
 }).then((doc) => {
   console.log(doc);
 });
+proxys.Dictionaries.newAndSave({
+  "key" : "opening_records",
+  "value" : "[\"2018-09-28\"]"
+}).then((doc) => {
+  console.log(doc);
+});
