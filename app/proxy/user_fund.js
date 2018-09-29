@@ -34,6 +34,10 @@ exports.findOne = function (query) {
   return UserFundModel.findOne(query);
 };
 
+exports.findOneById = function (id) {
+  return UserFundModel.findById(id);
+};
+
 exports.check = function (query, opt) {
   return UserFundModel.findOne(query, '_id', opt);
 };
@@ -48,19 +52,7 @@ exports.count = function (query) {
 
 const baseInfo = models.fields_table.fundBase.join(' ');
 
-exports.findByUserIdWithFundBase = function (userId) {
-  return UserFundModel.find({user: userId}).populate('fund', baseInfo);
-};
-
-exports.findByUserIdFundId = function (userId, fundId) {
-  return UserFundModel.findOne({user: userId, fund: fundId});
-};
-
-exports.findByUserId = function (userId) {
-  return UserFundModel.find({user: userId});
-};
-
-exports.findById = function (UserFundId) {
-  return UserFundModel.findById(UserFundId);
+exports.findWithFundBase = function (query) {
+  return UserFundModel.find(query).populate('fund', baseInfo);
 };
 

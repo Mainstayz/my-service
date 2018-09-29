@@ -26,16 +26,20 @@ exports.update = function (query, data) {
   });
 };
 
-exports.check = function (query, opt) {
-  return LogAuditModel.findOne(query, '_id', opt);
-};
-
 exports.find = function (query, opt) {
   return LogAuditModel.find(query, {}, opt);
 };
 
 exports.findOne = function (query, opt) {
   return LogAuditModel.findOne(query, {}, opt);
+};
+
+exports.findOneById = function (id) {
+  return LogAuditModel.findById(id);
+};
+
+exports.check = function (query, opt) {
+  return LogAuditModel.findOne(query, '_id', opt);
 };
 
 exports.count = function (query) {

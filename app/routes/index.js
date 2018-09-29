@@ -50,11 +50,11 @@ router.post('/fund/updateFundThemeByKeyword', controllers.fundController.updateF
 /**
  * 用户基金模块
  */
-router.post('/fund/addUserFund', controllers.myFundController.addUserFund);
-router.get('/fund/deleteUserFund', controllers.myFundController.deleteUserFund);
-router.post('/fund/updateUserFund', controllers.myFundController.updateUserFund);
-router.get('/fund/getUserFunds', controllers.myFundController.getUserFunds);
-router.get('/fund/getUserFundsNormal', controllers.myFundController.getUserFundsNormal);
+router.post('/fund/addUserFund', controllers.userFundController.addUserFund);
+router.get('/fund/deleteUserFund', controllers.userFundController.deleteUserFund);
+router.post('/fund/updateUserFund', controllers.userFundController.updateUserFund);
+router.get('/fund/getUserFunds', controllers.userFundController.getUserFunds);
+router.get('/fund/getUserFundsNormal', controllers.userFundController.getUserFundsNormal);
 /**
  * 用户净值记录
  */

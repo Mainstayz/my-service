@@ -34,6 +34,10 @@ exports.findOne = function (query) {
   return OptionalFundModel.findOne(query);
 };
 
+exports.findOneById = function (id) {
+  return OptionalFundModel.findById(id);
+};
+
 exports.check = function (query, opt) {
   return OptionalFundModel.findOne(query, '_id', opt);
 };

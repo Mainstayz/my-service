@@ -34,6 +34,10 @@ exports.findOne = function (query) {
   return UserNetValueModel.findOne(query);
 };
 
+exports.findOneById = function (id) {
+  return UserNetValueModel.findById(id);
+};
+
 exports.check = function (query, opt) {
   return UserNetValueModel.findOne(query, '_id', opt);
 };

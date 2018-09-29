@@ -23,10 +23,6 @@ exports.update = function (query, data) {
   });
 };
 
-exports.check = function (query, opt) {
-  return UserModel.findOne(query, '_id', opt);
-};
-
 exports.find = function (query, opt) {
   return UserModel.find(query, {}, opt);
 };
@@ -35,18 +31,14 @@ exports.findOne = function (query, opt) {
   return UserModel.findOne(query, {}, opt);
 };
 
+exports.findOneById = function (id) {
+  return UserModel.findById(id);
+};
+
+exports.check = function (query, opt) {
+  return UserModel.findOne(query, '_id', opt);
+};
+
 exports.count = function (query) {
   return UserModel.count(query);
-};
-
-/**
- * 扩展
- */
-
-exports.getByName = function (userName) {
-  return UserModel.findOne({ name: userName });
-};
-
-exports.getById = function (userId) {
-  return UserModel.findById(userId);
 };

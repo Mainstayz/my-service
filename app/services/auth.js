@@ -4,7 +4,7 @@
 const Proxy = require('../proxy');
 const UserProxy = Proxy.User;
 exports.login = async function (account, password) {
-  const user = await UserProxy.getByName(account);
+  const user = await UserProxy.findOne({ name: account });
   if (!user) {
     throw new Error('用户不存在');
   }

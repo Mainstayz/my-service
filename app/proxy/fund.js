@@ -26,16 +26,20 @@ exports.update = function (query, data) {
   });
 };
 
-exports.check = function (query, opt) {
-  return FundModel.findOne(query, '_id', opt);
-};
-
 exports.find = function (query, opt) {
   return FundModel.find(query, {}, opt);
 };
 
 exports.findOne = function (query, opt) {
   return FundModel.findOne(query, {}, opt);
+};
+
+exports.findOneById = function (id) {
+  return FundModel.findById(id);
+};
+
+exports.check = function (query, opt) {
+  return FundModel.findOne(query, '_id', opt);
 };
 
 exports.count = function (query) {

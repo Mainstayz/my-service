@@ -34,6 +34,10 @@ exports.findOne = function (query) {
   return FocusFundModel.findOne(query);
 };
 
+exports.findOneById = function (id) {
+  return FocusFundModel.findById(id);
+};
+
 exports.check = function (query, opt) {
   return FocusFundModel.findOne(query, '_id', opt);
 };
@@ -48,24 +52,12 @@ exports.count = function (query) {
 
 const baseInfo = models.fields_table.fundBase.join(' ');
 
-exports.findByUserIdWithFundBase = function (userId) {
-  return FocusFundModel.find({user: userId}).populate('fund', baseInfo);
+exports.findWithFundBase = function (query) {
+  return FocusFundModel.find(query).populate('fund', baseInfo);
 };
 
-exports.findOneByUserIdWithFundBase = function (userId) {
-  return FocusFundModel.findOne({user: userId}).populate('fund', baseInfo);
-};
-
-exports.findByUserIdFundId = function (userId, fundId) {
-  return FocusFundModel.findOne({user: userId, fund: fundId});
-};
-
-exports.findByUserId = function (userId) {
-  return FocusFundModel.find({user: userId});
-};
-
-exports.findById = function (FocusFundId) {
-  return FocusFundModel.findById(FocusFundId);
+exports.findOneWithFundBase = function (query) {
+  return FocusFundModel.findOne(query).populate('fund', baseInfo);
 };
 
 

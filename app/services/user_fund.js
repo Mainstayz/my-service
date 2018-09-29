@@ -52,7 +52,7 @@ exports.updateUserFund = async function (userId, fundId, data) {
  * @returns {Promise.<void>}
  */
 exports.getUserFundsByUserId = async function (userId) {
-  return UserFundProxy.findByUserId(userId);
+  return UserFundProxy.findOne({user: userId});
 };
 
 /**
@@ -61,7 +61,7 @@ exports.getUserFundsByUserId = async function (userId) {
  * @returns {Promise.<void>}
  */
 exports.getUserFundsByUserIdWithFundBase = async function (userId) {
-  return UserFundProxy.findByUserIdWithFundBase(userId);
+  return UserFundProxy.findWithFundBase({user: userId});
 };
 
 /**
@@ -71,7 +71,7 @@ exports.getUserFundsByUserIdWithFundBase = async function (userId) {
  * @returns {Promise.<void>}
  */
 exports.getUserFund = async function (userId, fundId) {
-  return UserFundProxy.findByUserIdFundId(userId, fundId);
+  return UserFundProxy.findOne({user: userId, fund: fundId});
 };
 
 /**
@@ -117,7 +117,7 @@ exports.deleteFocusFund = async function (userId, fundId) {
  * @returns {Promise.<void>}
  */
 exports.getFocusFund = async function (userId, fundId) {
-  return FocusFundProxy.findByUserIdFundId(userId, fundId);
+  return FocusFundProxy.findOne({user: userId, fund: fundId});
 };
 
 /**
@@ -126,7 +126,7 @@ exports.getFocusFund = async function (userId, fundId) {
  * @returns {Promise.<void>}
  */
 exports.getFocusFundsByUserId = async function (userId) {
-  return FocusFundProxy.findByUserId(userId);
+  return FocusFundProxy.find({user: userId});
 };
 
 /**
@@ -135,7 +135,7 @@ exports.getFocusFundsByUserId = async function (userId) {
  * @returns {Promise.<void>}
  */
 exports.getFocusFundsByUserIdWithFundBase = async function (userId) {
-  return FocusFundProxy.findByUserIdWithFundBase(userId);
+  return FocusFundProxy.findWithFundBase({user: userId});
 };
 
 /**

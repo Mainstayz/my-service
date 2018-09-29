@@ -34,6 +34,10 @@ exports.findOne = function (query) {
   return DictionariesModel.findOne(query);
 };
 
+exports.findOneById = function (id) {
+  return DictionariesModel.findById(id);
+};
+
 exports.check = function (query, opt) {
   return DictionariesModel.findOne(query, '_id', opt);
 };
