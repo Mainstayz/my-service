@@ -6,7 +6,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const schema = new Schema({
+  // 基金名称
   name: String,
+  // 基金编码
   code: String,
   // 净值
   net_value: Number,
