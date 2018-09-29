@@ -2,6 +2,9 @@
  * Created by xiaobxia on 2018/4/1.
  */
 const Proxy = require('../proxy');
+const util = require('../util');
+
+const numberUtil = util.numberUtil;
 
 const UserFundProxy = Proxy.UserFund;
 const FocusFundProxy = Proxy.FocusFund;
@@ -18,6 +21,12 @@ const FocusFundProxy = Proxy.FocusFund;
  * @returns {Promise.<void>}
  */
 exports.addUserFund = async function (userId, fundId, data) {
+  //添加持仓记录
+  data.position_record = JSON.stringify([{
+    cost: data.cost,
+    shares: data.shares,
+    buy_date: data.buy_date
+  }]);
   return UserFundProxy.newAndSave({
     user: userId,
     fund: fundId,
@@ -33,6 +42,102 @@ exports.addUserFund = async function (userId, fundId, data) {
  */
 exports.deleteUserFund = async function (userId, fundId) {
   return UserFundProxy.delete({user: userId, fund: fundId});
+};
+
+/**
+ * 加仓
+ * @param userId
+ * @param fundId
+ * @returns {Promise<*>}
+ */
+exports.addUserFundPosition = async function (userId, fundId, data) {
+  let updateData = {};
+  const rawData = await UserFundProxy.findOne({user: userId, fund: fundId});
+  //之前有记录
+  if (rawData.position_record) {
+    let temp = JSON.parse(rawData.position_record);
+    temp.push({
+      cost: data.cost,
+      shares: data.shares,
+      buy_date: data.buy_date
+    });
+    updateData.position_record = JSON.stringify(temp);
+  } else {
+    updateData.position_record = JSON.stringify([{
+      cost: data.cost,
+      shares: data.shares,
+      buy_date: data.buy_date
+    }]);
+  }
+  //份额是直接加的
+  updateData.shares = numberUtil.keepTwoDecimals(rawData.shares + data.shares);
+  //成本是会变动的
+  updateData.cost = numberUtil.keepFourDecimals((rawData.shares * rawData.cost + data.shares * data.cost) / (rawData.shares + data.shares));
+  return UserFundProxy.update({user: userId, fund: fundId}, updateData);
+};
+
+/**
+ * 初始化仓位，老数据是没有仓位记录的
+ * @returns {Promise<any[]>}
+ */
+exports.initUserFundPosition = async function () {
+  let allUserFunds = await UserFundProxy.find({});
+  let queryList = [];
+  for (let i = 0; i < allUserFunds.length; i++) {
+    const userFund = allUserFunds[i];
+    //没有记录的
+    if (!userFund.position_record) {
+      queryList.push(UserFundProxy.update({_id: userFund._id}, {
+        position_record: JSON.stringify([{
+          cost: userFund.cost,
+          shares: userFund.shares,
+          buy_date: userFund.buy_date
+        }])
+      }));
+    }
+  }
+  return Promise.all(queryList);
+};
+
+/**
+ * 减仓
+ * @param userId
+ * @param fundId
+ * @param data
+ * @returns {Promise<*>}
+ */
+exports.cutUserFundPosition = async function (userId, fundId, data) {
+  let updateData = {};
+  const rawData = await UserFundProxy.findOne({user: userId, fund: fundId});
+  let cutShares = data.shares;
+  const positionRecord = JSON.parse(rawData.position_record);
+  let newPositionRecord = [];
+  //老的数据在前面
+  for (let i = 0; i < positionRecord.length; i++) {
+    const item = positionRecord[i];
+    //允许20块误差
+    if ((Math.abs(cutShares - item.shares) * item.cost) < 20) {
+      newPositionRecord = positionRecord.slice(i + 1);
+      break;
+    } else {
+      //有剩余
+      if (cutShares < item.shares) {
+        newPositionRecord = positionRecord.slice(i + 1);
+        newPositionRecord.unshift({
+          cost: item.cost,
+          shares: numberUtil.keepTwoDecimals(item.shares - cutShares),
+          buy_date: item.buy_date
+        });
+        break;
+      } else {
+        //超出
+        cutShares -= item.shares;
+      }
+    }
+  }
+  updateData.shares = numberUtil.keepTwoDecimals((rawData.shares - data.shares) < 0 ? 0 : (rawData.shares - data.shares));
+  updateData.position_record = JSON.stringify(newPositionRecord);
+  return UserFundProxy.update({user: userId, fund: fundId}, updateData);
 };
 
 /**
@@ -52,7 +157,7 @@ exports.updateUserFund = async function (userId, fundId, data) {
  * @returns {Promise.<void>}
  */
 exports.getUserFundsByUserId = async function (userId) {
-  return UserFundProxy.findOne({user: userId});
+  return UserFundProxy.find({user: userId});
 };
 
 /**

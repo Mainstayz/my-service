@@ -20,10 +20,10 @@ exports.addUserFund = async function (ctx) {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
       code: {required: true},
-      shares: {required: true},
+      shares: {required: true, type: 'number'},
       strategy: {required: true},
       standard: {required: false},
-      cost: {required: true},
+      cost: {required: true, type: 'number'},
       buy_date: {required: true},
       target_net_value: {required: true},
       stop_net_value: {required: true}
@@ -64,6 +64,76 @@ exports.deleteUserFund = async function (ctx) {
 };
 
 /**
+ * 加仓
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.addUserFundPosition = async function (ctx) {
+  const query = ctx.request.body;
+  const fundService = ctx.services.fund;
+  const userFundService = ctx.services.userFund;
+  try {
+    const tokenRaw = ctx.tokenRaw;
+    const data = ctx.validateData({
+      code: {required: true},
+      shares: {required: true, type: 'number'},
+      cost: {required: true, type: 'number'},
+      buy_date: {required: true}
+    }, query);
+    let fund = await fundService.getFundBaseByCode(data.code);
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    await userFundService.addUserFundPosition(userRaw._id, fund._id, data);
+    ctx.body = ctx.resuccess();
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
+/**
+ * 初始化仓位，老数据是没有仓位记录的
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.initUserFundPosition = async function (ctx) {
+  const userFundService = ctx.services.userFund;
+  try {
+    const tokenRaw = ctx.tokenRaw;
+    if (tokenRaw.name === 'xiaobxia') {
+      await userFundService.initUserFundPosition();
+      ctx.body = ctx.resuccess();
+    } else {
+      ctx.body = ctx.refail({message: '不具备此权限'});
+    }
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
+/**
+ * 减仓
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.cutUserFundPosition = async function (ctx) {
+  const query = ctx.request.body;
+  const fundService = ctx.services.fund;
+  const userFundService = ctx.services.userFund;
+  try {
+    const tokenRaw = ctx.tokenRaw;
+    const data = ctx.validateData({
+      code: {required: true},
+      shares: {required: true}
+    }, query);
+    let fund = await fundService.getFundBaseByCode(data.code);
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+    await userFundService.cutUserFundPosition(userRaw._id, fund._id, data);
+    ctx.body = ctx.resuccess();
+  } catch (err) {
+    ctx.body = ctx.refail(err);
+  }
+};
+
+/**
  * 更新用户基金
  * @param ctx
  * @returns {Promise.<void>}
@@ -82,7 +152,8 @@ exports.updateUserFund = async function (ctx) {
       standard: {required: false},
       buy_date: {required: false},
       target_net_value: {required: false},
-      stop_net_value: {required: false}
+      stop_net_value: {required: false},
+      position_record: {required: false}
     }, query);
     // 验证基金
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
@@ -134,6 +205,14 @@ exports.getUserFunds = async function (ctx) {
           break;
         }
       }
+      let tempPosition_record = JSON.parse(userFund.position_record);
+      let newPosition_record = [];
+      for (let i = 0; i < tempPosition_record.length; i++) {
+        newPosition_record[i] = {
+          ...tempPosition_record[i],
+          has_days: records.indexOf(tempPosition_record[i].buy_date),
+        }
+      }
       let result = {
         ...strategyInfo,
         name: fund.name,
@@ -143,6 +222,7 @@ exports.getUserFunds = async function (ctx) {
         strategy: userFund.strategy,
         cost: userFund.cost,
         standard: userFund.standard,
+        position_record: JSON.stringify(newPosition_record),
         buy_date: buyDate,
         has_days: records.indexOf(buyDate),
         target_net_value: userFund.target_net_value,
@@ -201,6 +281,14 @@ exports.getUserFundsNormal = async function (ctx) {
       const costSum = userFund.cost * userFund.shares;
       const valuationInfo = fundBaseUtil.getBetterValuation(fund);
       const buyDate = moment(userFund.buy_date).format('YYYY-MM-DD');
+      let tempPosition_record = JSON.parse(userFund.position_record);
+      let newPosition_record = [];
+      for (let i = 0; i < tempPosition_record.length; i++) {
+        newPosition_record[i] = {
+          ...tempPosition_record[i],
+          has_days: records.indexOf(tempPosition_record[i].buy_date),
+        }
+      }
       let result = {
         name: fund.name,
         code: fund.code,
@@ -208,6 +296,7 @@ exports.getUserFundsNormal = async function (ctx) {
         shares: userFund.shares,
         cost: userFund.cost,
         standard: userFund.standard,
+        position_record: JSON.stringify(newPosition_record),
         buy_date: buyDate,
         has_days: records.indexOf(buyDate),
         target_net_value: userFund.target_net_value,

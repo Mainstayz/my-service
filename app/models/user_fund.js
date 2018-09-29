@@ -16,7 +16,7 @@ const schema = new Schema({
   cost: Number,
   // 几倍仓
   standard: Number,
-  // 买入日期
+  // 买入日期，是指持仓里面最早的那个，在减仓时会更新
   buy_date: {
     type: Date,
     default: Date.now
@@ -24,7 +24,7 @@ const schema = new Schema({
   // 目标净值
   target_net_value: Number,
   stop_net_value: Number,
-  // 持仓记录，[{cost,shares,buyDate}]
+  // 持仓记录，[{cost,shares,buy_date}]
   position_record: {
     type: String,
     default: ''

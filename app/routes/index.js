@@ -53,6 +53,9 @@ router.post('/fund/updateFundThemeByKeyword', controllers.fundController.updateF
 router.post('/fund/addUserFund', controllers.userFundController.addUserFund);
 router.get('/fund/deleteUserFund', controllers.userFundController.deleteUserFund);
 router.post('/fund/updateUserFund', controllers.userFundController.updateUserFund);
+router.post('/fund/addUserFundPosition', controllers.userFundController.addUserFundPosition);
+router.post('/fund/cutUserFundPosition', controllers.userFundController.cutUserFundPosition);
+router.get('/fund/initUserFundPosition', controllers.userFundController.initUserFundPosition);
 router.get('/fund/getUserFunds', controllers.userFundController.getUserFunds);
 router.get('/fund/getUserFundsNormal', controllers.userFundController.getUserFundsNormal);
 /**

@@ -162,7 +162,7 @@ exports.getMarket = async function (ctx) {
     const userFunds = result[0];
     const funds = result[1];
     paging.total = funds.count;
-    console.log(userFunds[0].fund)
+    // console.log(userFunds[0].fund)
     //估值获取
     let list = [];
     funds.list.forEach((fund) => {

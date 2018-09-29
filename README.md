@@ -17,4 +17,4 @@ pm2 delete <id|name>
 ```
 
 ## 复制库
-db.copyDatabase('myServiceV2','myServiceV2','39.108.114.91:27017')
+db.copyDatabase('myServiceV2','myServiceV2','47.98.140.76:27017')
