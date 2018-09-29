@@ -26,6 +26,4 @@ const schema = new Schema({
 // 名字不重复
 schema.index({name: 1}, { unique: true });
 
-module.exports = {
-  model: mongoose.model('User', schema)
-};
+module.exports = mongoose.model('User', schema);

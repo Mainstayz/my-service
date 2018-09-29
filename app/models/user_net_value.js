@@ -22,6 +22,4 @@ const schema = new Schema({
 });
 schema.index({net_value_date: -1}, {unique: true});
 
-module.exports = {
-  model: mongoose.model('UserNetValue', schema)
-};
+module.exports = mongoose.model('UserNetValue', schema);

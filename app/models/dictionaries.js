@@ -23,6 +23,4 @@ const schema = new Schema({
 schema.index({key: 1}, {unique: true});
 schema.index({create_at: -1});
 
-module.exports = {
-  model: mongoose.model('Dictionaries', schema)
-};
+module.exports =  mongoose.model('Dictionaries', schema);
