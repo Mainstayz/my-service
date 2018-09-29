@@ -19,7 +19,7 @@ exports.addUserFund = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw;
     const data = ctx.validateData({
-      code: {type: 'string', required: true},
+      code: {required: true},
       shares: {required: true},
       strategy: {required: true},
       standard: {required: false},
@@ -28,7 +28,7 @@ exports.addUserFund = async function (ctx) {
       target_net_value: {required: true},
       stop_net_value: {required: true}
     }, query);
-    // 添加基金
+    // 添加基金，如果存在就什么都不做
     let fund = await fundService.addFundByCode(data.code);
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
     await userFundService.addUserFund(userRaw._id, fund._id, data);

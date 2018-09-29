@@ -38,4 +38,6 @@ const schema = new Schema({
 schema.index({user: 1, fund: 1}, {unique: true});
 schema.index({create_at: -1});
 
-module.exports = mongoose.model('UserFund', schema);
+module.exports = {
+  model: mongoose.model('UserFund', schema)
+};

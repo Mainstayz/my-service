@@ -14,18 +14,16 @@ mongoose.connect(config.db, {
   }
 });
 
-exports.User = require('./user');
-exports.LogAudit = require('./log_audit');
+//模型
+exports.User = require('./user').model;
+exports.LogAudit = require('./log_audit').model;
+exports.Fund = require('./fund').model;
+exports.UserNetValue = require('./user_net_value').model;
+exports.UserFund = require('./user_fund').model;
+exports.FocusFund = require('./focus_fund').model;
+exports.OptionalFund = require('./optional_fund').model;
+exports.Dictionaries = require('./dictionaries').model;
 
-exports.Fund = require('./fund');
-
-exports.UserNetValue = require('./user_net_value');
-exports.UserFund = require('./user_fund');
-exports.FocusFund = require('./focus_fund');
-exports.OptionalFund = require('./optional_fund');
-
-
-exports.Dictionaries = require('./dictionaries');
-
+//字段
 exports.fields_table = require('./fields_table');
 

@@ -18,4 +18,6 @@ const schema = new Schema({
 // 一般是以用户id查
 schema.index({ user_id: 1, create_at: -1 });
 
-module.exports = mongoose.model('LogAudit', schema);
+module.exports = {
+  model: mongoose.model('LogAudit', schema)
+};
