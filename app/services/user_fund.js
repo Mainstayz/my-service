@@ -3,6 +3,7 @@
  */
 const Proxy = require('../proxy');
 const util = require('../util');
+const moment = require('moment');
 
 const numberUtil = util.numberUtil;
 
@@ -25,7 +26,7 @@ exports.addUserFund = async function (userId, fundId, data) {
   data.position_record = JSON.stringify([{
     cost: data.cost,
     shares: data.shares,
-    buy_date: data.buy_date
+    buy_date: moment(data.buy_date).format('YYYY-MM-DD')
   }]);
   return UserFundProxy.newAndSave({
     user: userId,
@@ -53,6 +54,7 @@ exports.deleteUserFund = async function (userId, fundId) {
 exports.addUserFundPosition = async function (userId, fundId, data) {
   let updateData = {};
   const rawData = await UserFundProxy.findOne({user: userId, fund: fundId});
+  data.buy_date = moment(data.buy_date).format('YYYY-MM-DD');
   //之前有记录
   if (rawData.position_record) {
     let temp = JSON.parse(rawData.position_record);
@@ -86,15 +88,16 @@ exports.initUserFundPosition = async function () {
   for (let i = 0; i < allUserFunds.length; i++) {
     const userFund = allUserFunds[i];
     //没有记录的
-    if (!userFund.position_record) {
-      queryList.push(UserFundProxy.update({_id: userFund._id}, {
-        position_record: JSON.stringify([{
-          cost: userFund.cost,
-          shares: userFund.shares,
-          buy_date: userFund.buy_date
-        }])
-      }));
-    }
+    // if (!userFund.position_record) {
+    // }
+    //强制初始化
+    queryList.push(UserFundProxy.update({_id: userFund._id}, {
+      position_record: JSON.stringify([{
+        cost: userFund.cost,
+        shares: userFund.shares,
+        buy_date: moment(userFund.buy_date).format('YYYY-MM-DD')
+      }])
+    }));
   }
   return Promise.all(queryList);
 };
