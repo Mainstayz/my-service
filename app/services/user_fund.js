@@ -137,6 +137,7 @@ exports.cutUserFundPosition = async function (userId, fundId, data) {
   }
   updateData.shares = numberUtil.keepTwoDecimals((rawData.shares - data.shares) < 0 ? 0 : (rawData.shares - data.shares));
   updateData.position_record = JSON.stringify(newPositionRecord);
+  updateData.buy_date = newPositionRecord[0] ? newPositionRecord[0].buy_date : positionRecord[positionRecord.length - 1].buy_date;
   return UserFundProxy.update({user: userId, fund: fundId}, updateData);
 };
 
