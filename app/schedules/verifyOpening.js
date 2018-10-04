@@ -33,6 +33,7 @@ function verifyOpening() {
     if (data && data.value === 'open') {
       fundService.verifyOpening().then((opening) => {
         if (opening === 'over') {
+          //已经确认开盘
           return false;
         } else if (opening === true) {
           // 更新净值
@@ -76,7 +77,7 @@ function verifyOpening() {
             }));
           });
         } else {
-          return sendMail(emailTemplate.verifyOpeningSuccessTemplate({
+          sendMail(emailTemplate.verifyOpeningSuccessTemplate({
             sender: config.email.senderAccount.auth.user,
             userEmail: config.email.adminAccount.user,
             openMsg: '不开盘'

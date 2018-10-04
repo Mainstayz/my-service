@@ -190,11 +190,11 @@ exports.verifyOpening = async function () {
   const isToday = nowDay === fundData.valuation_date;
   let result = await DictionariesProxy.findOne({key: localConst.OPENING_RECORDS_REDIS_KEY});
   let records = [];
-  //如果有记录
+  //如果数据库中有今天的记录记录
   if (result) {
     records = JSON.parse(result.value);
-    // 没开市，就不会有记录
     if (records[0] === nowDay) {
+      //已经确认是开市的
       return 'over';
     } else {
       //是，就加记录
@@ -203,7 +203,7 @@ exports.verifyOpening = async function () {
       }
     }
   } else {
-    //是，就加记录
+    //如果没有记录且是开盘，就加记录
     if (isToday) {
       records = [nowDay];
     }
