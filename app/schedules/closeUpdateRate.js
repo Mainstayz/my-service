@@ -19,6 +19,7 @@ let rule = new schedule.RecurrenceRule();
 //工作日，17点关闭定时更新估值
 rule.dayOfWeek = [new schedule.Range(1, 5)];
 rule.hour = [17];
+rule.minute = 0;
 
 function closeUpdateRate() {
   scheduleService.getSchedule('closeUpdateRate').then((data)=>{
