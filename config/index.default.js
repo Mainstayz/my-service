@@ -1,20 +1,20 @@
 /**
  * Created by xiaobxia on 2017/7/26.
  */
-const path = require('path');
-const env = process.env.NODE_ENV;
-const isDev = env === 'dev';
+const path = require('path')
+const env = process.env.NODE_ENV
+const isDev = env === 'dev'
 
-const root = path.resolve(__dirname, '../');
+const root = path.resolve(__dirname, '../')
 
-function resolveRoot(dir) {
-  return path.resolve(root, dir);
+function resolveRoot (dir) {
+  return path.resolve(root, dir)
 }
 
 module.exports = {
   root: path.resolve(__dirname, '../'),
   project: {
-    projectName: "myService"
+    projectName: 'myService'
   },
   server: {
     port: 3002,
@@ -34,22 +34,22 @@ module.exports = {
   qiniu: {
     zone: 'Zone_z2'
   },
-  //只有在debug为false时开启
+  // 只有在debug为false时开启
   email: {
     senderAccount: {
       host: 'smtp.mxhichina.com',
       secureConnection: !isDev, // use SSL
-      //port: 465, // port for secure SMTP
+      // port: 465, // port for secure SMTP
       port: isDev ? 25 : 465,
-      //secure: true, // use TLS
+      // secure: true, // use TLS
       auth: {
         user: 'chenlingjie@cd121.com',
         pass: 'CLJclj214'
       },
-      ignoreTLS: true,
+      ignoreTLS: true
     },
     adminAccount: {
       user: '673806687@qq.com'
     }
   }
-};
+}

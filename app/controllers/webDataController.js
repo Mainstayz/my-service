@@ -1,13 +1,13 @@
 /**
  * Created by xiaobxia on 2018/4/7.
  */
-const axios = require('axios');
-const moment = require('moment');
-const util = require('../util');
+const axios = require('axios')
+const moment = require('moment')
+const util = require('../util')
 
-const numberUtil = util.numberUtil;
+const numberUtil = util.numberUtil
 
-function formatDongfangData(rawData) {
+function formatDongfangData (rawData) {
   return {
     close: rawData.c,
     high: rawData.h,
@@ -18,17 +18,17 @@ function formatDongfangData(rawData) {
   }
 }
 
-function formatDongfangCode(code) {
-  let codeId = '';
+function formatDongfangCode (code) {
+  let codeId = ''
   if (code.indexOf('sh') !== -1) {
     codeId = code.substring(2) + '1'
   } else if (code.indexOf('sz') !== -1) {
     codeId = code.substring(2) + '2'
   }
-  return codeId;
+  return codeId
 }
 
-function formatZhongjinData(rawData) {
+function formatZhongjinData (rawData) {
   return {
     close: rawData.ClosePrice,
     high: rawData.HighPrice,
@@ -39,17 +39,17 @@ function formatZhongjinData(rawData) {
   }
 }
 
-function formatZhongjinCode(code) {
-  let codeId = '';
+function formatZhongjinCode (code) {
+  let codeId = ''
   if (code.indexOf('sh') !== -1) {
     codeId = code.substring(2) + 'K'
   } else if (code.indexOf('sz') !== -1) {
     codeId = code.substring(2) + 'J'
   }
-  return codeId;
+  return codeId
 }
 
-function formatKline(rawData) {
+function formatKline (rawData) {
   return {
     close: rawData.close,
     high: rawData.high,
@@ -63,13 +63,13 @@ function formatKline(rawData) {
 function getAllDataByZhongjin (code, count) {
   return axios({
     method: 'get',
-    url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${count}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`,
+    url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${count}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`
   }).then((data) => {
-    let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
-    let list = JSON.parse(str).List;
-    let listTemp = [];
+    let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'))
+    let list = JSON.parse(str).List
+    let listTemp = []
     for (let i = list.length - 1; i >= 0; i--) {
-      let item = list[i];
+      let item = list[i]
       listTemp.push({
         date: moment(new Date(item[0])).format('YYYYMMDD'),
         close: item[4],
@@ -78,10 +78,10 @@ function getAllDataByZhongjin (code, count) {
         netChangeRatio: item[7],
         open: item[1],
         preClose: i === 0 ? item[1] : list[i - 1][4]
-      });
+      })
     }
-    return listTemp;
-  });
+    return listTemp
+  })
 }
 
 /**
@@ -90,26 +90,26 @@ function getAllDataByZhongjin (code, count) {
  * @returns {Promise.<void>}
  */
 exports.getWebStockdaybar = async function (ctx) {
-  const query = ctx.query;
+  const query = ctx.query
   try {
     const data = ctx.validateData({
-      code: {type: 'string', required: true}
-    }, query);
-    let count = 0;
+      code: { type: 'string', required: true }
+    }, query)
+    // let count = 0
     for (let i = 1; i < 36; i++) {
       if (moment('2018-03-01').add(i * 31, 'days').isAfter(moment())) {
-        count = i * 25;
-        break;
+        // count = i * 25
+        break
       }
     }
-    let code = formatZhongjinCode(data.code);
+    let code = formatZhongjinCode(data.code)
     // let resData = await axios.get(`https://gupiao.baidu.com/api/stocks/stockdaybar?from=pc&os_ver=1&cuid=xxx&vv=100&format=json&stock_code=${data.code}&step=3&start=&count=${count}&fq_type=no&timestamp=${Date.now()}`, {
     //   headers: {
     //     Referer: `https://gupiao.baidu.com/stock/${data.code}.html?from=aladingpc`
     //   }
     // });
-    let list = await getAllDataByZhongjin(code, data.days || 200);
-    let listTemp = [];
+    let list = await getAllDataByZhongjin(code, data.days || 200)
+    let listTemp = []
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
         date: list[i].date,
@@ -118,11 +118,11 @@ exports.getWebStockdaybar = async function (ctx) {
     }
     ctx.body = ctx.resuccess({
       list: listTemp
-    });
+    })
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 /**
  * 全部情况--中金在线
@@ -130,15 +130,15 @@ exports.getWebStockdaybar = async function (ctx) {
  * @returns {Promise<void>}
  */
 exports.getWebStockdaybarAllZhongjin = async function (ctx) {
-  const query = ctx.query;
+  const query = ctx.query
   try {
     const data = ctx.validateData({
-      code: {type: 'string', required: true},
-      days: {type: 'int', required: false}
-    }, query);
-    let code = formatZhongjinCode(data.code);
-    let list = await getAllDataByZhongjin(code, data.days || 200);
-    let listTemp = [];
+      code: { type: 'string', required: true },
+      days: { type: 'int', required: false }
+    }, query)
+    let code = formatZhongjinCode(data.code)
+    let list = await getAllDataByZhongjin(code, data.days || 200)
+    let listTemp = []
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
         date: list[i].date,
@@ -147,31 +147,31 @@ exports.getWebStockdaybarAllZhongjin = async function (ctx) {
     }
     let nowItem = await axios({
       method: 'get',
-      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`,
+      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`
     }).then((data) => {
-      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
-      return JSON.parse(str).List[0];
-    });
-    let date = listTemp[0].date;
-    let dataNow = moment(nowItem.TradeTime).format('YYYYMMDD');
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'))
+      return JSON.parse(str).List[0]
+    })
+    let date = listTemp[0].date
+    let dataNow = moment(nowItem.TradeTime).format('YYYYMMDD')
     if (date === dataNow) {
       listTemp.splice(0, 1, {
         date: date,
         kline: formatZhongjinData(nowItem)
-      });
+      })
     } else {
       listTemp.splice(0, 0, {
         date: date,
         kline: formatZhongjinData(nowItem)
-      });
+      })
     }
     ctx.body = ctx.resuccess({
       list: listTemp
-    });
+    })
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 /**
  * 全部情况--股市通
@@ -179,24 +179,24 @@ exports.getWebStockdaybarAllZhongjin = async function (ctx) {
  * @returns {Promise<void>}
  */
 exports.getWebStockdaybarAllGushitong = async function (ctx) {
-  const query = ctx.query;
+  const query = ctx.query
   try {
     const data = ctx.validateData({
-      code: {type: 'string', required: true},
-      days: {type: 'int', required: false}
-    }, query);
+      code: { type: 'string', required: true },
+      days: { type: 'int', required: false }
+    }, query)
     let resData = await axios.get(`https://gupiao.baidu.com/api/stocks/stockdaybar?from=pc&os_ver=1&cuid=xxx&vv=100&format=json&stock_code=${data.code}&step=3&start=&count=${data.days || 200}&fq_type=no&timestamp=${Date.now()}`, {
       headers: {
         Referer: `https://gupiao.baidu.com/stock/${data.code}.html?from=aladingpc`
       }
-    });
+    })
     ctx.body = ctx.resuccess({
       list: resData.data.mashData
-    });
+    })
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 /**
  * 中金网当天的涨跌情况
@@ -204,24 +204,24 @@ exports.getWebStockdaybarAllGushitong = async function (ctx) {
  * @returns {Promise<void>}
  */
 exports.getWebStockdaybarTodayZhongjin = async function (ctx) {
-  const query = ctx.query;
+  const query = ctx.query
   try {
     const data = ctx.validateData({
-      code: {type: 'string', required: true}
-    }, query);
-    let code = formatZhongjinCode(data.code);
+      code: { type: 'string', required: true }
+    }, query)
+    let code = formatZhongjinCode(data.code)
     let nowItem = await axios({
       method: 'get',
-      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`,
+      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`
     }).then((data) => {
-      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
-      return JSON.parse(str).List[0];
-    });
-    ctx.body = ctx.resuccess(formatZhongjinData(nowItem));
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'))
+      return JSON.parse(str).List[0]
+    })
+    ctx.body = ctx.resuccess(formatZhongjinData(nowItem))
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 /**
  * 全部情况--东方财富
@@ -229,16 +229,16 @@ exports.getWebStockdaybarTodayZhongjin = async function (ctx) {
  * @returns {Promise<void>}
  */
 exports.getWebStockdaybarDongfang = async function (ctx) {
-  const query = ctx.query;
+  const query = ctx.query
   try {
     const data = ctx.validateData({
-      code: {type: 'string', required: true},
-      days: {type: 'int', required: false}
-    }, query);
-    let code = formatZhongjinCode(data.code);
-    let codeId = formatDongfangCode(data.code);
-    let list = await getAllDataByZhongjin(code, data.days || 200);
-    let listTemp = [];
+      code: { type: 'string', required: true },
+      days: { type: 'int', required: false }
+    }, query)
+    let code = formatZhongjinCode(data.code)
+    let codeId = formatDongfangCode(data.code)
+    let list = await getAllDataByZhongjin(code, data.days || 200)
+    let listTemp = []
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
         date: list[i].date,
@@ -247,32 +247,32 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
     }
     let nowItem = await axios({
       method: 'get',
-      url: `http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&cb=jQuery183018258284170372074_1534312345300&id=${codeId}&type=r&iscr=false&_=1534312487848`,
+      url: `http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&cb=jQuery183018258284170372074_1534312345300&id=${codeId}&type=r&iscr=false&_=1534312487848`
     }).then((data) => {
-      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
-      return JSON.parse(str).info;
-    });
-    let date = listTemp[0].date;
-    let dataNow = moment(nowItem.time).format('YYYYMMDD');
-    //如果当天没有重合那就直接加，如果当天有重合就删除再加
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'))
+      return JSON.parse(str).info
+    })
+    let date = listTemp[0].date
+    let dataNow = moment(nowItem.time).format('YYYYMMDD')
+    // 如果当天没有重合那就直接加，如果当天有重合就删除再加
     if (date === dataNow) {
       listTemp.splice(0, 1, {
         date: date,
         kline: formatDongfangData(nowItem)
-      });
+      })
     } else {
       listTemp.splice(0, 0, {
         date: date,
         kline: formatDongfangData(nowItem)
-      });
+      })
     }
     ctx.body = ctx.resuccess({
       list: listTemp
-    });
+    })
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 /**
  * 当天的涨跌情况--东方财富渠道
@@ -280,21 +280,21 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
  * @returns {Promise<void>}
  */
 exports.getWebStockdaybarTodayDongfang = async function (ctx) {
-  const query = ctx.query;
+  const query = ctx.query
   try {
     const data = ctx.validateData({
-      code: {type: 'string', required: true}
-    }, query);
-    let codeId = formatDongfangCode(data.code);
+      code: { type: 'string', required: true }
+    }, query)
+    let codeId = formatDongfangCode(data.code)
     let nowItem = await axios({
       method: 'get',
-      url: `http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&cb=jQuery183018258284170372074_1534312345300&id=${codeId}&type=r&iscr=false&_=1534312487848`,
+      url: `http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&cb=jQuery183018258284170372074_1534312345300&id=${codeId}&type=r&iscr=false&_=1534312487848`
     }).then((data) => {
-      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'));
-      return JSON.parse(str).info;
-    });
-    ctx.body = ctx.resuccess(formatDongfangData(nowItem));
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'))
+      return JSON.parse(str).info
+    })
+    ctx.body = ctx.resuccess(formatDongfangData(nowItem))
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}

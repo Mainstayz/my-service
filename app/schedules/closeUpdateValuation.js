@@ -1,8 +1,8 @@
 /**
  * Created by xiaobxia on 2018/3/6.
  */
-const schedule = require('node-schedule');
-const scheduleService = require('../services/schedule');
+const schedule = require('node-schedule')
+const scheduleService = require('../services/schedule')
 /**
  * cron风格的
  *    *    *    *    *    *
@@ -15,23 +15,23 @@ const scheduleService = require('../services/schedule');
  │    └──────────────────── minute (0 - 59)
  └───────────────────────── second (0 - 59, OPTIONAL)
  */
-let rule = new schedule.RecurrenceRule();
-//工作日，17点关闭定时更新估值
-rule.dayOfWeek = [new schedule.Range(1, 5)];
-rule.hour = [17];
-rule.minute = 0;
+let rule = new schedule.RecurrenceRule()
+// 工作日，17点关闭定时更新估值
+rule.dayOfWeek = [new schedule.Range(1, 5)]
+rule.hour = [17]
+rule.minute = 0
 
-function closeUpdateValuation() {
-  scheduleService.getSchedule('closeUpdateValuation').then((data)=>{
+function closeUpdateValuation () {
+  scheduleService.getSchedule('closeUpdateValuation').then((data) => {
     if (data && data.value === 'open') {
       scheduleService.updateSchedule('updateValuation', {
         value: 'close'
-      }).then(()=>{
-      });
+      }).then(() => {
+      })
     }
-  });
+  })
 }
 
-const job = schedule.scheduleJob(rule, closeUpdateValuation);
+const job = schedule.scheduleJob(rule, closeUpdateValuation)
 
-module.exports = job;
+module.exports = job

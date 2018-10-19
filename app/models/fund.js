@@ -1,9 +1,9 @@
 /**
  * Created by xiaobxia on 2018/1/25.
  */
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const schema = new Schema({
   // 基金名称
@@ -15,11 +15,11 @@ const schema = new Schema({
   net_value_date: Date,
   // 是否可购
   sell: Boolean,
-  //涨幅
+  // 涨幅
   rate: Number,
   // 是否低费率
   lowRate: Boolean,
-  //基金的主题概念
+  // 基金的主题概念
   theme: String,
   // 估值
   valuation_tiantian: Number,
@@ -36,9 +36,9 @@ const schema = new Schema({
     type: Date,
     default: Date.now
   }
-});
+})
 
-schema.index({code: 1}, {unique: true});
-schema.index({create_at: -1});
+schema.index({ code: 1 }, { unique: true })
+schema.index({ create_at: -1 })
 
-module.exports = mongoose.model('Fund', schema);
+module.exports = mongoose.model('Fund', schema)

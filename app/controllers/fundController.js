@@ -1,56 +1,56 @@
 /**
  * Created by xiaobxia on 2018/1/26.
  */
-const util = require('../util');
-const moment = require('moment');
+const util = require('../util')
+const moment = require('moment')
 
-const fundBaseUtil = util.fundBaseUtil;
+const fundBaseUtil = util.fundBaseUtil
 
 /**
  * 手动添加基金
  */
 exports.addFund = async function (ctx) {
-  const query = ctx.request.body;
-  const fundService = ctx.services.fund;
+  const query = ctx.request.body
+  const fundService = ctx.services.fund
   try {
     const data = ctx.validateData({
-      code: {required: true}
-    }, query);
-    await fundService.addFundByCode(data.code);
-    ctx.body = ctx.resuccess();
+      code: { required: true }
+    }, query)
+    await fundService.addFundByCode(data.code)
+    ctx.body = ctx.resuccess()
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 /**
  * 删除基金
  */
 exports.deleteFund = async function (ctx) {
-  const query = ctx.query;
-  const fundService = ctx.services.fund;
+  const query = ctx.query
+  const fundService = ctx.services.fund
   try {
     const data = ctx.validateData({
-      code: {required: true}
-    }, query);
-    await fundService.deleteFundByCode(data.code);
-    ctx.body = ctx.resuccess();
+      code: { required: true }
+    }, query)
+    await fundService.deleteFundByCode(data.code)
+    ctx.body = ctx.resuccess()
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 /**
  * 基金基本信息
  */
 exports.getFundBase = async function (ctx) {
-  const query = ctx.query;
-  const fundService = ctx.services.fund;
+  const query = ctx.query
+  const fundService = ctx.services.fund
   try {
     const data = ctx.validateData({
-      code: {type: 'string', required: true}
-    }, query);
-    const fund = await fundService.getFundBaseByCode(data.code);
+      code: { type: 'string', required: true }
+    }, query)
+    const fund = await fundService.getFundBaseByCode(data.code)
     if (fund) {
-      const valuationInfo = fundBaseUtil.getBetterValuation(fund);
+      const valuationInfo = fundBaseUtil.getBetterValuation(fund)
       const result = {
         code: fund.code,
         name: fund.name,
@@ -63,108 +63,108 @@ exports.getFundBase = async function (ctx) {
         valuation_tiantian: fund.valuation_tiantian,
         valuation: valuationInfo.valuation,
         valuationSource: valuationInfo.sourceName
-      };
-      ctx.body = ctx.resuccess(result);
+      }
+      ctx.body = ctx.resuccess(result)
     } else {
       ctx.body = ctx.refail({
         message: '基金不存在'
-      });
+      })
     }
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 // 得到基金分页
 exports.getFunds = async function (ctx) {
-  const query = ctx.query;
-  const tokenRaw = ctx.tokenRaw;
+  const query = ctx.query
+  const tokenRaw = ctx.tokenRaw
   try {
     const data = ctx.validateData({
-      keyword: {required: false},
-      current: {type: 'int', required: true},
-      pageSize: {type: 'int', required: true}
-    }, query);
-    let paging = ctx.paging(data.current, data.pageSize);
-    //分页获取
-    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+      keyword: { required: false },
+      current: { type: 'int', required: true },
+      pageSize: { type: 'int', required: true }
+    }, query)
+    let paging = ctx.paging(data.current, data.pageSize)
+    // 分页获取
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
     const result = await Promise.all([
       ctx.services.userFund.getUserFundsByUserId(userRaw._id),
       ctx.services.fund.getFundsBaseByPaging(data, paging)
-    ]);
-    const userFunds = result[0];
-    const funds = result[1];
-    paging.total = funds.count;
-    //估值获取
+    ])
+    const userFunds = result[0]
+    const funds = result[1]
+    paging.total = funds.count
+    // 估值获取
     funds.list.forEach((fund) => {
-      const valuationInfo = fundBaseUtil.getBetterValuation(fund);
-      fund.valuation = valuationInfo.valuation;
-      fund.valuationSource = valuationInfo.sourceName;
-      fund.better_count = '';
+      const valuationInfo = fundBaseUtil.getBetterValuation(fund)
+      fund.valuation = valuationInfo.valuation
+      fund.valuationSource = valuationInfo.sourceName
+      fund.better_count = ''
       for (let j = 0; j < userFunds.length; j++) {
         if (userFunds[j].fund.toString() === fund._id.toString()) {
-          fund.has = true;
-          break;
+          fund.has = true
+          break
         }
       }
-    });
+    })
     ctx.body = ctx.resuccess({
       list: funds.list,
       page: paging
-    });
+    })
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 // 获取近期分析数据
 exports.getFundAnalyzeRecent = async function (ctx) {
-  const query = ctx.query;
-  const fundService = ctx.services.fund;
-  const dictionariesService = ctx.services.dictionaries;
+  const query = ctx.query
+  const fundService = ctx.services.fund
+  const dictionariesService = ctx.services.dictionaries
   try {
     const data = ctx.validateData({
-      code: {type: 'string', required: true}
-    }, query);
-    const fund = await fundService.getFundByCode(data.code);
+      code: { type: 'string', required: true }
+    }, query)
+    const fund = await fundService.getFundByCode(data.code)
     if (fund && fund['recent_net_value']) {
-      const analyzeValue = await dictionariesService.getAnalyzeValue();
+      const analyzeValue = await dictionariesService.getAnalyzeValue()
       ctx.body = ctx.resuccess(
         ctx.services.analyze.getFundAnalyzeRecent(fund, analyzeValue, true)
-      );
+      )
     } else {
       ctx.body = ctx.refail({
         message: '暂无数据分析'
-      });
+      })
     }
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
-//得到行情
+// 得到行情
 exports.getMarket = async function (ctx) {
-  const query = ctx.query;
-  const tokenRaw = ctx.tokenRaw;
+  const query = ctx.query
+  const tokenRaw = ctx.tokenRaw
   try {
     const data = ctx.validateData({
-      sort: {required: false},
-      current: {type: 'int', required: true},
-      pageSize: {type: 'int', required: true},
-      lowRate: {type: 'int', required: false}
-    }, query);
-    let paging = ctx.paging(data.current, data.pageSize);
-    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
+      sort: { required: false },
+      current: { type: 'int', required: true },
+      pageSize: { type: 'int', required: true },
+      lowRate: { type: 'int', required: false }
+    }, query)
+    let paging = ctx.paging(data.current, data.pageSize)
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
     const result = await Promise.all([
       ctx.services.userFund.getUserFundsByUserId(userRaw._id),
       ctx.services.fund.getMarket(data.sort, paging, data.lowRate)
-    ]);
-    const userFunds = result[0];
-    const funds = result[1];
-    paging.total = funds.count;
+    ])
+    const userFunds = result[0]
+    const funds = result[1]
+    paging.total = funds.count
     // console.log(userFunds[0].fund)
-    //估值获取
-    let list = [];
+    // 估值获取
+    let list = []
     funds.list.forEach((fund) => {
       fund = {
         code: fund.code,
@@ -175,49 +175,49 @@ exports.getMarket = async function (ctx) {
         sell: fund.sell,
         theme: fund.theme,
         _id: fund._id
-      };
+      }
       for (let j = 0; j < userFunds.length; j++) {
         if (userFunds[j].fund.toString() === fund._id.toString()) {
-          fund.has = true;
-          break;
+          fund.has = true
+          break
         }
       }
       list.push(fund)
-    });
+    })
     ctx.body = ctx.resuccess({
       list: list,
       page: paging
-    });
+    })
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 exports.getMarketInfo = async function (ctx) {
   try {
-    const info = await ctx.services.fund.getMarketInfo();
+    const info = await ctx.services.fund.getMarketInfo()
     ctx.body = ctx.resuccess({
       info
-    });
+    })
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 exports.getRank = async function (ctx) {
-  const query = ctx.query;
+  const query = ctx.query
   try {
     const data = ctx.validateData({
-      day: {type: 'int', required: true}
-    }, query);
-    const funds = await ctx.services.fund.getRank(data.day);
+      day: { type: 'int', required: true }
+    }, query)
+    const funds = await ctx.services.fund.getRank(data.day)
     ctx.body = ctx.resuccess({
       list: funds
-    });
+    })
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 /**
  * 更新基金的概念主题
@@ -225,18 +225,18 @@ exports.getRank = async function (ctx) {
  * @returns {Promise.<void>}
  */
 exports.updateFundTheme = async function (ctx) {
-  const query = ctx.request.body;
+  const query = ctx.request.body
   try {
     const data = ctx.validateData({
-      code: {type: 'string', required: true},
-      theme: {type: 'string', required: false}
-    }, query);
-    await ctx.services.fund.updateFundTheme(data.code, data.theme || '');
-    ctx.body = ctx.resuccess({});
+      code: { type: 'string', required: true },
+      theme: { type: 'string', required: false }
+    }, query)
+    await ctx.services.fund.updateFundTheme(data.code, data.theme || '')
+    ctx.body = ctx.resuccess({})
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 /**
  * 批量更新
@@ -244,18 +244,18 @@ exports.updateFundTheme = async function (ctx) {
  * @returns {Promise.<void>}
  */
 exports.updateFundThemeByKeyword = async function (ctx) {
-  const query = ctx.request.body;
+  const query = ctx.request.body
   try {
     const data = ctx.validateData({
-      keyword: {type: 'string', required: true},
-      theme: {type: 'string', required: true}
-    }, query);
-    await ctx.services.fund.updateFundThemeByKeyword(data.keyword, data.theme);
-    ctx.body = ctx.resuccess({});
+      keyword: { type: 'string', required: true },
+      theme: { type: 'string', required: true }
+    }, query)
+    await ctx.services.fund.updateFundThemeByKeyword(data.keyword, data.theme)
+    ctx.body = ctx.resuccess({})
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}
 
 /**
  * 通过主题概念筛选基金
@@ -263,20 +263,20 @@ exports.updateFundThemeByKeyword = async function (ctx) {
  * @returns {Promise.<void>}
  */
 exports.getFundsByTheme = async function (ctx) {
-  const query = ctx.query;
-  const tokenRaw = ctx.tokenRaw;
-  const dictionariesService = ctx.services.dictionaries;
+  const query = ctx.query
+  const tokenRaw = ctx.tokenRaw
+  const dictionariesService = ctx.services.dictionaries
   try {
     const data = ctx.validateData({
-      theme: {type: 'string', required: true}
-    }, query);
-    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name);
-    const userFunds = await ctx.services.userFund.getUserFundsByUserId(userRaw._id);
-    const funds = await ctx.services.fund.getFundsByTheme(data.theme);
-    let records = await dictionariesService.getByKey(ctx.localConst.OPENING_RECORDS_REDIS_KEY);
-    //如果有记录
-    records = JSON.parse(records.value);
-    let list = [];
+      theme: { type: 'string', required: true }
+    }, query)
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
+    const userFunds = await ctx.services.userFund.getUserFundsByUserId(userRaw._id)
+    const funds = await ctx.services.fund.getFundsByTheme(data.theme)
+    let records = await dictionariesService.getByKey(ctx.localConst.OPENING_RECORDS_REDIS_KEY)
+    // 如果有记录
+    records = JSON.parse(records.value)
+    let list = []
     funds.forEach((fund) => {
       fund = {
         code: fund.code,
@@ -287,22 +287,22 @@ exports.getFundsByTheme = async function (ctx) {
         sell: fund.sell,
         theme: fund.theme,
         _id: fund._id
-      };
+      }
       for (let j = 0; j < userFunds.length; j++) {
         if (userFunds[j].fund.toString() === fund._id.toString()) {
-          const buyDate = moment(userFunds[j].buy_date).format('YYYY-MM-DD');
-          fund.buy_date = buyDate;
-          fund.has_days = records.indexOf(buyDate);
-          fund.has = true;
-          break;
+          const buyDate = moment(userFunds[j].buy_date).format('YYYY-MM-DD')
+          fund.buy_date = buyDate
+          fund.has_days = records.indexOf(buyDate)
+          fund.has = true
+          break
         }
       }
       list.push(fund)
-    });
+    })
     ctx.body = ctx.resuccess({
       funds: list
-    });
+    })
   } catch (err) {
-    ctx.body = ctx.refail(err);
+    ctx.body = ctx.refail(err)
   }
-};
+}

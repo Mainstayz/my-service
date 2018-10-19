@@ -14,4 +14,4 @@ module.exports = {
     NO_EMAIL_RECORD: '没有邮件记录',
     EMAIL_OVERDUE: '邮件记录过期'
   }
-};
+}

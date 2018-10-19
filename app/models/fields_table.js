@@ -6,4 +6,4 @@ module.exports = {
     'valuation_haomai', 'better_count', 'valuation_date',
     'lowRate', 'rate', 'theme'
   ]
-};
+}

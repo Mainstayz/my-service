@@ -1,12 +1,12 @@
 /**
  * Created by xiaobxia on 2018/2/2.
  */
-const schedule = require('node-schedule');
-const request = require('request-promise');
-const reqlib = require('app-root-path').require;
-const logger = require('../common/logger');
-const config = reqlib('/config/index');
-const scheduleService = require('../services/schedule');
+const schedule = require('node-schedule')
+const request = require('request-promise')
+const reqlib = require('app-root-path').require
+const logger = require('../common/logger')
+const config = reqlib('/config/index')
+const scheduleService = require('../services/schedule')
 /**
  * cron风格的
  *    *    *    *    *    *
@@ -19,30 +19,30 @@ const scheduleService = require('../services/schedule');
  │    └──────────────────── minute (0 - 59)
  └───────────────────────── second (0 - 59, OPTIONAL)
  */
-let rule = new schedule.RecurrenceRule();
+let rule = new schedule.RecurrenceRule()
 
-//工作日定时更新估值
-rule.dayOfWeek = [new schedule.Range(1, 5)];
-rule.hour = [10, 11, 13, 14, 15];
-let minute = [];
+// 工作日定时更新估值
+rule.dayOfWeek = [new schedule.Range(1, 5)]
+rule.hour = [10, 11, 13, 14, 15]
+let minute = []
 for (let k = 0; k < 60; k += 2) {
-  minute.push(k);
+  minute.push(k)
 }
-rule.minute = minute;
+rule.minute = minute
 
-function updateValuation() {
-  scheduleService.getSchedule('updateValuation').then((data)=>{
+function updateValuation () {
+  scheduleService.getSchedule('updateValuation').then((data) => {
     if (data && data.value === 'open') {
       request({
         method: 'get',
         url: `http://localhost:${config.server.port || 8080}/${config.project.projectName}/schedule/updateValuation`
       }).catch(function (err) {
-        logger.error(err);
-      });
+        logger.error(err)
+      })
     }
-  });
+  })
 }
 
-const job = schedule.scheduleJob(rule, updateValuation);
+const job = schedule.scheduleJob(rule, updateValuation)
 
-module.exports = job;
+module.exports = job

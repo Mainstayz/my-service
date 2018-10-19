@@ -1,12 +1,12 @@
 /**
  * Created by xiaobxia on 2018/3/31.
  */
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const schema = new Schema({
-  user: {type: Schema.Types.ObjectId, ref: 'User'},
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
   // 净值
   net_value: Number,
   // 资产
@@ -19,7 +19,7 @@ const schema = new Schema({
     type: Date,
     default: Date.now
   }
-});
-schema.index({net_value_date: -1}, {unique: true});
+})
+schema.index({ net_value_date: -1 }, { unique: true })
 
-module.exports = mongoose.model('UserNetValue', schema);
+module.exports = mongoose.model('UserNetValue', schema)
