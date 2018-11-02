@@ -98,31 +98,36 @@ exports.getUserNetValueMonthRate = async function (query) {
     sort: 'net_value_date'
   }
   const netValues = await UserNetValue.find(query, opt)
-  let lastMonthNetValue = 1
-  let lastItem = {}
   let list = []
-  for (let i = 0; i < netValues.length; i++) {
+  let nowItemDate = ''
+  let nowMonthLastNetValue = 0
+  for (let i = netValues.length - 1; i >= 0; i--) {
     const netValueItem = netValues[i]
-    // 判断是不是第一个数据
-    if (lastItem.net_value_date) {
-      // 判断和上个数据是不是同一个月
-      if (!(moment(netValueItem.net_value_date).isSame(lastItem.net_value_date, 'month'))) {
-        list.push({
-          yearMonth: moment(lastItem.net_value_date).format('YYYY-MM'),
-          rate: numberUtil.countRate((lastItem.net_value - lastMonthNetValue), 1)
-        })
-        lastMonthNetValue = lastItem.net_value
-        // 如果是最后一个
+    if (i !== 0) {
+      if (nowItemDate) {
+        // 到了前一个月的数据
+        if (!(moment(netValueItem.net_value_date).isSame(nowItemDate, 'month'))) {
+          list.unshift({
+            yearMonth: moment(nowItemDate).format('YYYY-MM'),
+            rate: numberUtil.countDifferenceRate(nowMonthLastNetValue, netValueItem.net_value)
+          })
+          nowMonthLastNetValue = netValueItem.net_value
+          nowItemDate = netValueItem.net_value_date
+        }
+      } else {
+        //第一个数据
+        nowMonthLastNetValue = netValueItem.net_value
+        nowItemDate = netValueItem.net_value_date
       }
-      // 如果是最后一个
-      if ((i + 1) === netValues.length) {
-        list.push({
-          yearMonth: moment(netValueItem.net_value_date).format('YYYY-MM'),
-          rate: numberUtil.countRate((netValueItem.net_value - lastMonthNetValue), 1)
-        })
-      }
+    } else {
+      //是第一个了
+      list.unshift({
+        yearMonth: moment(nowItemDate).format('YYYY-MM'),
+        rate: numberUtil.countDifferenceRate((nowItemDate ? nowMonthLastNetValue : netValueItem.net_value), 1)
+      })
+      nowMonthLastNetValue = netValueItem.net_value
+      nowItemDate = netValueItem.net_value_date
     }
-    lastItem = netValueItem
   }
   return list
 }
