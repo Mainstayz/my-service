@@ -82,6 +82,7 @@ exports.getFunds = async function (ctx) {
   try {
     const data = ctx.validateData({
       keyword: { required: false },
+      sell: { type: 'boolean', required: false },
       current: { type: 'int', required: true },
       pageSize: { type: 'int', required: true }
     }, query)

@@ -115,12 +115,12 @@ exports.getUserNetValueMonthRate = async function (query) {
           nowItemDate = netValueItem.net_value_date
         }
       } else {
-        //第一个数据
+        // 第一个数据
         nowMonthLastNetValue = netValueItem.net_value
         nowItemDate = netValueItem.net_value_date
       }
     } else {
-      //是第一个了
+      // 是第一个了
       list.unshift({
         yearMonth: moment(nowItemDate).format('YYYY-MM'),
         rate: numberUtil.countDifferenceRate((nowItemDate ? nowMonthLastNetValue : netValueItem.net_value), 1)

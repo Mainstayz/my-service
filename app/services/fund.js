@@ -103,8 +103,12 @@ exports.getFundsBaseByPaging = async function (query, paging) {
     queryOption = {
       $or: [
         { code: keyExp },
-        { name: keyExp }]
+        { name: keyExp }
+      ]
     }
+  }
+  if (query.sell !== undefined) {
+    queryOption.sell = query.sell
   }
   const data = await Promise.all([FundProxy.findBase(queryOption, opt), FundProxy.count(queryOption)])
   return { list: data[0], count: data[1] }
