@@ -295,6 +295,7 @@ exports.getUserFundsNormal = async function (ctx) {
         theme: fund.theme,
         shares: userFund.shares,
         cost: userFund.cost,
+        strategy: userFund.strategy,
         standard: userFund.standard,
         position_record: JSON.stringify(newPosition_record),
         buy_date: buyDate,
