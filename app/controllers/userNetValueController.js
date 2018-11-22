@@ -81,6 +81,24 @@ exports.updateUserNetValue = async function (ctx) {
 }
 
 /**
+ * 获取用户最新净值记录
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getUserNetValue = async function (ctx) {
+  try {
+    const tokenRaw = ctx.tokenRaw
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
+    const userNetValue = await ctx.services.userNetValue.getUserNetValue({ user: userRaw._id })
+    ctx.body = ctx.resuccess({
+      record: userNetValue ? userNetValue[0] : {}
+    })
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}
+
+/**
  * 分页获取用户净值
  * @param ctx
  * @returns {Promise.<void>}
@@ -116,7 +134,7 @@ exports.getUserNetValuesAll = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
-    const userNetValues = await ctx.services.userNetValue.getUserNetValue({ user: userRaw._id })
+    const userNetValues = await ctx.services.userNetValue.getUserNetValueAll({ user: userRaw._id })
     ctx.body = ctx.resuccess({
       list: userNetValues
     })

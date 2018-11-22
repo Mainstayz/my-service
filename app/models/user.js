@@ -18,8 +18,14 @@ const schema = new Schema({
   introduce: String,
   token: String,
   // 基金部分
-  fundShares: Number,
-  fundAssetCost: Number,
+  fundShares: {
+    type: Number,
+    default: 0
+  },
+  fundAssetCost: {
+    type: Number,
+    default: 0
+  },
   create_at: {
     type: Date,
     default: Date.now

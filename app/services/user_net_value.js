@@ -45,6 +45,21 @@ exports.updateUserNetValue = async function (userId, dateString, data) {
 }
 
 /**
+ * 获取用户最新净值
+ * @param query
+ * @returns {Promise.<void>}
+ */
+exports.getUserNetValue = async function (query) {
+  // 新创建的在后面
+  const opt = {
+    skip: 0,
+    limit: 1,
+    sort: 'net_value_date'
+  }
+  return UserNetValue.find(query, opt)
+}
+
+/**
  * 分页获取用户净值记录
  * @param query
  * @param paging
@@ -62,11 +77,11 @@ exports.getUserNetValueByPaging = async function (query, paging) {
 }
 
 /**
- * 获取所有用户净值记录
+ * 获取用户所有净值记录
  * @param query
  * @returns {Promise.<void>}
  */
-exports.getUserNetValue = async function (query) {
+exports.getUserNetValueAll = async function (query) {
   // 新创建的在后面
   const opt = {
     sort: 'net_value_date'

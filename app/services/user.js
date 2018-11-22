@@ -11,3 +11,7 @@ exports.getUserByName = async function (name) {
   }
   return user
 }
+
+exports.updateUser = async function (query, data) {
+  return UserProxy.update(query, data)
+}

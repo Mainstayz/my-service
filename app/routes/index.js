@@ -47,6 +47,13 @@ router.get('/fund/getRank', controllers.fundController.getRank)
 router.post('/fund/updateFundTheme', controllers.fundController.updateFundTheme)
 router.get('/fund/getFundsByTheme', controllers.fundController.getFundsByTheme)
 router.post('/fund/updateFundThemeByKeyword', controllers.fundController.updateFundThemeByKeyword)
+
+/**
+ * 用户基金资产模块
+ */
+router.get('/fund/getUserFundAssetInfo', controllers.userFundController.getUserFundAssetInfo)
+router.post('/fund/updateUserFundAssetInfo', controllers.userFundController.updateUserFundAssetInfo)
+
 /**
  * 用户基金模块
  */
@@ -64,6 +71,7 @@ router.get('/fund/getUserFundsNormal', controllers.userFundController.getUserFun
 router.post('/fund/addUserNetValue', controllers.userNetValueController.addUserNetValue)
 router.get('/fund/deleteUserNetValue', controllers.userNetValueController.deleteUserNetValue)
 router.post('/fund/updateUserNetValue', controllers.userNetValueController.updateUserNetValue)
+router.get('/fund/getUserNetValue', controllers.userNetValueController.getUserNetValue)
 router.get('/fund/getUserNetValues', controllers.userNetValueController.getUserNetValues)
 router.get('/fund/getUserNetValuesAll', controllers.userNetValueController.getUserNetValuesAll)
 router.get('/fund/getUserNetValueMonthRate', controllers.userNetValueController.getUserNetValueMonthRate)
