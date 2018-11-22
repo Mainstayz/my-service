@@ -19,14 +19,14 @@ exports.addUserFund = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw
     const data = ctx.validateData({
-      code: {required: true},
-      shares: {required: true, type: 'number'},
-      strategy: {required: true},
-      standard: {required: false},
-      cost: {required: true, type: 'number'},
-      buy_date: {required: true},
-      target_net_value: {required: true},
-      stop_net_value: {required: true}
+      code: { required: true },
+      shares: { required: true, type: 'number' },
+      strategy: { required: true },
+      standard: { required: false },
+      cost: { required: true, type: 'number' },
+      buy_date: { required: true },
+      target_net_value: { required: true },
+      stop_net_value: { required: true }
     }, query)
     // 添加基金，如果存在就什么都不做
     let fund = await fundService.addFundByCode(data.code)
@@ -50,7 +50,7 @@ exports.deleteUserFund = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw
     const data = ctx.validateData({
-      code: {type: 'string', required: true}
+      code: { type: 'string', required: true }
     }, query)
     // 得到基金信息
     const fund = await fundService.getFundBaseByCode(data.code)
@@ -75,10 +75,10 @@ exports.addUserFundPosition = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw
     const data = ctx.validateData({
-      code: {required: true},
-      shares: {required: true, type: 'number'},
-      cost: {required: true, type: 'number'},
-      buy_date: {required: true}
+      code: { required: true },
+      shares: { required: true, type: 'number' },
+      cost: { required: true, type: 'number' },
+      buy_date: { required: true }
     }, query)
     let fund = await fundService.getFundBaseByCode(data.code)
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
@@ -102,7 +102,7 @@ exports.initUserFundPosition = async function (ctx) {
       await userFundService.initUserFundPosition()
       ctx.body = ctx.resuccess()
     } else {
-      ctx.body = ctx.refail({message: '不具备此权限'})
+      ctx.body = ctx.refail({ message: '不具备此权限' })
     }
   } catch (err) {
     ctx.body = ctx.refail(err)
@@ -121,8 +121,8 @@ exports.cutUserFundPosition = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw
     const data = ctx.validateData({
-      code: {required: true},
-      shares: {required: true}
+      code: { required: true },
+      shares: { required: true }
     }, query)
     let fund = await fundService.getFundBaseByCode(data.code)
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
@@ -145,15 +145,15 @@ exports.updateUserFund = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw
     const data = ctx.validateData({
-      code: {required: true},
-      shares: {required: false},
-      strategy: {required: false},
-      cost: {required: false},
-      standard: {required: false},
-      buy_date: {required: false},
-      target_net_value: {required: false},
-      stop_net_value: {required: false},
-      position_record: {required: false}
+      code: { required: true },
+      shares: { required: false },
+      strategy: { required: false },
+      cost: { required: false },
+      standard: { required: false },
+      buy_date: { required: false },
+      target_net_value: { required: false },
+      stop_net_value: { required: false },
+      position_record: { required: false }
     }, query)
     // 验证基金
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
@@ -335,7 +335,7 @@ exports.getUserFundAssetInfo = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
     ctx.body = ctx.resuccess({
       fundShares: userRaw.fundShares,
-      fundAssetCost: userRaw.fundAssetCost,
+      fundAssetCost: userRaw.fundAssetCost
     })
     // 找到用户下的基金
   } catch (err) {
@@ -353,10 +353,10 @@ exports.updateUserFundAssetInfo = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw
     const data = ctx.validateData({
-      fundShares: {required: false, type: 'number'},
-      fundAssetCost: {required: false, type: 'number'}
+      fundShares: { required: false, type: 'number' },
+      fundAssetCost: { required: false, type: 'number' }
     }, query)
-    await ctx.services.user.update({name: tokenRaw.name}, data)
+    await ctx.services.user.update({ name: tokenRaw.name }, data)
     ctx.body = ctx.resuccess()
     // 找到用户下的基金
   } catch (err) {
