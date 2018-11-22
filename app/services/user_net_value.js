@@ -122,7 +122,7 @@ exports.getUserLastNetValue = async function (query) {
   let dateNow = moment().format('YYYY-MM-DD')
   if (date === dateNow) {
     if (records[1]) {
-      lastNetValue = records[1].net_value_date
+      lastNetValue = records[1]
     } else {
       return {}
     }
