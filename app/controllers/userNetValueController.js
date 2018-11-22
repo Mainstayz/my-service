@@ -144,6 +144,25 @@ exports.getUserNetValuesAll = async function (ctx) {
 }
 
 /**
+ * 获取上一交易日净值
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getUserLastNetValue = async function (ctx) {
+  try {
+    const tokenRaw = ctx.tokenRaw
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
+    const userNetValue = await ctx.services.userNetValue.getUserLastNetValue({ user: userRaw._id })
+    ctx.body = ctx.resuccess({
+      record: userNetValue
+    })
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}
+
+
+/**
  * 获取用户每月收益率
  * @param ctx
  * @returns {Promise.<void>}

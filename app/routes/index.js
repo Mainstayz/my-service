@@ -72,6 +72,7 @@ router.post('/fund/addUserNetValue', controllers.userNetValueController.addUserN
 router.get('/fund/deleteUserNetValue', controllers.userNetValueController.deleteUserNetValue)
 router.post('/fund/updateUserNetValue', controllers.userNetValueController.updateUserNetValue)
 router.get('/fund/getUserNetValue', controllers.userNetValueController.getUserNetValue)
+router.get('/fund/getUserLastNetValue', controllers.userNetValueController.getUserLastNetValue)
 router.get('/fund/getUserNetValues', controllers.userNetValueController.getUserNetValues)
 router.get('/fund/getUserNetValuesAll', controllers.userNetValueController.getUserNetValuesAll)
 router.get('/fund/getUserNetValueMonthRate', controllers.userNetValueController.getUserNetValueMonthRate)

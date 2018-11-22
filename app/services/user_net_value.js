@@ -102,6 +102,37 @@ exports.getUserNetValueNewSort = async function (query) {
 }
 
 /**
+ * 获取上一交易日的净值
+ * @param query
+ * @returns {Promise<*>}
+ */
+exports.getUserLastNetValue = async function (query) {
+  const opt = {
+    skip: 0,
+    limit: 2,
+    sort: '-net_value_date'
+  }
+  const records = await UserNetValue.find(query, opt)
+  let lastNetValue = {}
+  //如果没有记录
+  if (!records) {
+    return {}
+  }
+  let date = records[0].net_value_date
+  let dateNow = moment().format('YYYY-MM-DD')
+  if (date === dateNow) {
+    if (records[1]) {
+      lastNetValue = records[1].net_value_date
+    } else {
+      return {}
+    }
+  } else {
+    lastNetValue = date
+  }
+  return lastNetValue
+}
+
+/**
  * 获取用户每月收益率
  * @param query
  * @returns {Promise.<Array>}
