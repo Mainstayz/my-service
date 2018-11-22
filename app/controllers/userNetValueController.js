@@ -126,34 +126,6 @@ exports.getUserNetValuesAll = async function (ctx) {
 }
 
 /**
- * 获取用户近期净值变化
- * @param ctx
- * @returns {Promise.<void>}
- */
-exports.getUserNetValuesRecent = async function (ctx) {
-  try {
-    const tokenRaw = ctx.tokenRaw
-    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
-    const userNetValues = await ctx.services.userNetValue.getUserNetValueNewSort({ user: userRaw._id })
-    const lastIndex = userNetValues.length - 1
-    const lastNetValue = userNetValues[lastIndex].net_value
-    const nowNetValue = userNetValues[0].net_value
-    const weekNetValue = userNetValues[5] ? userNetValues[5].net_value : lastNetValue
-    const halfMonthNetValue = userNetValues[10] ? userNetValues[10].net_value : lastNetValue
-    const monthNetValue = userNetValues[21] ? userNetValues[21].net_value : lastNetValue
-    const yearNetValue = userNetValues[260] ? userNetValues[260].net_value : lastNetValue
-    ctx.body = ctx.resuccess({
-      week: numberUtil.countDifferenceRate(nowNetValue, weekNetValue),
-      halfMonth: numberUtil.countDifferenceRate(nowNetValue, halfMonthNetValue),
-      month: numberUtil.countDifferenceRate(nowNetValue, monthNetValue),
-      year: numberUtil.countDifferenceRate(nowNetValue, yearNetValue)
-    })
-  } catch (err) {
-    ctx.body = ctx.refail(err)
-  }
-}
-
-/**
  * 获取用户每月收益率
  * @param ctx
  * @returns {Promise.<void>}
