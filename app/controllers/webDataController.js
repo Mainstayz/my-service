@@ -330,3 +330,30 @@ exports.getLastTradingDay = async function (ctx) {
     ctx.body = ctx.refail(err)
   }
 }
+
+/**
+ * 获取交易日
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getTradingDays = async function (ctx) {
+  const query = ctx.query
+  try {
+    const data = ctx.validateData({
+      days: { type: 'int', required: false }
+    }, query)
+    let code = formatZhongjinCode('sh000016')
+    let list = await getAllDataByZhongjin(code, 260 || data.days)
+    let tradingDay = []
+    for (let i = 0; i < list.length; i++) {
+      tradingDay.push(moment(list[i].date).format('YYYY-MM-DD'))
+    }
+    // 翻转
+    tradingDay.reverse()
+    ctx.body = ctx.resuccess({
+      tradingDay
+    })
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}
