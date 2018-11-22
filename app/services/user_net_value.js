@@ -50,11 +50,10 @@ exports.updateUserNetValue = async function (userId, dateString, data) {
  * @returns {Promise.<void>}
  */
 exports.getUserNetValue = async function (query) {
-  // 新创建的在后面
   const opt = {
     skip: 0,
     limit: 1,
-    sort: 'net_value_date'
+    sort: '-net_value_date'
   }
   return UserNetValue.find(query, opt)
 }
