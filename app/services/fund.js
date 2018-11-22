@@ -209,7 +209,8 @@ exports.verifyOpening = async function () {
       records = [nowDay]
     }
   }
-  records = records.slice(0, 260)
+  // 两年记录
+  records = records.slice(0, 520)
   await DictionariesProxy.update({ key: localConst.OPENING_RECORDS_REDIS_KEY }, {
     value: JSON.stringify(records)
   })

@@ -105,6 +105,11 @@ exports.getSchedules = async function (ctx) {
   }
 }
 
+/**
+ * 获取定时任务的值
+ * @param ctx
+ * @returns {Promise<void>}
+ */
 exports.getScheduleValue = async function (ctx) {
   const query = ctx.query
   const dictionariesService = ctx.services.dictionaries

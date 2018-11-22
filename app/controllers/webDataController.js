@@ -312,7 +312,7 @@ exports.getLastTradingDay = async function (ctx) {
     // 近的在左边
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
-        date: list[i].date,
+        date: list[i].date
       })
     }
     let lastTradingDay = ''
