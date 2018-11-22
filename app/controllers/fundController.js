@@ -293,6 +293,7 @@ exports.getFundsByTheme = async function (ctx) {
         if (userFunds[j].fund.toString() === fund._id.toString()) {
           const buyDate = moment(userFunds[j].buy_date).format('YYYY-MM-DD')
           fund.buy_date = buyDate
+          fund.position_record = userFunds[j].position_record
           fund.has_days = records.indexOf(buyDate)
           fund.has = true
           break
