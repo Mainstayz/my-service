@@ -356,7 +356,7 @@ exports.updateUserFundAssetInfo = async function (ctx) {
       fundShares: { required: false, type: 'number' },
       fundAssetCost: { required: false, type: 'number' }
     }, query)
-    await ctx.services.user.update({ name: tokenRaw.name }, data)
+    await ctx.services.user.updateUser({ name: tokenRaw.name }, data)
     ctx.body = ctx.resuccess()
     // 找到用户下的基金
   } catch (err) {
