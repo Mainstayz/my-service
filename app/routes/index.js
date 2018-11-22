@@ -125,6 +125,7 @@ router.get('/webData/getWebStockdaybarAllGushitong', controllers.webDataControll
 router.get('/webData/getWebStockdaybarTodayZhongjin', controllers.webDataController.getWebStockdaybarTodayZhongjin)
 router.get('/webData/getWebStockdaybarDongfang', controllers.webDataController.getWebStockdaybarDongfang)
 router.get('/webData/getWebStockdaybarTodayDongfang', controllers.webDataController.getWebStockdaybarTodayDongfang)
+router.get('/webData/getLastTradingDay', controllers.webDataController.getLastTradingDay)
 
 /**
  * 测试

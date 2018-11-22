@@ -298,3 +298,35 @@ exports.getWebStockdaybarTodayDongfang = async function (ctx) {
     ctx.body = ctx.refail(err)
   }
 }
+
+/**
+ * 获取上一个交易日
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getLastTradingDay = async function (ctx) {
+  try {
+    let code = formatZhongjinCode('sh000016')
+    let list = await getAllDataByZhongjin(code, 2)
+    let listTemp = []
+    // 近的在左边
+    for (let i = 0; i < list.length; i++) {
+      listTemp.push({
+        date: list[i].date,
+      })
+    }
+    let lastTradingDay = ''
+    let date = listTemp[0].date
+    let dateNow = moment().format('YYYYMMDD')
+    if (date === dateNow) {
+      lastTradingDay = listTemp[1].date
+    } else {
+      lastTradingDay = listTemp[0].date
+    }
+    ctx.body = ctx.resuccess({
+      lastTradingDay: moment(lastTradingDay).format('YYYY-MM-DD')
+    })
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}

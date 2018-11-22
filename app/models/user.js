@@ -17,7 +17,7 @@ const schema = new Schema({
   job: String,
   introduce: String,
   token: String,
-  //基金部分
+  // 基金部分
   fundShares: Number,
   fundAssetCost: Number,
   create_at: {
