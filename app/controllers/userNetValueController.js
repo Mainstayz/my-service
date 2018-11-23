@@ -161,7 +161,6 @@ exports.getUserLastNetValue = async function (ctx) {
   }
 }
 
-
 /**
  * 获取用户每月收益率
  * @param ctx

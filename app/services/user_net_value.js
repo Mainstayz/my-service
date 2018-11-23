@@ -114,7 +114,7 @@ exports.getUserLastNetValue = async function (query) {
   }
   const records = await UserNetValue.find(query, opt)
   let lastNetValue = {}
-  //如果没有记录
+  // 如果没有记录
   if (!records) {
     return {}
   }
