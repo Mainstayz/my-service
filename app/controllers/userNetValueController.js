@@ -89,9 +89,14 @@ exports.getUserNetValue = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
-    const userNetValue = await ctx.services.userNetValue.getUserNetValue({ user: userRaw._id })
+    let userNetValue = await ctx.services.userNetValue.getUserNetValue({ user: userRaw._id })
+    userNetValue = userNetValue ? userNetValue[0] : {}
     ctx.body = ctx.resuccess({
-      record: userNetValue ? userNetValue[0] : {}
+      record: {
+        fundShares: userRaw.fundShares,
+        fundAssetCost: userRaw.fundAssetCost,
+        ...userNetValue
+      }
     })
   } catch (err) {
     ctx.body = ctx.refail(err)
@@ -154,7 +159,11 @@ exports.getUserLastNetValue = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
     const userNetValue = await ctx.services.userNetValue.getUserLastNetValue({ user: userRaw._id })
     ctx.body = ctx.resuccess({
-      record: userNetValue
+      record: {
+        fundShares: userRaw.fundShares,
+        fundAssetCost: userRaw.fundAssetCost,
+        ...userNetValue
+      }
     })
   } catch (err) {
     ctx.body = ctx.refail(err)
