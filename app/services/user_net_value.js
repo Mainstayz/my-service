@@ -127,7 +127,7 @@ exports.getUserLastNetValue = async function (query) {
       return {}
     }
   } else {
-    lastNetValue = date
+    lastNetValue = records[0]
   }
   return lastNetValue
 }
