@@ -76,6 +76,21 @@ exports.getUserNetValueByPaging = async function (query, paging) {
 }
 
 /**
+ * 通过天数获取净值
+ * @param query
+ * @param count
+ * @returns {Promise<*>}
+ */
+exports.getUserNetValueByCount = async function (query, count) {
+  const opt = {
+    skip: 0,
+    limit: count,
+    sort: '-net_value_date'
+  }
+  return UserNetValue.find(query, opt)
+}
+
+/**
  * 获取用户所有净值记录
  * @param query
  * @returns {Promise.<void>}

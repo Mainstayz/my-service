@@ -131,6 +131,28 @@ exports.getUserNetValues = async function (ctx) {
 }
 
 /**
+ * 通过天数获取净值
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getUserNetValuesByCount = async function (ctx) {
+  const query = ctx.query
+  try {
+    const tokenRaw = ctx.tokenRaw
+    const data = ctx.validateData({
+      count: { type: 'int', required: true }
+    }, query)
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
+    const userNetValues = await ctx.services.userNetValue.getUserNetValueByCount({ user: userRaw._id }, data.count)
+    ctx.body = ctx.resuccess({
+      list: userNetValues.list
+    })
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}
+
+/**
  * 获取用户所有净值
  * @param ctx
  * @returns {Promise.<void>}

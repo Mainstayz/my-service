@@ -74,6 +74,7 @@ router.post('/fund/updateUserNetValue', controllers.userNetValueController.updat
 router.get('/fund/getUserNetValue', controllers.userNetValueController.getUserNetValue)
 router.get('/fund/getUserLastNetValue', controllers.userNetValueController.getUserLastNetValue)
 router.get('/fund/getUserNetValues', controllers.userNetValueController.getUserNetValues)
+router.get('/fund/getUserNetValuesByCount', controllers.userNetValueController.getUserNetValuesByCount)
 router.get('/fund/getUserNetValuesAll', controllers.userNetValueController.getUserNetValuesAll)
 router.get('/fund/getUserNetValueMonthRate', controllers.userNetValueController.getUserNetValueMonthRate)
 /**
