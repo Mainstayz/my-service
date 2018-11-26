@@ -246,7 +246,7 @@ exports.getUserFund = async function (ctx) {
       target_net_value: userFund.target_net_value,
       stop_net_value: userFund.stop_net_value,
       // 净值
-      netValue: fund.net_value,
+      netValue: userFund.net_value,
       // 持仓净值
       valuation: valuationInfo.valuation,
       valuationSource: valuationInfo.sourceName
