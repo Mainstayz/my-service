@@ -214,7 +214,6 @@ exports.getUserFunds = async function (ctx) {
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
     // 找到用户下的基金
     const userFunds = await userFundService.getUserFundsByUserIdWithFundBase(userRaw._id)
-    const strategy = await ctx.services.strategy.getMyStrategy(userRaw._id)
     let records = await dictionariesService.getByKey(ctx.localConst.OPENING_RECORDS_REDIS_KEY)
     // 如果有记录
     records = JSON.parse(records.value)
@@ -232,13 +231,6 @@ exports.getUserFunds = async function (ctx) {
       costTotalSum += costSum
       const valuationInfo = fundBaseUtil.getBetterValuation(fund)
       const buyDate = moment(userFund.buy_date).format('YYYY-MM-DD')
-      let strategyInfo = {}
-      for (let j = 0; j < strategy.length; j++) {
-        if (fund.code === strategy[j].code) {
-          strategyInfo = strategy[j]
-          break
-        }
-      }
       let tempPosition_record = JSON.parse(userFund.position_record)
       let newPosition_record = []
       for (let i = 0; i < tempPosition_record.length; i++) {
@@ -248,7 +240,6 @@ exports.getUserFunds = async function (ctx) {
         }
       }
       let result = {
-        ...strategyInfo,
         name: fund.name,
         code: fund.code,
         theme: fund.theme,
