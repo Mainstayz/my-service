@@ -65,6 +65,7 @@ router.post('/fund/cutUserFundPosition', controllers.userFundController.cutUserF
 router.get('/fund/initUserFundPosition', controllers.userFundController.initUserFundPosition)
 router.get('/fund/getUserFunds', controllers.userFundController.getUserFunds)
 router.get('/fund/getUserFundsNormal', controllers.userFundController.getUserFundsNormal)
+router.get('/fund/getUserFundValuationInfo', controllers.userFundController.getUserFundValuationInfo)
 /**
  * 用户净值记录
  */

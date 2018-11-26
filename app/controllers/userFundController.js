@@ -168,6 +168,40 @@ exports.updateUserFund = async function (ctx) {
 }
 
 /**
+ * 用户基金账户估值信息
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getUserFundValuationInfo = async function (ctx) {
+  const userFundService = ctx.services.userFund
+  try {
+    const tokenRaw = ctx.tokenRaw
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
+    // 找到用户下的基金
+    const userFunds = await userFundService.getUserFundsByUserIdWithFundBase(userRaw._id)
+    let totalSum = 0
+    let costTotalSum = 0
+    let valuationTotalSum = 0
+    for (let i = 0; i < userFunds.length; i++) {
+      const userFund = userFunds[i]
+      const fund = userFund.fund
+      // 持仓金额
+      totalSum += fund.net_value * userFund.shares
+      costTotalSum += userFund.cost * userFund.shares
+      const valuationInfo = fundBaseUtil.getBetterValuation(fund)
+      valuationTotalSum += numberUtil.keepTwoDecimals(valuationInfo.valuation * userFund.shares)
+    }
+    ctx.body = ctx.resuccess({
+      costTotalSum: numberUtil.keepTwoDecimals(costTotalSum),
+      totalSum: numberUtil.keepTwoDecimals(totalSum),
+      valuationTotalSum: numberUtil.keepTwoDecimals(valuationTotalSum)
+    })
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}
+
+/**
  * 获取用户基金
  * @param ctx
  * @returns {Promise.<void>}
