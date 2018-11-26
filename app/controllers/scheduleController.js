@@ -118,9 +118,7 @@ exports.getScheduleValue = async function (ctx) {
       key: { type: 'string', required: true }
     }, query)
     const value = await dictionariesService.getByKey(data.key)
-    ctx.body = ctx.resuccess({
-      value
-    })
+    ctx.body = ctx.resuccess(value)
   } catch (err) {
     ctx.body = ctx.refail(err)
   }

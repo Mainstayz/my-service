@@ -8,6 +8,7 @@ exports.countRate = function (numerator, denominator) {
 
 exports.countDifferenceRate = function (numerator, denominator) {
   denominator = denominator || 1
+  numerator = numerator || 1
   return Math.round(10000 * ((numerator - denominator) / denominator)) / 100
 }
 
