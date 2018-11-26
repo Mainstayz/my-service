@@ -202,6 +202,65 @@ exports.getUserFundValuationInfo = async function (ctx) {
 }
 
 /**
+ * 获取单个用户基金信息
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getUserFund = async function (ctx) {
+  const query = ctx.query
+  const dictionariesService = ctx.services.dictionaries
+  const fundService = ctx.services.fund
+  const userFundService = ctx.services.userFund
+  try {
+    const tokenRaw = ctx.tokenRaw
+    const data = ctx.validateData({
+      code: { type: 'string', required: true }
+    }, query)
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
+    let fund = await fundService.getFundBaseByCode(data.code)
+    const userFund = await userFundService.getUserFundWithFundBase(userRaw._id, fund._id)
+    let records = await dictionariesService.getByKey(ctx.localConst.OPENING_RECORDS_REDIS_KEY)
+    // 如果有记录
+    records = JSON.parse(records.value)
+    const valuationInfo = fundBaseUtil.getBetterValuation(userFund)
+    const buyDate = moment(userFund.buy_date).format('YYYY-MM-DD')
+    let tempPosition_record = JSON.parse(userFund.position_record)
+    let newPosition_record = []
+    for (let i = 0; i < tempPosition_record.length; i++) {
+      newPosition_record[i] = {
+        ...tempPosition_record[i],
+        has_days: records.indexOf(tempPosition_record[i].buy_date)
+      }
+    }
+    let result = {
+      name: userFund.name,
+      code: userFund.code,
+      theme: userFund.theme,
+      shares: userFund.shares,
+      strategy: userFund.strategy,
+      cost: userFund.cost,
+      standard: userFund.standard,
+      position_record: JSON.stringify(newPosition_record),
+      buy_date: buyDate,
+      has_days: records.indexOf(buyDate),
+      target_net_value: userFund.target_net_value,
+      stop_net_value: userFund.stop_net_value,
+      // 净值
+      netValue: fund.net_value,
+      // 持仓净值
+      valuation: valuationInfo.valuation,
+      valuationSource: valuationInfo.sourceName
+    }
+    result.valuationSum = numberUtil.keepTwoDecimals(result.valuation * userFund.shares)
+    result.sum = numberUtil.keepTwoDecimals(userFund.net_value * userFund.shares)
+    result.costSum = numberUtil.keepTwoDecimals(userFund.cost * userFund.shares)
+    ctx.body = ctx.resuccess(result)
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}
+
+/**
  * 获取用户基金
  * @param ctx
  * @returns {Promise.<void>}

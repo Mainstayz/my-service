@@ -64,6 +64,7 @@ router.post('/fund/addUserFundPosition', controllers.userFundController.addUserF
 router.post('/fund/cutUserFundPosition', controllers.userFundController.cutUserFundPosition)
 router.get('/fund/initUserFundPosition', controllers.userFundController.initUserFundPosition)
 router.get('/fund/getUserFunds', controllers.userFundController.getUserFunds)
+router.get('/fund/getUserFund', controllers.userFundController.getUserFund)
 router.get('/fund/getUserFundsNormal', controllers.userFundController.getUserFundsNormal)
 router.get('/fund/getUserFundValuationInfo', controllers.userFundController.getUserFundValuationInfo)
 /**

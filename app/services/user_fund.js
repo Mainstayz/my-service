@@ -184,6 +184,16 @@ exports.getUserFund = async function (userId, fundId) {
 }
 
 /**
+ * 获取单个用户基金以及基金信息
+ * @param userId
+ * @param fundId
+ * @returns {Promise<*>}
+ */
+exports.getUserFundWithFundBase = async function (userId, fundId) {
+  return UserFundProxy.findOnWithFundBase({ user: userId, fund: fundId })
+}
+
+/**
  * 检查用户基金是否存在
  * @param query
  * @returns {Promise.<void>}

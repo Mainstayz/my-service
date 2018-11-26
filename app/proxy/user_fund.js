@@ -55,3 +55,7 @@ const baseInfo = models.fields_table.fundBase.join(' ')
 exports.findWithFundBase = function (query) {
   return UserFundModel.find(query).populate('fund', baseInfo)
 }
+
+exports.findOnWithFundBase = function (query) {
+  return UserFundModel.findOne(query).populate('fund', baseInfo)
+}
