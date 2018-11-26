@@ -218,11 +218,11 @@ exports.getUserFund = async function (ctx) {
     }, query)
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
     let fund = await fundService.getFundBaseByCode(data.code)
-    const userFund = await userFundService.getUserFundWithFundBase(userRaw._id, fund._id)
+    const userFund = await userFundService.getUserFund(userRaw._id, fund._id)
     let records = await dictionariesService.getByKey(ctx.localConst.OPENING_RECORDS_REDIS_KEY)
     // 如果有记录
     records = JSON.parse(records.value)
-    const valuationInfo = fundBaseUtil.getBetterValuation(userFund)
+    const valuationInfo = fundBaseUtil.getBetterValuation(fund)
     const buyDate = moment(userFund.buy_date).format('YYYY-MM-DD')
     let tempPosition_record = JSON.parse(userFund.position_record)
     let newPosition_record = []
@@ -233,26 +233,26 @@ exports.getUserFund = async function (ctx) {
       }
     }
     let result = {
-      name: userFund.name,
-      code: userFund.code,
-      theme: userFund.theme,
-      shares: userFund.shares,
-      strategy: userFund.strategy,
+      name: fund.name,
+      code: fund.code,
+      theme: fund.theme,
+      shares: fund.shares,
+      strategy: fund.strategy,
       cost: userFund.cost,
-      standard: userFund.standard,
+      standard: fund.standard,
       position_record: JSON.stringify(newPosition_record),
       buy_date: buyDate,
       has_days: records.indexOf(buyDate),
       target_net_value: userFund.target_net_value,
       stop_net_value: userFund.stop_net_value,
       // 净值
-      netValue: userFund.net_value,
+      netValue: fund.net_value,
       // 持仓净值
       valuation: valuationInfo.valuation,
       valuationSource: valuationInfo.sourceName
     }
     result.valuationSum = numberUtil.keepTwoDecimals(result.valuation * userFund.shares)
-    result.sum = numberUtil.keepTwoDecimals(userFund.net_value * userFund.shares)
+    result.sum = numberUtil.keepTwoDecimals(fund.net_value * userFund.shares)
     result.costSum = numberUtil.keepTwoDecimals(userFund.cost * userFund.shares)
     ctx.body = ctx.resuccess(result)
   } catch (err) {
