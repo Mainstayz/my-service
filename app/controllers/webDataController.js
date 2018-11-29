@@ -372,7 +372,7 @@ exports.getWebStockdaybarRate = async function (ctx) {
     }, query)
     let code = formatZhongjinCode(data.code)
     let diff = moment().diff(data.start, 'days')
-    let day = parseInt((5*diff/7) + 10)
+    let day = parseInt((5 * diff / 7) + 10)
     console.log(day)
     let list = await axios({
       method: 'get',
