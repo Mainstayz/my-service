@@ -357,3 +357,59 @@ exports.getTradingDays = async function (ctx) {
     ctx.body = ctx.refail(err)
   }
 }
+
+/**
+ * 获取某天开始至今的幅度，包括开始那天
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getWebStockdaybarRate = async function (ctx) {
+  const query = ctx.query
+  try {
+    const data = ctx.validateData({
+      code: { type: 'string', required: true },
+      start: { type: 'string', required: true }
+    }, query)
+    let code = formatZhongjinCode(data.code)
+    let diff = moment().diff(data.start, 'days')
+    let day = parseInt((5*diff/7) + 10)
+    console.log(day)
+    let list = await axios({
+      method: 'get',
+      url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${day}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`
+    }).then((data) => {
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'))
+      return JSON.parse(str).List
+    })
+    let startClose = 0
+    let itemDate = ''
+    for (let i = 0; i < list.length; i++) {
+      let item = list[i]
+      let date = moment(new Date(item[0])).format('YYYYMMDD')
+      // 前面一天的数据
+      if (moment(data.start).isAfter(date) || moment(data.start).isSame(date, 'day')) {
+        break
+      } else {
+        startClose = item[4]
+        itemDate = date
+      }
+    }
+    let nowItemRaw = await axios({
+      method: 'get',
+      url: `http://v2.quotes.api.cnfol.com/stock.html?action=getStockPrice&sid=${code}&fieldseq=11111111111111101100000000010001&callback=StockPrice.GetData&_t=143010`
+    }).then((data) => {
+      let str = data.data.slice(data.data.indexOf('(') + 1, data.data.indexOf(')'))
+      return JSON.parse(str).List[0]
+    })
+    let nowItem = formatZhongjinData(nowItemRaw)
+    ctx.body = ctx.resuccess({
+      startClose,
+      startDate: data.start,
+      nowClose: nowItem.close,
+      rate: numberUtil.countDifferenceRate(nowItem.close, startClose),
+      itemDate
+    })
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}

@@ -73,6 +73,7 @@ router.get('/fund/getUserFundValuationInfo', controllers.userFundController.getU
 router.post('/fund/addUserNetValue', controllers.userNetValueController.addUserNetValue)
 router.get('/fund/deleteUserNetValue', controllers.userNetValueController.deleteUserNetValue)
 router.post('/fund/updateUserNetValue', controllers.userNetValueController.updateUserNetValue)
+router.get('/fund/getFirstUserNetValue', controllers.userNetValueController.getFirstUserNetValue)
 router.get('/fund/getUserNetValue', controllers.userNetValueController.getUserNetValue)
 router.get('/fund/getUserLastNetValue', controllers.userNetValueController.getUserLastNetValue)
 router.get('/fund/getUserNetValues', controllers.userNetValueController.getUserNetValues)
@@ -138,6 +139,7 @@ router.get('/webData/getWebStockdaybarDongfang', controllers.webDataController.g
 router.get('/webData/getWebStockdaybarTodayDongfang', controllers.webDataController.getWebStockdaybarTodayDongfang)
 router.get('/webData/getLastTradingDay', controllers.webDataController.getLastTradingDay)
 router.get('/webData/getTradingDays', controllers.webDataController.getTradingDays)
+router.get('/webData/getWebStockdaybarRate', controllers.webDataController.getWebStockdaybarRate)
 /**
  * 测试
  */

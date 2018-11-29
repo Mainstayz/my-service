@@ -45,6 +45,20 @@ exports.updateUserNetValue = async function (userId, dateString, data) {
 }
 
 /**
+ * 获取用户第一个净值
+ * @param query
+ * @returns {Promise<*>}
+ */
+exports.getFirstUserNetValue = async function (query) {
+  const opt = {
+    skip: 0,
+    limit: 1,
+    sort: 'net_value_date'
+  }
+  return UserNetValue.find(query, opt)
+}
+
+/**
  * 获取用户最新净值
  * @param query
  * @returns {Promise.<void>}
