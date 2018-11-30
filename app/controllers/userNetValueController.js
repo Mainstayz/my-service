@@ -89,7 +89,7 @@ exports.getFirstUserNetValue = async function (ctx) {
   try {
     const tokenRaw = ctx.tokenRaw
     const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
-    let userNetValue = await ctx.services.userNetValue.getFirsUserNetValue({ user: userRaw._id })
+    let userNetValue = await ctx.services.userNetValue.getFirstUserNetValue({ user: userRaw._id })
     userNetValue = userNetValue ? userNetValue[0] : {}
     ctx.body = ctx.resuccess({
       record: userNetValue,
@@ -227,6 +227,32 @@ exports.getUserNetValueMonthRate = async function (ctx) {
     const userNetValues = await ctx.services.userNetValue.getUserNetValueMonthRate({ user: userRaw._id })
     ctx.body = ctx.resuccess({
       list: userNetValues
+    })
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}
+
+/**
+ * 获取用户初始和最新净值
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getUserIncomeInfo = async function (ctx) {
+  try {
+    const tokenRaw = ctx.tokenRaw
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
+    let userNetValue = await ctx.services.userNetValue.getUserNetValue({ user: userRaw._id })
+    let firstUserNetValue = await ctx.services.userNetValue.getFirstUserNetValue({ user: userRaw._id })
+    userNetValue = userNetValue ? userNetValue[0] : {}
+    firstUserNetValue = firstUserNetValue ? firstUserNetValue[0] : {}
+    ctx.body = ctx.resuccess({
+      userNetValue,
+      firstUserNetValue,
+      fundAssetInfo: {
+        fundShares: userRaw.fundShares,
+        fundAssetCost: userRaw.fundAssetCost
+      }
     })
   } catch (err) {
     ctx.body = ctx.refail(err)

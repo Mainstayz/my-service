@@ -372,8 +372,7 @@ exports.getWebStockdaybarRate = async function (ctx) {
     }, query)
     let code = formatZhongjinCode(data.code)
     let diff = moment().diff(data.start, 'days')
-    let day = parseInt((5 * diff / 7) + 10)
-    console.log(day)
+    let day = parseInt((5 * diff / 7) + 5)
     let list = await axios({
       method: 'get',
       url: `http://v2.quotes.api.cnfol.com/chart.html?action=getStockKline&stockid=${code}&type=1&limit=${day}&callback=jQuery1120020910699759913287_1532932371008&_=1532932371009`
@@ -387,7 +386,7 @@ exports.getWebStockdaybarRate = async function (ctx) {
       let item = list[i]
       let date = moment(new Date(item[0])).format('YYYYMMDD')
       // 前面一天的数据
-      if (moment(data.start).isAfter(date) || moment(data.start).isSame(date, 'day')) {
+      if (moment(data.start).isBefore(date) || moment(data.start).isSame(date, 'day')) {
         break
       } else {
         startClose = item[4]
@@ -404,10 +403,9 @@ exports.getWebStockdaybarRate = async function (ctx) {
     let nowItem = formatZhongjinData(nowItemRaw)
     ctx.body = ctx.resuccess({
       startClose,
-      startDate: data.start,
+      startDate: itemDate,
       nowClose: nowItem.close,
-      rate: numberUtil.countDifferenceRate(nowItem.close, startClose),
-      itemDate
+      rate: numberUtil.countDifferenceRate(nowItem.close, startClose)
     })
   } catch (err) {
     ctx.body = ctx.refail(err)
