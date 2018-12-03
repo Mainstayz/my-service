@@ -14,7 +14,8 @@ function formatDongfangData (rawData) {
     low: rawData.l,
     netChangeRatio: numberUtil.countDifferenceRate(rawData.c, rawData.yc),
     open: rawData.o,
-    preClose: rawData.yc
+    preClose: rawData.yc,
+    tradeTime: rawData.time
   }
 }
 
@@ -35,7 +36,8 @@ function formatZhongjinData (rawData) {
     low: rawData.LowPrice,
     netChangeRatio: rawData.DiffPriceRate,
     open: rawData.OpenPrice,
-    preClose: rawData.RefPrice
+    preClose: rawData.RefPrice,
+    tradeTime: rawData.TradeTime
   }
 }
 
