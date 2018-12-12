@@ -7,5 +7,6 @@ exports.UserFund = require('./user_fund')
 exports.FocusFund = require('./focus_fund')
 exports.OptionalFund = require('./optional_fund')
 exports.UserNetValue = require('./user_net_value')
+exports.StockPrice = require('./stock_price')
 
 exports.Dictionaries = require('./dictionaries')

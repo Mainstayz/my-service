@@ -23,6 +23,7 @@ exports.UserFund = require('./user_fund')
 exports.FocusFund = require('./focus_fund')
 exports.OptionalFund = require('./optional_fund')
 exports.Dictionaries = require('./dictionaries')
+exports.StockPrice = require('./stock_price')
 
 // 字段
 exports.fields_table = require('./fields_table')
