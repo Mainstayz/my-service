@@ -21,7 +21,7 @@ exports.addStockPrice = async function (list) {
         netChangeRatio: item.netChangeRatio,
         open: item.open,
         preClose: item.preClose,
-        trade_date: item.trade_date,
+        trade_date: item.trade_date
       })
     }
   }
