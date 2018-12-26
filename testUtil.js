@@ -3,27 +3,27 @@
  */
 const axios = require('axios')
 const moment = require('moment')
-console.log(moment('2018-02-02 00:00:00.000Z').isSame('2018-02-05 03:30:00.000Z', 'day'));
+console.log(moment('2018-02-02 00:00:00.000Z').isSame('2018-02-05 03:30:00.000Z', 'day'))
 axios({
   method: 'get',
-// 更新估值
-// url: 'http://127.0.0.1:3002/myService/schedule/updateRate'
-// url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/updateValuation'
-// 更新净值
-// url: 'http://39.108.114.91:3002/${config.project.projectName}/analyze/updateBaseInfo'
-// url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/updateBaseInfo'
-// 更好估值
-// url: 'http://39.108.114.91:3002/${config.project.projectName}/analyze/betterValuation'
-// url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/betterValuation'
-// 添加净值
-// url: 'http://39.108.114.91:3002/${config.project.projectName}/analyze/addRecentNetValue'
-// url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/addRecentNetValue'
-// 策略
-// url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/getStrategy'
-// 强制更新净值
-// url: 'http://127.0.0.1:3002/myService/schedule/updateRecentNetValue'
-// 判断开盘
- url: `http://47.98.140.76:3002/myService/schedule/verifyOpening`,
+  // 更新估值
+  // url: 'http://127.0.0.1:3002/myService/schedule/updateRate'
+  // url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/updateValuation'
+  // 更新净值
+  // url: 'http://39.108.114.91:3002/${config.project.projectName}/analyze/updateBaseInfo'
+  // url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/updateBaseInfo'
+  // 更好估值
+  // url: 'http://39.108.114.91:3002/${config.project.projectName}/analyze/betterValuation'
+  // url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/betterValuation'
+  // 添加净值
+  // url: 'http://39.108.114.91:3002/${config.project.projectName}/analyze/addRecentNetValue'
+  // url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/addRecentNetValue'
+  // 策略
+  // url: 'http://127.0.0.1:3002/${config.project.projectName}/analyze/getStrategy'
+  // 强制更新净值
+  // url: 'http://127.0.0.1:3002/myService/schedule/updateRecentNetValue'
+  // 判断开盘
+  url: `http://47.98.140.76:3002/myService/schedule/verifyOpening`
 // 回归
 // url: 'http://127.0.0.1:3002/myServiceV2/schedule/verifyOpening',
 // 邮件
