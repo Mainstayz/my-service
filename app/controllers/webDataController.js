@@ -86,6 +86,31 @@ function getAllDataByZhongjin (code, count) {
   })
 }
 
+function getAllDataByDongfang (code, count) {
+  return axios({
+    method: 'get',
+    url: `http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&token=4f1862fc3b5e77c150a2b985b12db0fd&cb=jQuery183004661289991642881_1545875200627&id=${code}&type=k&authorityType=&_=1545875218263`
+  }).then((data) => {
+    let str = data.data.slice(data.data.indexOf('(') + 1, data.data.lastIndexOf(')'))
+    let list = JSON.parse(str).data
+    let listTemp = []
+    for (let i = list.length - 1; i >= count; i--) {
+      let item = list[i]
+      let temp = item.split(',')
+      listTemp.push({
+        date: moment(temp[0]).format('YYYYMMDD'),
+        close: parseFloat(temp[2]),
+        high: parseFloat(temp[3]),
+        low: parseFloat(temp[4]),
+        netChangeRatio: numberUtil.countDifferenceRate(parseFloat(temp[2]), parseFloat(i === 0 ? temp[1] : list[i - 1].split(',')[2])),
+        open: parseFloat(temp[1]),
+        preClose: parseFloat(i === 0 ? temp[1] : list[i - 1].split(',')[2])
+      })
+    }
+    return listTemp
+  })
+}
+
 /**
  * 查询股票的走势信息
  * @param ctx
@@ -237,9 +262,9 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
       code: { type: 'string', required: true },
       days: { type: 'int', required: false }
     }, query)
-    let code = formatZhongjinCode(data.code)
+    // let code = formatZhongjinCode(data.code)
     let codeId = formatDongfangCode(data.code)
-    let list = await getAllDataByZhongjin(code, data.days || 200)
+    let list = await getAllDataByDongfang(codeId, data.days || 200)
     let listTemp = []
     for (let i = 0; i < list.length; i++) {
       listTemp.push({
