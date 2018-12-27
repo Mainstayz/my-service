@@ -94,7 +94,7 @@ function getAllDataByDongfang (code, count) {
     let str = data.data.slice(data.data.indexOf('(') + 1, data.data.lastIndexOf(')'))
     let list = JSON.parse(str).data
     let listTemp = []
-    for (let i = list.length - 1; i >= count; i--) {
+    for (let i = list.length - 1; i >= list.length - count; i--) {
       let item = list[i]
       let temp = item.split(',')
       listTemp.push({
