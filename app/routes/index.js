@@ -139,6 +139,8 @@ router.get('/webData/getWebStockdaybarAllGushitong', controllers.webDataControll
 router.get('/webData/getWebStockdaybarTodayZhongjin', controllers.webDataController.getWebStockdaybarTodayZhongjin)
 router.get('/webData/getWebStockdaybarDongfang', controllers.webDataController.getWebStockdaybarDongfang)
 router.get('/webData/getWebStockdaybarTodayDongfang', controllers.webDataController.getWebStockdaybarTodayDongfang)
+router.get('/webData/getWebStockdaybarTenxun', controllers.webDataController.getWebStockdaybarTenxun)
+router.get('/webData/getWebStockdaybarTodayTenxun', controllers.webDataController.getWebStockdaybarTodayTenxun)
 router.get('/webData/getLastTradingDay', controllers.webDataController.getLastTradingDay)
 router.get('/webData/getTradingDays', controllers.webDataController.getTradingDays)
 router.get('/webData/getWebStockdaybarRate', controllers.webDataController.getWebStockdaybarRate)
