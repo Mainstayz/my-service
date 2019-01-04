@@ -234,6 +234,22 @@ exports.getUserNetValueMonthRate = async function (ctx) {
 }
 
 /**
+ * 获取当月月收益
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+exports.getUserNetValueNowMonthRate = async function (ctx) {
+  try {
+    const tokenRaw = ctx.tokenRaw
+    const userRaw = await ctx.services.user.getUserByName(tokenRaw.name)
+    const nowMonthRate = await ctx.services.userNetValue.getUserNetValueNowMonthRate({ user: userRaw._id })
+    ctx.body = ctx.resuccess(nowMonthRate)
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}
+
+/**
  * 获取用户初始和最新净值
  * @param ctx
  * @returns {Promise<void>}

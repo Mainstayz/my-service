@@ -205,3 +205,51 @@ exports.getUserNetValueMonthRate = async function (query) {
   }
   return list
 }
+
+/**
+ * 获取当月月收益
+ * @param query
+ * @returns {Promise<*>}
+ */
+exports.getUserNetValueNowMonthRate = async function (query) {
+  // 新创建的在后面
+  const opt = {
+    sort: 'net_value_date'
+  }
+  query['net_value_date'] = {
+    $gte: moment().subtract(1, 'month').format('YYYY-MM')
+  }
+  const netValues = await UserNetValue.find(query, opt)
+  let list = []
+  let nowItemDate = ''
+  let nowMonthLastNetValue = 0
+  for (let i = netValues.length - 1; i >= 0; i--) {
+    const netValueItem = netValues[i]
+    if (i !== 0) {
+      if (nowItemDate) {
+        // 到了前一个月的数据
+        if (!(moment(netValueItem.net_value_date).isSame(nowItemDate, 'month'))) {
+          list.unshift({
+            yearMonth: moment(nowItemDate).format('YYYY-MM'),
+            rate: numberUtil.countDifferenceRate(nowMonthLastNetValue, netValueItem.net_value)
+          })
+          nowMonthLastNetValue = netValueItem.net_value
+          nowItemDate = netValueItem.net_value_date
+        }
+      } else {
+        // 第一个数据
+        nowMonthLastNetValue = netValueItem.net_value
+        nowItemDate = netValueItem.net_value_date
+      }
+    } else {
+      // 是第一个了
+      list.unshift({
+        yearMonth: moment(nowItemDate).format('YYYY-MM'),
+        rate: numberUtil.countDifferenceRate((nowItemDate ? nowMonthLastNetValue : netValueItem.net_value), 1)
+      })
+      nowMonthLastNetValue = netValueItem.net_value
+      nowItemDate = netValueItem.net_value_date
+    }
+  }
+  return list[1]
+}

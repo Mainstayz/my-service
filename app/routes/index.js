@@ -80,7 +80,9 @@ router.get('/fund/getUserNetValues', controllers.userNetValueController.getUserN
 router.get('/fund/getUserNetValuesByCount', controllers.userNetValueController.getUserNetValuesByCount)
 router.get('/fund/getUserNetValuesAll', controllers.userNetValueController.getUserNetValuesAll)
 router.get('/fund/getUserNetValueMonthRate', controllers.userNetValueController.getUserNetValueMonthRate)
+router.get('/fund/getUserNetValueNowMonthRate', controllers.userNetValueController.getUserNetValueNowMonthRate)
 router.get('/fund/getUserIncomeInfo', controllers.userNetValueController.getUserIncomeInfo)
+
 /**
  * 关注基金模块
  */
