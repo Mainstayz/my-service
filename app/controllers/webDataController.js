@@ -155,8 +155,12 @@ exports.getWebStockdaybarTodayTenxun = async function (ctx) {
  * @returns {Promise<void>}
  */
 exports.getLastTradingDay = async function (ctx) {
+  const query = ctx.query
   try {
-    const resData = await axios.get(`${address}/stockData/getLastTradingDay`).then((res) => {
+    const data = ctx.validateData({
+      way: { type: 'string', required: false }
+    }, query)
+    const resData = await axios.get(`${address}/stockData/getLastTradingDay?way=${data.way}`).then((res) => {
       return res.data
     })
     ctx.body = ctx.resuccess(resData)
@@ -174,9 +178,10 @@ exports.getTradingDays = async function (ctx) {
   const query = ctx.query
   try {
     const data = ctx.validateData({
-      days: { type: 'int', required: false }
+      days: { type: 'int', required: false },
+      way: { type: 'string', required: false }
     }, query)
-    const resData = await axios.get(`${address}/stockData/getTradingDays?days=${data.days}`).then((res) => {
+    const resData = await axios.get(`${address}/stockData/getTradingDays?days=${data.days}&way=${data.way}`).then((res) => {
       return res.data
     })
     ctx.body = ctx.resuccess(resData)
@@ -195,9 +200,10 @@ exports.getWebStockdaybarRate = async function (ctx) {
   try {
     const data = ctx.validateData({
       code: { type: 'string', required: true },
-      start: { type: 'string', required: true }
+      start: { type: 'string', required: true },
+      way: { type: 'string', required: false }
     }, query)
-    const resData = await axios.get(`${address}/stockData/getStockRate?code=${data.code}&start=${data.start}`).then((res) => {
+    const resData = await axios.get(`${address}/stockData/getStockRate?code=${data.code}&start=${data.start}&way=${data.way}`).then((res) => {
       return res.data
     })
     ctx.body = ctx.resuccess(resData)
