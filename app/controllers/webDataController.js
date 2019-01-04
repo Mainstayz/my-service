@@ -17,7 +17,7 @@ exports.getWebStockdaybarAllZhongjin = async function (ctx) {
       code: { type: 'string', required: true },
       days: { type: 'int', required: false }
     }, query)
-    const resData = await axios.get(`${address}/stockData/getStockAllZhongjin?code=${data.code}&days=${data.days}`).then((res) => {
+    const resData = await axios.get(`${address}/stockData/getStockAllZhongjin?code=${data.code}&days=${data.days || 200}`).then((res) => {
       return res.data
     })
     ctx.body = ctx.resuccess(resData)
@@ -38,7 +38,7 @@ exports.getWebStockdaybarAllGushitong = async function (ctx) {
       code: { type: 'string', required: true },
       days: { type: 'int', required: false }
     }, query)
-    const resData = await axios.get(`${address}/stockData/getStockAllGushitong?code=${data.code}&days=${data.days}`).then((res) => {
+    const resData = await axios.get(`${address}/stockData/getStockAllGushitong?code=${data.code}&days=${data.days || 200}`).then((res) => {
       return res.data
     })
     ctx.body = ctx.resuccess(resData)
@@ -79,7 +79,7 @@ exports.getWebStockdaybarDongfang = async function (ctx) {
       code: { type: 'string', required: true },
       days: { type: 'int', required: false }
     }, query)
-    const resData = await axios.get(`${address}/stockData/getStockAllDongfang?code=${data.code}&days=${data.days}`).then((res) => {
+    const resData = await axios.get(`${address}/stockData/getStockAllDongfang?code=${data.code}&days=${data.days || 200}`).then((res) => {
       return res.data
     })
     ctx.body = ctx.resuccess(resData)
@@ -120,7 +120,7 @@ exports.getWebStockdaybarTenxun = async function (ctx) {
       code: { type: 'string', required: true },
       days: { type: 'int', required: false }
     }, query)
-    const resData = await axios.get(`${address}/stockData/getStockAllTenxun?code=${data.code}&days=${data.days}`).then((res) => {
+    const resData = await axios.get(`${address}/stockData/getStockAllTenxun?code=${data.code}&days=${data.days || 200}`).then((res) => {
       return res.data
     })
     ctx.body = ctx.resuccess(resData)
@@ -181,7 +181,7 @@ exports.getTradingDays = async function (ctx) {
       days: { type: 'int', required: false },
       way: { type: 'string', required: false }
     }, query)
-    const resData = await axios.get(`${address}/stockData/getTradingDays?days=${data.days}&way=${data.way || ''}`).then((res) => {
+    const resData = await axios.get(`${address}/stockData/getTradingDays?days=${data.days || 200}&way=${data.way || ''}`).then((res) => {
       return res.data
     })
     ctx.body = ctx.resuccess(resData)
