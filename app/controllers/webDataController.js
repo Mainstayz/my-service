@@ -4,7 +4,7 @@
 const axios = require('axios')
 
 const address = 'http://127.0.0.1:3016'
-// const address = 'http://172.26.100.24:3006'
+// const address = 'http://47.92.210.171:3006'
 
 /**
  * 全部情况--中金在线
