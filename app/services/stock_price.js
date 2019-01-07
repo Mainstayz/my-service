@@ -4,7 +4,7 @@ const moment = require('moment')
 
 const StockPriceProxy = Proxy.StockPrice
 
-const address = 'http://47.98.140.76:3016'
+const address = 'http://127.0.0.1:3016'
 /**
  * 添加数据，大量数据添加
  */

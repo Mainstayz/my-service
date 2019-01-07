@@ -7,9 +7,9 @@ const util = require('../util')
 
 const numberUtil = util.numberUtil
 
-// const address = 'http://127.0.0.1:3016'
+const address = 'http://127.0.0.1:3016'
 // const address = 'http://47.92.210.171:3006'
-const address = 'http://47.98.140.76:3016'
+// const address = 'http://47.98.140.76:3016'
 
 /**
  * 全部情况--中金在线
