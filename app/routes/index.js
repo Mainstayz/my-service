@@ -144,6 +144,12 @@ router.get('/webData/getWebStockdaybarTodayTenxun', controllers.webDataControlle
 router.get('/webData/getLastTradingDay', controllers.webDataController.getLastTradingDay)
 router.get('/webData/getTradingDays', controllers.webDataController.getTradingDays)
 router.get('/webData/getWebStockdaybarRate', controllers.webDataController.getWebStockdaybarRate)
+// 本地股票数据管理
+router.get('/webData/initStockPrice', controllers.stockPriceController.initStockPrice)
+router.get('/webData/addStockPrice', controllers.stockPriceController.addStockPrice)
+router.get('/webData/getStockPrice', controllers.stockPriceController.getStockPrice)
+router.get('/webData/getWebStockdaybarRateByLocal', controllers.webDataController.getWebStockdaybarRateByLocal)
+
 /**
  * 测试
  */

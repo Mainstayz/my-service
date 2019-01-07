@@ -2,9 +2,14 @@
  * Created by xiaobxia on 2018/4/7.
  */
 const axios = require('axios')
+const moment = require('moment')
+const util = require('../util')
 
-const address = 'http://127.0.0.1:3016'
+const numberUtil = util.numberUtil
+
+// const address = 'http://127.0.0.1:3016'
 // const address = 'http://47.92.210.171:3006'
+const address = 'http://47.98.140.76:3016'
 
 /**
  * 全部情况--中金在线
@@ -208,6 +213,32 @@ exports.getWebStockdaybarRate = async function (ctx) {
       return res.data
     })
     ctx.body = ctx.resuccess(resData)
+  } catch (err) {
+    ctx.body = ctx.refail(err)
+  }
+}
+
+exports.getWebStockdaybarRateByLocal = async function (ctx) {
+  const query = ctx.query
+  const stockPriceService = ctx.services.stockPrice
+  try {
+    const data = ctx.validateData({
+      code: { type: 'string', required: true },
+      start: { type: 'string', required: true }
+    }, query)
+    const res = await stockPriceService.getStockPrice({
+      code: data.code,
+      trade_date: moment(data.start).format('YYYYMMDD')
+    })
+    const resData = await axios.get(`${address}/stockData/getStockTodayDongfang?code=${data.code}`).then((res) => {
+      return res.data
+    })
+    ctx.body = ctx.resuccess({
+      startClose: res.close,
+      startDate: res.trade_date,
+      nowClose: parseFloat(resData.close),
+      rate: numberUtil.countDifferenceRate(parseFloat(resData.close), res.close)
+    })
   } catch (err) {
     ctx.body = ctx.refail(err)
   }

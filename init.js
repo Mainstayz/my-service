@@ -89,3 +89,11 @@ proxys.Dictionaries.newAndSave({
 }).then((doc) => {
   console.log(doc)
 })
+proxys.Dictionaries.newAndSave({
+  'key': 'addStockPrice',
+  'describe': '定时添加股票信息',
+  'type': 'schedule',
+  'value': 'close'
+}).then((doc) => {
+  console.log(doc)
+})

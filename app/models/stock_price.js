@@ -4,14 +4,15 @@ const Schema = mongoose.Schema
 
 const schema = new Schema({
   code: String,
+  // 交易日期
+  trade_date: String,
+  // 具体数据
   close: Number,
   high: Number,
   low: Number,
   netChangeRatio: Number,
   open: Number,
   preClose: Number,
-  // 交易日期
-  trade_date: String,
   create_at: {
     type: Date,
     default: Date.now

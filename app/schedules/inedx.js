@@ -13,4 +13,5 @@ if (!isDev) {
   // exports.deleteUnSellFund = require('./deleteUnSellFund');
   exports.updateRate = require('./updateRate')
   exports.closeUpdateRate = require('./closeUpdateRate')
+  exports.addStockPrice = require('./addStockPrice')
 }

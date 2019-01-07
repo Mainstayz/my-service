@@ -23,12 +23,19 @@ axios({
   // 强制更新净值
   // url: 'http://127.0.0.1:3002/myService/schedule/updateRecentNetValue'
   // 判断开盘
-  url: `http://47.98.140.76:3002/myService/schedule/addRecentNetValue`
-// 回归
-// url: 'http://127.0.0.1:3002/myServiceV2/schedule/verifyOpening',
-// 邮件
-// url: `http://47.98.140.76:3002/myService/test/testEmail`
-// url: `http://47.98.140.76:3002/myService/fund/initUserFundPosition`
+  // url: `http://47.98.140.76:3002/myService/schedule/addRecentNetValue`
+  // 回归
+  // url: 'http://127.0.0.1:3002/myServiceV2/schedule/verifyOpening',
+  // 邮件
+  // url: `http://47.98.140.76:3002/myService/test/testEmail`
+  // url: `http://47.98.140.76:3002/myService/fund/initUserFundPosition`
+  // 初始化股股票数据
+  // url: `http://127.0.0.1:3002/myService/webData/initStockPrice?code=sz399432&count=400`
+  // 添加股票数据
+  // url: `http://127.0.0.1:3002/myService/webData/addStockPrice?code=sz399432`
+  // 获取股票某天的数据
+  // url: `http://127.0.0.1:3002/myService/webData/getStockPrice?code=sz399432&date=20190104`
+  url: 'http://127.0.0.1:3002/myService/webData/getWebStockdaybarRateByLocal?code=sz399300&start=2018-03-09&timestamp=1546849226355'
 }).then((data) => {
   if (data.data.success) {
     console.log(data.data.data)
