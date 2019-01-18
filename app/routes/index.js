@@ -154,5 +154,6 @@ router.get('/webData/getWebStockdaybarRateByLocal', controllers.webDataControlle
  * 测试
  */
 router.get('/test/testEmail', controllers.testController.testEmail)
+router.get('/test/getFundBaseAll', controllers.testController.getFundBaseAll)
 
 module.exports = router

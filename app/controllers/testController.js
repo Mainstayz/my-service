@@ -15,3 +15,9 @@ exports.testEmail = async function (ctx) {
     ctx.body = ctx.refail(err)
   }
 }
+
+exports.getFundBaseAll = async function (ctx) {
+  const fundService = ctx.services.fund
+  const fund = await fundService.getFundBaseAll()
+  ctx.body = ctx.resuccess(fund)
+}
